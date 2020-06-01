@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
 
 public class GenericObject : MonoBehaviour
 {
+    [Header("Transforms")]
     public Transform top;
     public Transform bottom;
     public Transform left;
@@ -13,9 +13,10 @@ public class GenericObject : MonoBehaviour
     public Transform front;
     public Transform back;
 
-    public MeshFilter meshFilter;
-    public MeshRenderer meshRenderer;
-
+    [Space] 
+    [Header("Debug")] 
+    public bool showDebugGizmos = true;
+    
     public void MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
     {
         StopAllCoroutines();
@@ -63,5 +64,23 @@ public class GenericObject : MonoBehaviour
         }
         transform.position = adjustEnd;
         yield return null;
+    }
+
+    void OnDrawGizmos()
+    {
+        if (showDebugGizmos)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(transform.position, Vector3.one);
+            Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
+            Gizmos.DrawCube(transform.position, Vector3.one);
+            Gizmos.color = Color.gray;
+            Gizmos.DrawSphere(top.position, 0.1f);
+            Gizmos.DrawSphere(bottom.position, 0.1f);
+            Gizmos.DrawSphere(left.position, 0.1f);
+            Gizmos.DrawSphere(right.position, 0.1f);
+            Gizmos.DrawSphere(back.position, 0.1f);
+            Gizmos.DrawSphere(front.position, 0.1f);
+        }
     }
 }
