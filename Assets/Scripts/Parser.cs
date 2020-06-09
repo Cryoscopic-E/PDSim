@@ -5,32 +5,24 @@ using PDDL.Model.PDDL12;
 
 public static class Parser
 {
-    public static PddlElements ParseDomainAndProblem(string domain, string problem)
+    public static DomainElements ParseDomain(string domainText)
     {
         PDDL12Parser parser = new PDDL12Parser();
-        Domain d;
-        Problem p;
-        PddlElements elements = new PddlElements();
+        DomainElements elements = new DomainElements();
         // Domain
         try
         {
-            IReadOnlyList<IDefinition> list = parser.Parse(domain);
-            d = (Domain)list[0];
-            foreach (IType type in d.Types)
+            IReadOnlyList<IDefinition> list = parser.Parse(domainText);
+            var domain = (Domain)list[0];
+            
+            // TYPES
+            foreach (IType type in domain.Types)
             {
                 elements.types.Add(type.ToString());
             }
-            foreach (IAction action in d.Actions)
-            {
-                List<PddlObject> objs = new List<PddlObject>();
-                foreach (IVariableDefinition par in action.Parameters)
-                {
-                    objs.Add(new PddlObject(par.ToString(), par.Type.ToString()));
-                }
-
-                elements.actions.Add(new PddlAction(action.ToString(), objs));
-            }
-            foreach (IAtomicFormulaSkeleton predicate in d.Predicates)
+            
+            // PREDICATES
+            foreach (IAtomicFormulaSkeleton predicate in domain.Predicates)
             {
                 List<PddlObject> objs = new List<PddlObject>();
                 foreach (IVariableDefinition par in predicate.Parameters)
@@ -39,6 +31,19 @@ public static class Parser
                 }
                 elements.predicates.Add(new PddlPredicate(predicate.Name.ToString(), objs));
             }
+            
+            // ACTIONS
+            foreach (IAction action in domain.Actions)
+            {
+                List<PddlObject> objs = new List<PddlObject>();
+                foreach (IVariableDefinition par in action.Parameters)
+                {
+                    objs.Add(new PddlObject(par.ToString(), par.Type.ToString()));
+                }
+
+                elements.actions.Add(new PddlAction(action.Functor.Value, objs));
+            }
+            
         }
         catch (PDDLSyntaxException pe)
         {
@@ -47,11 +52,25 @@ public static class Parser
 
 
 
-        // Problem
+        
+        return elements;
+    }
+
+    public static List<PlanAction> ParsePlan(string response)
+    {
+        List<PlanAction> actions = new List<PlanAction>();
+
+        return actions;
+    }
+
+    public static ProblemElements ParseProblem(string problem)
+    {
+        PDDL12Parser parser = new PDDL12Parser();
+        ProblemElements elements = new ProblemElements();
         try
         {
             IReadOnlyList<IDefinition> list = parser.Parse(problem);
-            p = (Problem)list[0];
+            var p = (Problem)list[0];
 
             foreach (IObject o in p.Objects)
             {
@@ -63,13 +82,7 @@ public static class Parser
         {
             Debug.LogError("Domain Syntax Error::" + pe.Message);
         }
+
         return elements;
-    }
-
-    public static List<PlanAction> ParsePlan(string response)
-    {
-        List<PlanAction> actions = new List<PlanAction>();
-
-        return actions;
     }
 }

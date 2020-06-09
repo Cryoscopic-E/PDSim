@@ -1,21 +1,4 @@
-﻿using System.Collections.Generic;
-
-[System.Serializable]
-public class PddlElements
-{
-    public List<string> types;
-    public List<PddlAction> actions;
-    public List<PddlPredicate> predicates;
-    public List<PddlObject> objects;
-
-    public PddlElements()
-    {
-        this.types = new List<string>();
-        this.actions = new List<PddlAction>();
-        this.predicates = new List<PddlPredicate>();
-        this.objects = new List<PddlObject>();
-    }
-}
+using System.Collections.Generic;
 
 [System.Serializable]
 public struct PddlObject
@@ -57,6 +40,3 @@ public struct PddlAction
         parameters = pars;
     }
 }
-
-
-

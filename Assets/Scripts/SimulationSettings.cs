@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Simulation Settings")]
 public class SimulationSettings : ScriptableObject
 {
     [SerializeField] public TextAsset domain;
-    [SerializeField] public TextAsset problem;
-    [SerializeField] public PddlElements pddlElements;
+    [FormerlySerializedAs("pddlElements")] [SerializeField] public DomainElements domainElements;
     [SerializeField] public GameObject[] typesModels;
 }

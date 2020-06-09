@@ -78,10 +78,10 @@ public class SimulationManager : MonoBehaviour
     public void GenerateScene()
     {
         CheckObjectsHolder();
-        foreach (var obj in simulationSettings.pddlElements.objects)
-        {
-            
-        }
+        // foreach (var obj in simulationSettings.domainElements.objects)
+        // {
+        //     
+        // }
     }
 
 }
