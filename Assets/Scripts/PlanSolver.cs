@@ -1,51 +1,62 @@
-﻿using System.Collections;
+﻿using System.Net.Http;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
+using System.Threading.Tasks;
 using SimpleJSON;
 
-public class PlanSolver : MonoBehaviour
+public class PlanSolver 
 {
-    const string URL = "solver.planning.domains/solve";
-    public void GeneratePlan(string domain, string problem)
+
+    private static PlanSolver _instance;
+    public static PlanSolver Instance => _instance ?? (_instance = new PlanSolver());
+    
+    private const string Url = "http://solver.planning.domains/solve";
+    private static readonly HttpClient HttpClient = new HttpClient();
+    
+    private PlanSolver()
     {
-        try
-        {
-            WWWForm www = new WWWForm();
-            www.AddField("domain", domain);
-            www.AddField("problem", problem);
-            StartCoroutine(SendRequest(www));
-        }
-        catch (UnityException ue)
-        {
-            Debug.LogError(ue.Message);
-        }
     }
 
-    IEnumerator SendRequest(WWWForm form)
+    public async Task<List<PlanAction>> GeneratePlan(string domain, string problem)
     {
-
-        UnityWebRequest www = UnityWebRequest.Post(URL, form);
-        yield return www.SendWebRequest();
-
-        if (www.isNetworkError || www.isHttpError)
+        var content = new Dictionary<string, string>()
         {
-            //Debug.Log(www.error);
-            throw new UnityException("Network Error");
-        }
-        else
+            {"domain", domain},
+            {"problem", problem}
+        };
+        
+        var form = new FormUrlEncodedContent(content);
+        var res = await HttpClient.PostAsync(Url, form);
+        var planObj = await res.Content.ReadAsStringAsync();
+        var planJson = JSON.Parse(planObj);
+        var actions = new List<PlanAction>();
+        string status = planJson["status"];
+        if (status.Equals("ok"))
         {
-            string response = www.downloadHandler.text;
-            //Debug.Log(response);
-            JSONNode res_json = JSON.Parse(response);
-            string status = res_json["status"];
-            int length = int.Parse(res_json["result"]["length"]);
-
-            if (status.Equals("ok"))
+            var planLength = int.Parse(planJson["result"]["length"]);
+            for (var i = 0; i < planLength; i++)
             {
-                //plan = new Plan(length, ActionParser(res_json, length));
-                //PlanReady();
+                string line = planJson["result"]["plan"][i]["name"];
+                // Remove parentheses
+                line = line.Remove(0, 1);
+                line = line.Remove(line.Length - 1, 1);
+                // Split spaces
+                var split = line.Split(' ');
+                // Action name is in first index
+                var methodName = split[0];
+
+                // Set action parameters
+                var parameters = new List<string>();
+
+                for (var j = 1; j < split.Length; j++)
+                {
+                    parameters.Add(split[j]);
+                }
+
+                var action = new PlanAction(methodName, parameters) {parameters = parameters};
+                actions.Add(action);
             }
         }
+        return actions;
     }
 }

@@ -13,6 +13,21 @@ public class SimulationManager : MonoBehaviour
     
     private Dictionary<string, GenericObject> objectsDictionary;
 
+    private SimulationManager _instance;
+
+    public SimulationManager Instance => _instance;
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
     private void Start()
     {
         CheckObjectsHolder();

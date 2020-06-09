@@ -5,14 +5,18 @@ using UnityEngine;
 public class SimulationManagerEditor : Editor
 {
     private SimulationManager _simulationManager;
-    
+
     public override void OnInspectorGUI()
     {
         _simulationManager = (SimulationManager) target;
         base.OnInspectorGUI();
-        if (GUILayout.Button("Generate Scene"))
+
+        if (_simulationManager.simulationSettings != null)
         {
-            Debug.Log("Generate scene");
+            if (GUILayout.Button("Generate Scene"))
+            {
+                
+            }
         }
     }
 }

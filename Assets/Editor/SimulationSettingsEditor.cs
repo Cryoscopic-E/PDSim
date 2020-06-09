@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Policy;
+using System.Threading.Tasks;
+using SimpleJSON;
 using UnityEngine;
 using UnityEditor;
 
@@ -5,14 +10,18 @@ using UnityEditor;
 public class SimulationSettingsEditor : Editor
 {
     SimulationSettings simulationSettings;
-
+    
     public override void OnInspectorGUI()
     {
         simulationSettings = (SimulationSettings)target;
         DrawSpace(10);
         DrawDomanProblemFields();
-        DrawSpace(10);
-        DrawParseButton();
+        
+        if (simulationSettings.domain != null && simulationSettings.problem != null)
+        {
+            DrawSpace(10);
+            DrawParseButton();
+        }
 
         if (simulationSettings.pddlElements != null)
         {
@@ -31,35 +40,62 @@ public class SimulationSettingsEditor : Editor
 
         EditorGUILayout.BeginHorizontal();
         {
+            EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginVertical();
             GUILayout.Label("Domain File", EditorStyles.boldLabel);
-            simulationSettings.domain = (TextAsset)EditorGUILayout.ObjectField(simulationSettings.domain, typeof(TextAsset), true);
+            TextAsset domain = (TextAsset)EditorGUILayout.ObjectField(simulationSettings.domain, typeof(TextAsset), true);
             EditorGUILayout.EndVertical();
-
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(simulationSettings,"Domain File Change");
+                simulationSettings.domain = domain;
+                EditorUtility.SetDirty(simulationSettings);
+            }
+            
+            EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginVertical();
             GUILayout.Label("Problem File", EditorStyles.boldLabel);
-            simulationSettings.problem = (TextAsset)EditorGUILayout.ObjectField(simulationSettings.problem, typeof(TextAsset), true);
+            TextAsset problem = (TextAsset)EditorGUILayout.ObjectField(simulationSettings.problem, typeof(TextAsset), true);
             EditorGUILayout.EndVertical();
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(simulationSettings,"Problem File Change");
+                simulationSettings.problem = problem;
+                EditorUtility.SetDirty(simulationSettings);
+            }
+            
         }
         EditorGUILayout.EndHorizontal();
-
     }
 
-    public void DrawParseButton()
+    private void DrawParseButton()
     {
         if (GUILayout.Button("Parse Domain And Problem"))
         {
-            if (simulationSettings.domain != null && simulationSettings.problem != null)
-            {
-                // parse elements
-                simulationSettings.pddlElements = Parser.ParseDomainAndProblem(simulationSettings.domain.text, simulationSettings.problem.text);
-                // instanciate meshes array
-                simulationSettings.typesModels = new GameObject[simulationSettings.pddlElements.types.Count];
-            }
+            // parse elements
+            simulationSettings.pddlElements = Parser.ParseDomainAndProblem(simulationSettings.domain.text, simulationSettings.problem.text);
+            // instantiate game objects array
+            simulationSettings.typesModels = new GameObject[simulationSettings.pddlElements.types.Count];
+            EditorUtility.SetDirty(simulationSettings);
         }
     }
 
-    public void DrawModelTypes()
+
+    private void SavePlan(List<PlanAction> actions)
+    {
+        var plan = (Plan) ScriptableObject.CreateInstance(typeof(Plan));
+        plan.actions = actions;
+        EditorUtility.SetDirty(plan);
+    }
+
+    private void WarnUnsolvedPlan()
+    {
+        EditorUtility.DisplayDialog("Plan not found!",
+            "It was impossible to solve the plan, check the domain and problem files.", "Ok");
+    }
+    
+    
+    private void DrawModelTypes()
     {
 
         //SerializedProperty meshesList = serializedObject.FindProperty("typesMeshes");
@@ -81,12 +117,12 @@ public class SimulationSettingsEditor : Editor
             EditorGUILayout.EndVertical();
         }
     }
-
+    
     private void DrawModelInput(int index)
     {
         // DRAW LABEL OF TYPE NAME
         GUILayout.Label(simulationSettings.pddlElements.types[index].ToUpper(), EditorStyles.largeLabel);
-
+        EditorGUI.BeginChangeCheck();
         // NEW MODEL BUTTON
         if (simulationSettings.typesModels[index] == null)
         {
@@ -114,9 +150,14 @@ public class SimulationSettingsEditor : Editor
         {
             simulationSettings.typesModels[index] = null;
         }
+        
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(simulationSettings);
+        }
     }
 
-    public static GameObject CreateNewTypeModel(string simulationName, string typeName)
+    private static GameObject CreateNewTypeModel(string simulationName, string typeName)
     {
         string folderPath = "Assets/Prefabs/" + simulationName.Replace(" ", string.Empty) + "Models";
         if (!AssetDatabase.IsValidFolder(folderPath))

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 [System.Serializable]
 public struct PlanAction
@@ -12,5 +11,10 @@ public struct PlanAction
     {
         this.name = name;
         this.parameters = parameters;
+    }
+
+    public string Parameters()
+    {
+        return string.Join(", ", parameters);
     }
 }

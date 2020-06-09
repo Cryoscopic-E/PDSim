@@ -12,11 +12,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8864ee0c87bd72fbeb5690b1db497702, type: 3}
   m_Name: Simulation Settings
   m_EditorClassIdentifier: 
-  domain: {fileID: 0}
-  problem: {fileID: 0}
+  domain: {fileID: 4900000, guid: e772067b1e877594f96ab51bca715cc2, type: 3}
+  problem: {fileID: 4900000, guid: bc7ecac2a572a7149842ef699bbf48e9, type: 3}
   pddlElements:
-    types: []
-    actions: []
-    predicates: []
-    objects: []
-  typesModels: []
+    types:
+    - block
+    actions:
+    - name: PDDL.Model.PDDL12.Action
+      parameters:
+      - name: ?x - block
+        type: block
+    - name: PDDL.Model.PDDL12.Action
+      parameters:
+      - name: ?x - block
+        type: block
+    - name: PDDL.Model.PDDL12.Action
+      parameters:
+      - name: ?x - block
+        type: block
+      - name: ?y - block
+        type: block
+    - name: PDDL.Model.PDDL12.Action
+      parameters:
+      - name: ?x - block
+        type: block
+      - name: ?y - block
+        type: block
+    predicates:
+    - predicateState: 1
+      name: on
+      parameters:
+      - name: ?x - block
+        type: block
+      - name: ?y - block
+        type: block
+    - predicateState: 1
+      name: ontable
+      parameters:
+      - name: ?x - block
+        type: block
+    - predicateState: 1
+      name: clear
+      parameters:
+      - name: ?x - block
+        type: block
+    - predicateState: 1
+      name: handempty
+      parameters: []
+    - predicateState: 1
+      name: holding
+      parameters:
+      - name: ?x - block
+        type: block
+    objects:
+    - name: D - block
+      type: block
+    - name: B - block
+      type: block
+    - name: A - block
+      type: block
+    - name: C - block
+      type: block
+  typesModels:
+  - {fileID: 9124979483608035433, guid: 33d7f328c936c4957b592dc104f4a270, type: 3}

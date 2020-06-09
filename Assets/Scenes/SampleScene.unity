@@ -247,8 +247,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -283, y: -279.5}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -251.5, y: -232.8}
+  m_SizeDelta: {x: 269.94403, y: 164.0531}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &717988041
 MonoBehaviour:
@@ -264,25 +264,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 10
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
+    m_BestFit: 1
+    m_MinSize: 0
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: '<Object> States:
+
+    State1
+
+    State2
+
+    ..
+
+    Staten'
 --- !u!222 &717988042
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -438,7 +446,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1519124391
 GameObject:
@@ -453,7 +461,7 @@ GameObject:
   - component: {fileID: 1519124393}
   - component: {fileID: 1519124392}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: StateCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -488,7 +496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -532,7 +540,7 @@ RectTransform:
   m_Children:
   - {fileID: 717988040}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -568,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c2d348959ba1c5438f913bee70f47a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationSettings: {fileID: 0}
+  simulationSettings: {fileID: 11400000, guid: 28683bb7a3d27de2f8234a5ca4878179, type: 2}
   plan: {fileID: 0}
 --- !u!4 &1690684045
 Transform:
