@@ -577,7 +577,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simulationSettings: {fileID: 11400000, guid: 28683bb7a3d27de2f8234a5ca4878179, type: 2}
-  plan: {fileID: 0}
+  simulationEnvironment: {fileID: 11400000, guid: 92e2a71d34ad8da2795b1b9311505bd1,
+    type: 2}
 --- !u!4 &1690684045
 Transform:
   m_ObjectHideFlags: 0

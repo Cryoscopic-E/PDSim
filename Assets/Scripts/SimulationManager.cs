@@ -6,7 +6,7 @@ using UnityEditor;
 public class SimulationManager : MonoBehaviour
 {
     public SimulationSettings simulationSettings;
-    public Plan plan;
+    public SimulationEnvironment simulationEnvironment;
     
     
     private Transform _objectsHolder;
@@ -30,10 +30,10 @@ public class SimulationManager : MonoBehaviour
     }
     private void Start()
     {
-        CheckObjectsHolder();
+        //CheckObjectsHolder();
         
         // SETUP SIMULATION WITH SETTINGS
-        SetupSimulation();
+        //SetupSimulation();
         // START SIMULATION ROUTINES
         //StartCoroutine(SimulatePlan());
     }
@@ -49,21 +49,21 @@ public class SimulationManager : MonoBehaviour
         }
 
     }
-    private IEnumerator SimulatePlan()
-    {
-        foreach (PlanAction action in plan.actions)
-        {
-            // foreach (string actionName in simulationSettings.pddlElements.actions)
-            // {
-            //     if (actionName.ToLower() == action.name)
-            //     {
-            //         yield return null; //TODO return action behaviour coroutine
-            //     }
-            // }
-        }
-
-        yield return null;
-    }
+    // private IEnumerator SimulatePlan()
+    // {
+    //     foreach (PlanAction action in plan.actions)
+    //     {
+    //         // foreach (string actionName in simulationSettings.pddlElements.actions)
+    //         // {
+    //         //     if (actionName.ToLower() == action.name)
+    //         //     {
+    //         //         yield return null; //TODO return action behaviour coroutine
+    //         //     }
+    //         // }
+    //     }
+    //
+    //     yield return null;
+    // }
 
     private void CheckObjectsHolder()
     {
