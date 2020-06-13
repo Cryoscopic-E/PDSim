@@ -9,13 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8864ee0c87bd72fbeb5690b1db497702, type: 3}
-  m_Name: Settings
+  m_Script: {fileID: 11500000, guid: a62581e9999346a899e2662f4355b396, type: 3}
+  m_Name: OnTable
   m_EditorClassIdentifier: 
-  domain: {fileID: 0}
-  domainElements:
-    types: []
-    actions: []
-    predicates: []
-  typesModels: []
-  predicatesBehaviours: []
+  target: {x: 0, y: 0, z: 0}

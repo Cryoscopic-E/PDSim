@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 using UnityEditor;
 
@@ -18,7 +19,7 @@ public class SimulationSettingsEditor : Editor
             DrawSpace(15);
             DrawModelTypes();
             DrawSpace(15);
-            DrawActions();
+            DrawPredicates();
         }
     }
 
@@ -33,7 +34,6 @@ public class SimulationSettingsEditor : Editor
         DrawSpace(5);
         EditorGUILayout.BeginHorizontal();
         {
-            
             EditorGUI.BeginChangeCheck();
 
 
@@ -44,7 +44,7 @@ public class SimulationSettingsEditor : Editor
             {
                 domain = null;
             }
-            
+
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(simulationSettings, "Domain File Change");
@@ -61,39 +61,50 @@ public class SimulationSettingsEditor : Editor
                         Parser.ParseDomain(simulationSettings.domain.text); //, simulationSettings.problem.text);
                     // instantiate game objects array
                     simulationSettings.typesModels = new GameObject[simulationSettings.domainElements.types.Count];
+                    // instantiate behaviours array
+                    simulationSettings.predicatesBehaviours = new PredicateCommand[simulationSettings.domainElements.predicates.Count];
                 }
 
                 // save asset
                 EditorUtility.SetDirty(simulationSettings);
             }
-
-            // EditorGUI.BeginChangeCheck();
-            // EditorGUILayout.BeginVertical();
-            // GUILayout.Label("Problem File", EditorStyles.boldLabel);
-            // TextAsset problem = (TextAsset)EditorGUILayout.ObjectField(simulationSettings.problem, typeof(TextAsset), true);
-            // EditorGUILayout.EndVertical();
-            // if (EditorGUI.EndChangeCheck())
-            // {
-            //     Undo.RecordObject(simulationSettings,"Problem File Change");
-            //     simulationSettings.problem = problem;
-            //     EditorUtility.SetDirty(simulationSettings);
-            // }
         }
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DrawActions()
+    private void DrawPredicates()
     {
         EditorGUILayout.BeginVertical();
         {
-            GUILayout.Label("PDDL Actions", EditorStyles.boldLabel);
-            for (int i = 0; i < simulationSettings.domainElements.actions.Count; i++)
+            GUILayout.Label("PDDL Predicates", EditorStyles.boldLabel);
+            
+            for (int i = 0; i < simulationSettings.domainElements.predicates.Count; i++)
             {
-                DrawSpace(10);
-                GUILayout.Label(simulationSettings.domainElements.actions[i].name);
+                DrawBehavioursInput(i);
             }
         }
         EditorGUILayout.EndVertical();
+    }
+
+    private void DrawBehavioursInput(int index)
+    {
+        // DRAW LABEL OF TYPE NAME
+        GUILayout.BeginHorizontal();
+        GUILayout.Label(simulationSettings.domainElements.predicates[index].name.ToUpper(), EditorStyles.largeLabel);
+
+        EditorGUI.BeginChangeCheck();
+        // GET BEHAVIOUR FIELD
+        var behavior = (PredicateCommand)EditorGUILayout.ObjectField(simulationSettings.predicatesBehaviours[index], typeof(PredicateCommand),
+                false);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(simulationSettings, "Predicate Behaviour Set");
+            simulationSettings.predicatesBehaviours[index] = behavior;
+            EditorUtility.SetDirty(this);
+        }
+        
+        GUILayout.EndHorizontal();
     }
 
     private void DrawModelTypes()

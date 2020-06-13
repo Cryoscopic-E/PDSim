@@ -17,6 +17,14 @@ public class GenericObject : MonoBehaviour
     [Header("Debug")] 
     public bool showDebugGizmos = true;
     
+    // ANIMATIONS
+
+    public void Move(Vector3 end)
+    {
+        StopAllCoroutines();
+        StartCoroutine(MoveTo(transform.position, end));
+    }
+    
     public void MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
     {
         StopAllCoroutines();
@@ -46,7 +54,7 @@ public class GenericObject : MonoBehaviour
         }
     }
 
-    // ANIMATIONS
+    
 
     IEnumerator MoveTo(Vector3 start, Vector3 end)
     {
