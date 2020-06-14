@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a62581e9999346a899e2662f4355b396, type: 3}
   m_Name: OnHand
   m_EditorClassIdentifier: 
-  target: {x: 0, y: 0, z: 0}
+  target: {x: 2, y: 3, z: 0}

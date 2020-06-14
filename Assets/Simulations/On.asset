@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f14e63dea794675ad736373f65b5842, type: 3}
   m_Name: On
   m_EditorClassIdentifier: 
-  alignment: 0
+  alignment: 1

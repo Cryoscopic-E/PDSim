@@ -91,11 +91,11 @@ public class SimulationSettingsEditor : Editor
         // DRAW LABEL OF TYPE NAME
         GUILayout.BeginHorizontal();
         GUILayout.Label(simulationSettings.domainElements.predicates[index].name.ToUpper(), EditorStyles.largeLabel);
-
+        
         EditorGUI.BeginChangeCheck();
         // GET BEHAVIOUR FIELD
         var behavior = (PredicateCommand)EditorGUILayout.ObjectField(simulationSettings.predicatesBehaviours[index], typeof(PredicateCommand),
-                false);
+                false, GUILayout.ExpandWidth(false));
 
         if (EditorGUI.EndChangeCheck())
         {
