@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -5,5 +6,5 @@ using UnityEngine.Serialization;
 public class SimulationEnvironment : ScriptableObject
 {
     [SerializeField] public TextAsset problem;
-    [SerializeField] public ProblemElements problemElements;
+    [SerializeField] public List<PddlObject> objects;
 }

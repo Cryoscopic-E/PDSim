@@ -15,7 +15,8 @@ public class SimulationManagerEditor : Editor
         {
             if (GUILayout.Button("Generate Scene"))
             {
-                
+                //_simulationManager.Plan();
+                _simulationManager.GenerateScene();
             }
         }
     }

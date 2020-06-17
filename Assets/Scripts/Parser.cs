@@ -97,30 +97,30 @@ public static class Parser
         return actions;
     }
 
-    public static ProblemElements ParseProblem(string problem)
-    {
-        ProblemElements elements = new ProblemElements();
-        PDDL12Parser parser = new PDDL12Parser();
-        try
-        {
-            IReadOnlyList<IDefinition> list = parser.Parse(problem);
-            var p = (Problem) list[0];
-            // OBJECTS
-            foreach (IObject o in p.Objects)
-            {
-                elements.objects.Add(new PddlObject(o.ToString(), o.Type.ToString()));
-            }
-
-            // INIT CODE
-            foreach (var predicate in p.Initial)
-            {
-            }
-        }
-        catch (PDDLSyntaxException pe)
-        {
-            Debug.LogError("Domain Syntax Error::" + pe.Message);
-        }
-
-        return elements;
-    }
+    // public static ProblemElements ParseProblem(string problem)
+    // {
+    //     ProblemElements elements = new ProblemElements();
+    //     PDDL12Parser parser = new PDDL12Parser();
+    //     try
+    //     {
+    //         IReadOnlyList<IDefinition> list = parser.Parse(problem);
+    //         var p = (Problem) list[0];
+    //         // OBJECTS
+    //         foreach (IObject o in p.Objects)
+    //         {
+    //             elements.objects.Add(new PddlObject(o.ToString(), o.Type.ToString()));
+    //         }
+    //
+    //         // INIT CODE
+    //         foreach (var predicate in p.Initial)
+    //         {
+    //         }
+    //     }
+    //     catch (PDDLSyntaxException pe)
+    //     {
+    //         Debug.LogError("Domain Syntax Error::" + pe.Message);
+    //     }
+    //
+    //     return elements;
+    // }
 }

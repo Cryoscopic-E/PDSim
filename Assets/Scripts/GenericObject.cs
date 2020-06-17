@@ -12,46 +12,48 @@ public class GenericObject : MonoBehaviour
     public Transform right;
     public Transform front;
     public Transform back;
-
+    
     [Space] 
     [Header("Debug")] 
     public bool showDebugGizmos = true;
     
     // ANIMATIONS
 
-    public void Move(Vector3 end)
+    public IEnumerator Move(Vector3 end)
     {
         StopAllCoroutines();
-        StartCoroutine(MoveTo(transform.position, end));
+        yield return StartCoroutine(MoveTo(transform.position, end));
     }
     
-    public void MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
+    public IEnumerator MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
     {
         StopAllCoroutines();
         switch (align)
         {
             case Alignment.TOP:
-                StartCoroutine(MoveTo(bottom.position, obj.top.position));
+                yield return StartCoroutine(MoveTo(bottom.position, obj.top.position));
                 break;
             case Alignment.BOTTOM:
-                StartCoroutine(MoveTo(top.position, obj.bottom.position));
+                yield return StartCoroutine(MoveTo(top.position, obj.bottom.position));
                 break;
             case Alignment.LEFT:
-                StartCoroutine(MoveTo(right.position, obj.left.position));
+                yield return StartCoroutine(MoveTo(right.position, obj.left.position));
                 break;
             case Alignment.RIGHT:
-                StartCoroutine(MoveTo(left.position, obj.right.position));
+                yield return StartCoroutine(MoveTo(left.position, obj.right.position));
                 break;
             case Alignment.FRONT:
-                StartCoroutine(MoveTo(back.position, obj.front.position));
+                yield return StartCoroutine(MoveTo(back.position, obj.front.position));
                 break;
             case Alignment.BACK:
-                StartCoroutine(MoveTo(front.position, obj.back.position));
+                yield return StartCoroutine(MoveTo(front.position, obj.back.position));
                 break;
             default:
-                StartCoroutine(MoveTo(transform.position, obj.transform.position));
+                yield return StartCoroutine(MoveTo(transform.position, obj.transform.position));
                 break;
         }
+
+        yield return null;
     }
 
     

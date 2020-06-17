@@ -13,4 +13,17 @@ public class DomainElements
         this.actions = new List<PddlAction>();
         this.predicates = new List<PddlPredicate>();
     }
+
+    public List<PddlEffect> GetEffectsOfAction(string actionName)
+    {
+        foreach (var a in actions)
+        {
+            if (a.name == actionName)
+            {
+                return a.effects;
+            }
+        }
+
+        return null;
+    }
 }

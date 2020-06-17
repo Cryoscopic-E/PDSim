@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0e36ac41634e339ece15a48c90f05c, type: 3}
   m_Name: Environment
   m_EditorClassIdentifier: 
-  problem: {fileID: 0}
-  problemElements:
-    objects: []
+  problem: {fileID: 4900000, guid: bc7ecac2a572a7149842ef699bbf48e9, type: 3}
+  objects: []

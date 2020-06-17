@@ -16,38 +16,93 @@ MonoBehaviour:
   domainElements:
     types:
     - block
-    actions: []
-    predicates:
-    - negate: 0
-      name: on
+    actions:
+    - name: pick-up
+      parameters:
+      - name: ?x - block
+        type: block
+      effects:
+      - predicateName: ontable
+        negate: 1
+      - predicateName: clear
+        negate: 1
+      - predicateName: handempty
+        negate: 1
+      - predicateName: holding
+        negate: 0
+    - name: put-down
+      parameters:
+      - name: ?x - block
+        type: block
+      effects:
+      - predicateName: holding
+        negate: 1
+      - predicateName: clear
+        negate: 0
+      - predicateName: handempty
+        negate: 0
+      - predicateName: ontable
+        negate: 0
+    - name: stack
       parameters:
       - name: ?x - block
         type: block
       - name: ?y - block
         type: block
-    - negate: 0
-      name: ontable
+      effects:
+      - predicateName: holding
+        negate: 1
+      - predicateName: clear
+        negate: 1
+      - predicateName: clear
+        negate: 0
+      - predicateName: handempty
+        negate: 0
+      - predicateName: on
+        negate: 0
+    - name: unstack
       parameters:
       - name: ?x - block
         type: block
-    - negate: 0
-      name: clear
+      - name: ?y - block
+        type: block
+      effects:
+      - predicateName: holding
+        negate: 0
+      - predicateName: clear
+        negate: 0
+      - predicateName: clear
+        negate: 1
+      - predicateName: handempty
+        negate: 1
+      - predicateName: on
+        negate: 1
+    predicates:
+    - name: on
       parameters:
       - name: ?x - block
         type: block
-    - negate: 0
-      name: handempty
+      - name: ?y - block
+        type: block
+    - name: ontable
+      parameters:
+      - name: ?x - block
+        type: block
+    - name: clear
+      parameters:
+      - name: ?x - block
+        type: block
+    - name: handempty
       parameters: []
-    - negate: 0
-      name: holding
+    - name: holding
       parameters:
       - name: ?x - block
         type: block
   typesModels:
-  - {fileID: 0}
+  - {fileID: 6667902667686268313, guid: 6c940d450592e4e659c48169a9dc3e2e, type: 3}
   predicatesBehaviours:
+  - {fileID: 11400000, guid: 92c73a9dd97fa2a4393dc1069401c801, type: 2}
+  - {fileID: 11400000, guid: ff25614859c50284ba74d36c5dae3f83, type: 2}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 9ef8b6a1acfc23247b89af75617530fe, type: 2}

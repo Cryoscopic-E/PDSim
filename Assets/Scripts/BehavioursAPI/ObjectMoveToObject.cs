@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "Object To Object", menuName = "Predicates Behaviours/Object To Object")]
 public class ObjectMoveToObject : PredicateCommand
@@ -6,18 +7,21 @@ public class ObjectMoveToObject : PredicateCommand
     [SerializeField]
     public Alignment alignment;
     
-    protected override void PreActivate()
+    protected override IEnumerator PreActivate()
     {
+        yield return null;
     }
 
-    protected override void Activate()
+    protected override IEnumerator Activate()
     {
         var x = attributes[0];
         var y = attributes[1];
-        x.MoveToObjectAlignedTo(y, alignment);
+        yield return x.MoveToObjectAlignedTo(y, alignment);
+        yield return new WaitForSeconds(0.4f);
     }
 
-    protected override void PostActivate()
+    protected override IEnumerator PostActivate()
     {
+        yield return null;
     }
 }

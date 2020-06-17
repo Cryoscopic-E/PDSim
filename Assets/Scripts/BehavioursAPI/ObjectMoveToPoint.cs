@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "Object To Point", menuName = "Predicates Behaviours/Object to Point")]
 public class ObjectMoveToPoint : PredicateCommand
@@ -6,17 +7,20 @@ public class ObjectMoveToPoint : PredicateCommand
     [SerializeField] public Vector3 target;
 
 
-    protected override void PreActivate()
+    protected override IEnumerator PreActivate()
     {
+        yield return null;
     }
 
-    protected override void Activate()
+    protected override IEnumerator Activate()
     {
         var x = attributes[0];
-        x.Move(target);
+        yield return x.Move(target);
+        yield return new WaitForSeconds(0.4f);
     }
 
-    protected override void PostActivate()
+    protected override IEnumerator PostActivate()
     {
+        yield return null;
     }
 }
