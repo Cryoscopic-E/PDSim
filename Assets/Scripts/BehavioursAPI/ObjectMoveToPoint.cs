@@ -12,7 +12,12 @@ public class ObjectMoveToPoint : PredicateCommand
         yield return null;
     }
 
-    protected override IEnumerator Activate()
+    protected override IEnumerator ActivateNegative()
+    {
+        yield return null;
+    }
+
+    protected override IEnumerator ActivatePositive()
     {
         var x = attributes[0];
         yield return x.Move(target);

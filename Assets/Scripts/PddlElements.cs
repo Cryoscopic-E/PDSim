@@ -1,5 +1,6 @@
 using PDDL.Model.PDDL12;
 using System.Collections.Generic;
+using System.Security.Permissions;
 
 [System.Serializable]
 public struct PddlObject
@@ -27,16 +28,33 @@ public struct PddlEffect
     }
 }
 
+
+[System.Serializable]
+public struct PddlInit
+{
+    public string predicateName;
+    public List<string> parameters;
+    public bool negate;
+
+    public PddlInit(string name, List<string> p, bool neg)
+    {
+        predicateName = name;
+        parameters = p;
+        negate = neg;
+    }
+}
+
 [System.Serializable]
 public struct PddlPredicate
 {
     public string name;
     public List<PddlObject> parameters;
-
-    public PddlPredicate(string n, List<PddlObject> pars)
+    public bool negate;
+    public PddlPredicate(string n, List<PddlObject> pars, bool nt = false)
     {
         name = n;
         parameters = pars;
+        negate = nt;
     }
 }
 

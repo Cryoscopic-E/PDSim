@@ -97,30 +97,40 @@ public static class Parser
         return actions;
     }
 
-    // public static ProblemElements ParseProblem(string problem)
-    // {
-    //     ProblemElements elements = new ProblemElements();
-    //     PDDL12Parser parser = new PDDL12Parser();
-    //     try
-    //     {
-    //         IReadOnlyList<IDefinition> list = parser.Parse(problem);
-    //         var p = (Problem) list[0];
-    //         // OBJECTS
-    //         foreach (IObject o in p.Objects)
-    //         {
-    //             elements.objects.Add(new PddlObject(o.ToString(), o.Type.ToString()));
-    //         }
-    //
-    //         // INIT CODE
-    //         foreach (var predicate in p.Initial)
-    //         {
-    //         }
-    //     }
-    //     catch (PDDLSyntaxException pe)
-    //     {
-    //         Debug.LogError("Domain Syntax Error::" + pe.Message);
-    //     }
-    //
-    //     return elements;
-    // }
+    public static ProblemElements ParseProblem(string problem)
+    {
+        ProblemElements elements = new ProblemElements();
+        PDDL12Parser parser = new PDDL12Parser();
+        try
+        {
+            IReadOnlyList<IDefinition> list = parser.Parse(problem);
+            var p = (Problem) list[0];
+            // OBJECTS
+            foreach (IObject o in p.Objects)
+            {
+                elements.objects.Add(new PddlObject(o.ToString(), o.Type.ToString()));
+            }
+    
+            // INIT CODE
+            foreach (var predicate in p.Initial)
+            {
+                /* Predicate Parameters*/
+                var predicateParams = new List<string>();
+                // Loop through parameters list
+                foreach (var parameter in predicate.Parameters)
+                {
+                    // parameter in form name-type added to parameters list
+                    predicateParams.Add(parameter.Value);
+                }
+                
+                elements.initBlock.Add(new PddlInit(predicate.Name.Value, predicateParams, !predicate.Positive));
+            }
+        }
+        catch (PDDLSyntaxException pe)
+        {
+            Debug.LogError("Domain Syntax Error::" + pe.Message);
+        }
+    
+        return elements;
+    }
 }

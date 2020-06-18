@@ -6,5 +6,6 @@ using UnityEngine.Serialization;
 public class SimulationEnvironment : ScriptableObject
 {
     [SerializeField] public TextAsset problem;
-    [SerializeField] public List<PddlObject> objects;
+    [SerializeField] public ProblemElements problemElements;
+    [SerializeField] public Plan plan;
 }

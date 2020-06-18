@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
 
+
 public class GenericObject : MonoBehaviour
 {
+    
+
     [Header("Transforms")]
     public Transform top;
     public Transform bottom;
@@ -12,11 +16,25 @@ public class GenericObject : MonoBehaviour
     public Transform right;
     public Transform front;
     public Transform back;
+    [Space] 
+    [Header("States HUD")] 
+    public GameObject stateCanvas;
     
     [Space] 
     [Header("Debug")] 
     public bool showDebugGizmos = true;
     
+    
+    private void OnMouseEnter()
+    {
+        stateCanvas.SetActive(true);
+    }
+
+    private void OnMouseExit()
+    {
+        stateCanvas.SetActive(false);
+    }
+
     // ANIMATIONS
 
     public IEnumerator Move(Vector3 end)
@@ -24,7 +42,9 @@ public class GenericObject : MonoBehaviour
         StopAllCoroutines();
         yield return StartCoroutine(MoveTo(transform.position, end));
     }
+
     
+
     public IEnumerator MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
     {
         StopAllCoroutines();

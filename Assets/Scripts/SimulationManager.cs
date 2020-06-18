@@ -121,11 +121,11 @@ public class SimulationManager : MonoBehaviour
             {
                 // check action behaviour
                 var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
-                if (behaviour && !predicate.negate)
+                if (behaviour)
                 {
                     List<GenericObject> param = GetObjects(action.parameters);
                     behaviour.SetAttributes(param);
-                    yield return behaviour.Execute();
+                    yield return behaviour.Execute(predicate.negate);
                 }
             }
         }
@@ -145,10 +145,10 @@ public class SimulationManager : MonoBehaviour
     
     private void CheckObjectsHolder()
     {
-        var objs = GameObject.Find("Objects");
+        var objs = GameObject.Find("Simulation Objects");
         if (!objs)
         {
-            objs = new GameObject("Objects");
+            objs = new GameObject("Simulation Objects");
         }
         _objectsHolder = objs.GetComponent<Transform>();
     }
@@ -164,6 +164,17 @@ public class SimulationManager : MonoBehaviour
             var clone = Instantiate(gameObj, Vector3.zero,  Quaternion.identity, _objectsHolder) as GameObject;
             clone.name = obj;
         }
+    }
+    
+    
+    public void Play()
+    {
+        Time.timeScale = 1.0f;
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0.0f;
     }
 
 }

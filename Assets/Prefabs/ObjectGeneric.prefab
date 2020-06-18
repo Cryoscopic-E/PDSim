@@ -100,6 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1849438405480917816}
   - component: {fileID: 1945603479453875239}
+  - component: {fileID: 1909468554057033010}
   m_Layer: 0
   m_Name: ObjectGeneric
   m_TagString: Untagged
@@ -142,7 +143,21 @@ MonoBehaviour:
   right: {fileID: 1082818281036075210}
   front: {fileID: 5113618866564870732}
   back: {fileID: 7184446344001077657}
+  stateCanvas: {fileID: 6367895016955356863}
   showDebugGizmos: 1
+--- !u!65 &1909468554057033010
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1902163776469494451}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2290885046518396293
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +183,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2290885046518396293}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -202,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3490566, g: 0.3210662, b: 0.3210662, a: 0.392}
+  m_Color: {r: 0.3490566, g: 0.3210662, b: 0.3210662, a: 0.78431374}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -291,7 +306,7 @@ GameObject:
   - component: {fileID: 9005624009283107098}
   - component: {fileID: 6158279242944015641}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: State Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -314,7 +329,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 3.25}
+  m_AnchoredPosition: {x: 0, y: 2.75}
   m_SizeDelta: {x: 5, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &9150621087707653979
@@ -486,7 +501,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Object Name
+  m_Text: 'Object Name
+
+    Object states'
 --- !u!1 &8053020079052366167
 GameObject:
   m_ObjectHideFlags: 0

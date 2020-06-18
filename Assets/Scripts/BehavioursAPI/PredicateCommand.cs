@@ -7,13 +7,21 @@ public abstract class PredicateCommand : ScriptableObject
     protected List<GenericObject> attributes;
 
     protected abstract IEnumerator PreActivate();
-    protected abstract IEnumerator Activate();
+    protected abstract IEnumerator ActivatePositive();
+    protected abstract IEnumerator ActivateNegative();
     protected abstract IEnumerator PostActivate();
 
-    public IEnumerator Execute()
+    public IEnumerator Execute(bool negate)
     {
         yield return PreActivate();
-        yield return Activate();
+        if (negate)
+        {
+            yield return ActivateNegative();
+        }
+        else
+        {
+            yield return ActivatePositive();
+        }
         yield return PostActivate();
     }
     
