@@ -11,27 +11,22 @@ public class SimulationSettingsEditor : Editor
     public override void OnInspectorGUI()
     {
         simulationSettings = (SimulationSettings) target;
-        DrawSpace(10);
+        GUILayout.Space(10);
         DrawDomainField();
 
         if (simulationSettings.domain != null)
         {
-            DrawSpace(15);
+            GUILayout.Space(15);
             DrawModelTypes();
-            DrawSpace(15);
+            GUILayout.Space(15);
             DrawPredicates();
         }
-    }
-
-    private static void DrawSpace(int pixels)
-    {
-        GUILayout.Space(pixels);
     }
 
     private void DrawDomainField()
     {
         GUILayout.Label("Domain File", EditorStyles.boldLabel);
-        DrawSpace(5);
+        GUILayout.Space(5);
         EditorGUILayout.BeginHorizontal();
         {
             EditorGUI.BeginChangeCheck();
@@ -114,7 +109,7 @@ public class SimulationSettingsEditor : Editor
             GUILayout.Label("Create Models for PDDL Types", EditorStyles.boldLabel);
             for (int i = 0; i < simulationSettings.domainElements.types.Count; i++)
             {
-                DrawSpace(10);
+                GUILayout.Space(10);
                 EditorGUILayout.BeginHorizontal();
                 {
                     DrawModelInput(i);
@@ -133,7 +128,7 @@ public class SimulationSettingsEditor : Editor
         // NEW MODEL BUTTON
         if (simulationSettings.typesModels[index] == null)
         {
-            if (GUILayout.Button("New Model"))
+            if (GUILayout.Button("New Model", GUILayout.ExpandWidth(false)))
             {
                 simulationSettings.typesModels[index] = CreateNewTypeModel(simulationSettings.name,
                     simulationSettings.domainElements.types[index]);
@@ -147,7 +142,7 @@ public class SimulationSettingsEditor : Editor
                     false);
 
             // EDIT PREFAB BUTTON
-            if (GUILayout.Button("Edit"))
+            if (GUILayout.Button("Edit", GUILayout.ExpandWidth(false)))
             {
                 if (!AssetDatabase.OpenAsset(simulationSettings.typesModels[index]))
                 {
@@ -157,7 +152,7 @@ public class SimulationSettingsEditor : Editor
         }
 
         // CLEAR BUTTON
-        if (GUILayout.Button("Clear"))
+        if (GUILayout.Button("Clear", GUILayout.ExpandWidth(false)))
         {
             simulationSettings.typesModels[index] = null;
         }
