@@ -1,45 +1,34 @@
-﻿using System;
+﻿using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using SimpleJSON;
 using UnityEngine;
-using UnityEngine.Networking;
+using UnityEditor;
 
 public class SimulationManager : MonoBehaviour
 {
+    private readonly string SIM_OBJECT_HOLDER = "Simulation Objects";
+    private readonly string CUSTOM_OBJECT_HOLDER = "Custom Objects";
+    
     public SimulationSettings simulationSettings;
     public SimulationEnvironment simulationEnvironment;
-    
-    
+
+
     private Transform _objectsHolder;
+    private Transform _customHolder;
     
     private Dictionary<string, GenericObject> objectsDictionary;
-    private List<PlanAction> plan;
-    private bool shouldRun = true;
-    private bool started = false;
+    private PlanSolver _planSolver;
+
     private void Start()
     {
-        if (shouldRun)
-        {
-            Plan();
-            
-            CheckObjectsHolder();
-            // SETUP SIMULATION WITH SETTINGS
-            SetupSimulation();
-            // START SIMULATION ROUTINES
-            
-        }
+        _planSolver = GetComponent<PlanSolver>();
+        // SET holders game objects in scene
+        SetHolders();
+        // SETUP SIMULATION WITH SETTINGS
+        SetupSimulation();
+        // START SIMULATION ROUTINES
+        StartCoroutine(SimulatePlan());
     }
-
-    private void Update()
-    {
-        if (plan != null && !started)
-        {
-            started = true;
-            StartCoroutine(SimulatePlan());
-        }
-    }
-
 
     private void SetupSimulation()
     {
@@ -50,73 +39,18 @@ public class SimulationManager : MonoBehaviour
             GenericObject obj = _objectsHolder.GetChild(i).GetComponent<GenericObject>();
             objectsDictionary.Add(obj.gameObject.name, obj);
         }
-
-    }
-
-    public void Plan()
-    {
-        WWWForm www = new WWWForm();
-
-        www.AddField("domain", simulationSettings.domain.text);
-        www.AddField("problem", simulationEnvironment.problem.text);
-        StartCoroutine(WaitForRequest(www));
-    }
-
-    IEnumerator WaitForRequest(WWWForm form)
-    {
-
-        UnityWebRequest www = UnityWebRequest.Post("solver.planning.domains/solve", form);
-        yield return www.SendWebRequest();
-
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            var actions = new List<PlanAction>();
-            string response = www.downloadHandler.text;
-            JSONNode planJson = JSON.Parse(response);
-            string status = planJson["status"];
-            int length = int.Parse(planJson["result"]["length"]);
-            if (status.Equals("ok"))
-            {
-                var planLength = int.Parse(planJson["result"]["length"]);
-                for (var i = 0; i < planLength; i++)
-                {
-                    string line = planJson["result"]["plan"][i]["name"];
-                    // Remove parentheses
-                    line = line.Remove(0, 1);
-                    line = line.Remove(line.Length - 1, 1);
-                    // Split spaces
-                    var split = line.Split(' ');
-                    // Action name is in first index
-                    var methodName = split[0];
-
-                    // Set action parameters
-                    var parameters = new List<string>();
-
-                    for (var j = 1; j < split.Length; j++)
-                    {
-                        parameters.Add(split[j]);
-                    }
-
-                    var action = new PlanAction(methodName, parameters) {parameters = parameters};
-                    actions.Add(action);
-                }
-            }
-
-            plan = actions;
-        }
-        
     }
 
     private IEnumerator SimulatePlan()
     {
-        foreach (PlanAction action in plan)
+        if (simulationEnvironment.plan.actions.Count == 0)
         {
-            var effects = simulationSettings.domainElements.GetEffectsOfAction(action.name);
-            
+            yield return GeneratePlan();
+        }
+        foreach (var action in simulationEnvironment.plan.actions)
+        {
+            var effects = simulationSettings.GetActionEffects(action.name);
+
             foreach (var predicate in effects)
             {
                 // check action behaviour
@@ -130,6 +64,41 @@ public class SimulationManager : MonoBehaviour
             }
         }
 
+
+        yield return null;
+    }
+
+    // CALLED FROM INSPECTOR
+    public void GenerateScene()
+    {
+        SetHolders();
+        
+        // Generate Simulation Objects
+        for (int i = 0; i < simulationEnvironment.objects.Count; i++)
+        {
+            var gameObj = simulationEnvironment.GetPrefabWithType(simulationEnvironment.objects[i].type);
+            if (gameObj == null) continue;
+            var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity, _objectsHolder);
+            clone.name = simulationEnvironment.objects[i].name;
+        }
+        
+        var custom =Resources.LoadAll("Assets/Simulations/" + simulationEnvironment.simulationName +
+                                          "/Custom Objects");
+        for (int i = 0; i < custom.Length; i++)
+        {
+            Debug.Log(i);
+            var clone = custom[i] as GameObject;
+            Instantiate(clone, _customHolder);
+        }
+    }
+    private IEnumerator GeneratePlan()
+    {
+        var plan = new Plan();
+        yield return _planSolver.RequestPlan(
+            simulationSettings.domain.text, 
+            simulationEnvironment.problem.text, 
+            value=> plan = value);
+        simulationEnvironment.SavePlan(plan);
         yield return null;
     }
 
@@ -140,33 +109,28 @@ public class SimulationManager : MonoBehaviour
         {
             list.Add(objectsDictionary[names[i]]);
         }
+
         return list;
     }
-    
-    private void CheckObjectsHolder()
+
+    private void SetHolders()
     {
-        var objs = GameObject.Find("Simulation Objects");
-        if (!objs)
-        {
-            objs = new GameObject("Simulation Objects");
-        }
-        _objectsHolder = objs.GetComponent<Transform>();
+        if (_objectsHolder != null || _customHolder != null) return;
+        _objectsHolder = GetHolder(SIM_OBJECT_HOLDER);
+        _customHolder = GetHolder(CUSTOM_OBJECT_HOLDER);
     }
     
-    public void GenerateScene()
+    private Transform GetHolder(string name)
     {
-        CheckObjectsHolder();
-        string[] objects = {"a", "b", "c", "d"};
-        foreach (var obj in objects)
+        var holder = GameObject.Find(name);
+        if (!holder)
         {
-            var gameObj = simulationSettings.GetPrefabWithType("block");
-            Debug.Log(gameObj);
-            var clone = Instantiate(gameObj, Vector3.zero,  Quaternion.identity, _objectsHolder) as GameObject;
-            clone.name = obj;
+            holder = new GameObject(name);
         }
+        return holder.transform;
     }
-    
-    
+
+
     public void Play()
     {
         Time.timeScale = 1.0f;
@@ -177,4 +141,30 @@ public class SimulationManager : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
+    public void SaveEnvironment()
+    {
+        SetHolders();
+        //for each object in object holder
+        for (int i = 0; i < _objectsHolder.childCount; i++)
+        {
+            // get object name
+            var obj = _objectsHolder.GetChild(i);
+            // get index in environment object list
+            var index = simulationEnvironment.GetObjectIndexPosition(obj.name);
+            // save position
+            simulationEnvironment.objectsPositions[i] = obj.transform.position;
+        }
+        
+        for (int i = 0; i < _customHolder.childCount; i++)
+        {
+            var obj = _customHolder.GetChild(i).gameObject;
+            var localPath = AssetDatabase.GenerateUniqueAssetPath("Assets/Simulations/" + simulationEnvironment.simulationName +
+                                                                  "/Custom Objects/"+obj.name+".prefab");
+            PrefabUtility.SaveAsPrefabAssetAndConnect(obj,localPath
+                , InteractionMode.AutomatedAction);
+        }
+        
+        
+        simulationEnvironment.Save();
+    }
 }

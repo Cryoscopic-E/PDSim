@@ -3,30 +3,26 @@ using System.Collections.Generic;
 using PDDL.Parser;
 using PDDL.Model.PDDL12;
 using PDDL.Model.PDDL12.Effects;
+using SimpleJSON;
 
 public static class Parser
 {
-    public static DomainElements ParseDomain(string domainText)
+    public static void ParseDomain(string domainText, out List<PddlPredicate> predicates, out List<PddlAction> actions)
     {
-        // Create new domain elements OOP representation
-        DomainElements elements = new DomainElements();
         // Instancing the PDDL parser 
-        PDDL12Parser parser = new PDDL12Parser();
+        var parser = new PDDL12Parser();
 
-        /* DOMAIN PARSING */
+        var domainPredicates = new List<PddlPredicate>();
+        var domainActions = new List<PddlAction>();
+
+        # region DOMAIN PARSE
+
         try
         {
             // Get definitions list
             var list = parser.Parse(domainText);
             // Get Domain
             var domain = (Domain) list[0];
-
-            /* CREATE PDDL TYPES */
-            foreach (var type in domain.Types)
-            {
-                // add type name to types list
-                elements.types.Add(type.ToString());
-            }
 
             /* CREATE PDDL PREDICATES*/
             // Loop through all predicates
@@ -42,7 +38,7 @@ public static class Parser
                 }
 
                 // add predicate to list
-                elements.predicates.Add(new PddlPredicate(predicate.Name.ToString(), predicateParams));
+                domainPredicates.Add(new PddlPredicate(predicate.Name.ToString(), predicateParams));
             }
 
             /* CREATE PDDL ACTIONS*/
@@ -77,8 +73,9 @@ public static class Parser
                         effects.Add(new PddlEffect(regularPredicate.Effects.Name.Value, false));
                     }
                 }
+
                 // add action to list
-                elements.actions.Add(new PddlAction(action.Functor.Value, actionParams,effects));
+                domainActions.Add(new PddlAction(action.Functor.Value, actionParams, effects));
             }
         }
         catch (PDDLSyntaxException pe)
@@ -86,31 +83,44 @@ public static class Parser
             Debug.LogError("Domain Syntax Error::" + pe.Message);
         }
 
+        #endregion
 
-        return elements;
+        predicates = domainPredicates;
+        actions = domainActions;
     }
 
-    public static List<PlanAction> ParsePlan(string response)
-    {
-        List<PlanAction> actions = new List<PlanAction>();
 
-        return actions;
-    }
-
-    public static ProblemElements ParseProblem(string problem)
+    public static void ParseProblem(string problemText, out List<string> pTypes, out List<PddlObject> objects,
+        out List<PddlInit> initPredicates)
     {
-        ProblemElements elements = new ProblemElements();
-        PDDL12Parser parser = new PDDL12Parser();
+        // Instancing the PDDL parser 
+        var parser = new PDDL12Parser();
+
+        var problemTypes = new List<string>();
+        var problemObjects = new List<PddlObject>();
+        var problemInit = new List<PddlInit>();
+
+        #region PROBLEM PARSE
+
         try
         {
-            IReadOnlyList<IDefinition> list = parser.Parse(problem);
+            IReadOnlyList<IDefinition> list = parser.Parse(problemText);
             var p = (Problem) list[0];
-            // OBJECTS
+
+            // OBJECTS & TYPES
+            // using set to remove duplicates types
+            HashSet<string> types = new HashSet<string>();
             foreach (IObject o in p.Objects)
             {
-                elements.objects.Add(new PddlObject(o.ToString(), o.Type.ToString()));
+                // only if type doesn't exist in set add to the domain elements
+                if (types.Add(o.Type.ToString()))
+                {
+                    problemTypes.Add(o.Type.ToString());
+                }
+
+                problemObjects.Add(new PddlObject(o.Value.ToString().ToLower(), o.Type.ToString()));
             }
-    
+
             // INIT CODE
             foreach (var predicate in p.Initial)
             {
@@ -122,15 +132,49 @@ public static class Parser
                     // parameter in form name-type added to parameters list
                     predicateParams.Add(parameter.Value);
                 }
-                
-                elements.initBlock.Add(new PddlInit(predicate.Name.Value, predicateParams, !predicate.Positive));
+
+                problemInit.Add(new PddlInit(predicate.Name.Value, predicateParams, !predicate.Positive));
             }
         }
         catch (PDDLSyntaxException pe)
         {
             Debug.LogError("Domain Syntax Error::" + pe.Message);
         }
-    
-        return elements;
+
+        #endregion
+
+        pTypes = problemTypes;
+        objects = problemObjects;
+        initPredicates = problemInit;
+    }
+
+    public static List<PlanAction> ParsePlan(JSONNode response)
+    {
+        List<PlanAction> actions = new List<PlanAction>();
+        var planLength = int.Parse(response["result"]["length"]);
+        for (var i = 0; i < planLength; i++)
+        {
+            string line = response["result"]["plan"][i]["name"];
+            // Remove parentheses
+            line = line.Remove(0, 1);
+            line = line.Remove(line.Length - 1, 1);
+            // Split spaces
+            var split = line.Split(' ');
+            // Action name is in first index
+            var methodName = split[0];
+
+            // Set action parameters
+            var parameters = new List<string>();
+
+            for (var j = 1; j < split.Length; j++)
+            {
+                parameters.Add(split[j]);
+            }
+
+            var action = new PlanAction(methodName, parameters) {parameters = parameters};
+            actions.Add(action);
+        }
+
+        return actions;
     }
 }

@@ -1,23 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-
-[CreateAssetMenu(fileName = "Simulation Settings")]
 public class SimulationSettings : ScriptableObject
 {
+    // ===============
+    // DOMAIN SETTINGS
+    // ===============
+    
+    // The domain file
     [SerializeField] public TextAsset domain;
-    [FormerlySerializedAs("pddlElements")] [SerializeField] public DomainElements domainElements;
-    [SerializeField] public GameObject[] typesModels;
+    // Domain's list of actions
+    [SerializeField] public List<PddlAction> actions;
+    // Domain's list of predicates
+    [SerializeField] public List<PddlPredicate> predicates;
+    
+    // =====================
+    // UNITY REPRESENTATIONS
+    // =====================
+    
+    // Predicate behaviour to call when an action is executed or during the init block
     [SerializeField] public PredicateCommand[] predicatesBehaviours;
-
+    
+    // ==============
+    // PUBLIC METHODS
+    // ==============
+    
     public PredicateCommand GetPredicateBehaviour(string predicateName)
     {
-        var indx = domainElements.predicates.FindIndex(a => a.name.Contains(predicateName));
-        return predicatesBehaviours[indx];
+        var index = predicates.FindIndex(a => a.name.Contains(predicateName));
+        return predicatesBehaviours[index];
     }
-
-    public GameObject GetPrefabWithType(string typeName)
+    
+    public List<PddlEffect> GetActionEffects(string actionName)
     {
-        var indx = domainElements.types.FindIndex(a => a.Contains(typeName));
-        return typesModels[indx];
+        foreach (var a in actions)
+        {
+            if (a.name == actionName)
+            {
+                return a.effects;
+            }
+        }
+        return null;
     }
 }                       

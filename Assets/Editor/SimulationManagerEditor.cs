@@ -1,22 +1,30 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(SimulationManager)), CanEditMultipleObjects]
-public class SimulationManagerEditor : Editor
+namespace Editor
 {
-    private SimulationManager _simulationManager;
-
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(SimulationManager)), CanEditMultipleObjects]
+    public class SimulationManagerEditor : UnityEditor.Editor
     {
-        _simulationManager = (SimulationManager) target;
-        base.OnInspectorGUI();
+        private SimulationManager _simulationManager;
 
-        if (_simulationManager.simulationSettings != null)
+        public override void OnInspectorGUI()
         {
-            if (GUILayout.Button("Generate Scene"))
+            _simulationManager = (SimulationManager) target;
+            base.OnInspectorGUI();
+
+            if (_simulationManager.simulationSettings != null)
             {
-                //_simulationManager.Plan();
-                _simulationManager.GenerateScene();
+                if (GUILayout.Button("Generate Scene"))
+                {
+                    //_simulationManager.Plan();
+                    _simulationManager.GenerateScene();
+                }
+
+                if (GUILayout.Button("Save Environment"))
+                {
+                    _simulationManager.SaveEnvironment();
+                }
             }
         }
     }
