@@ -137,13 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36eaa19cdad95654fa84277104594b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  top: {fileID: 2224215074497272778}
-  bottom: {fileID: 4009313703416322111}
-  left: {fileID: 3793192600091974097}
-  right: {fileID: 1082818281036075210}
-  front: {fileID: 5113618866564870732}
-  back: {fileID: 7184446344001077657}
-  stateCanvas: {fileID: 6367895016955356863}
   showDebugGizmos: 1
 --- !u!65 &1909468554057033010
 BoxCollider:

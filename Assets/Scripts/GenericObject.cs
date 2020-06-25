@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
@@ -7,24 +6,54 @@ public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
 
 public class GenericObject : MonoBehaviour
 {
+    private Transform top;
+    private Transform bottom;
+    private Transform left;
+    private Transform right;
+    private Transform front;
+    private Transform back;
     
+    private GameObject stateCanvas;
+    private MaterialPropertyBlock _materialPropertyBlock;
+    [Header("Object Options")]
+    
+    public bool randomColor = false;
 
-    [Header("Transforms")]
-    public Transform top;
-    public Transform bottom;
-    public Transform left;
-    public Transform right;
-    public Transform front;
-    public Transform back;
-    [Space] 
-    [Header("States HUD")] 
-    public GameObject stateCanvas;
+    public bool usePathPlanning = false;
     
     [Space] 
     [Header("Debug")] 
     public bool showDebugGizmos = true;
-    
-    
+
+    private void Awake()
+    {
+        // Get internal references
+        var transforms = transform.Find("Transforms");
+        top = transforms.Find("Top");
+        bottom = transforms.Find("Bottom");
+        left = transforms.Find("Left");
+        right = transforms.Find("Right");
+        front = transforms.Find("Front");
+        back = transforms.Find("Back");
+        stateCanvas = transform.Find("State Canvas").gameObject;
+        
+        // set color if random
+        if (randomColor)
+        {
+            var modelRenderer = transform.Find("3DModel").GetComponentInChildren<Renderer>();
+            modelRenderer.material.color = GenerateRandomColor();
+        }
+    }
+
+    private Color GenerateRandomColor()
+    {
+        return new Color(
+            Random.Range(0f,1f),
+            Random.Range(0f,1f),
+            Random.Range(0f,1f)
+            );
+    }
+
     private void OnMouseEnter()
     {
         stateCanvas.SetActive(true);
