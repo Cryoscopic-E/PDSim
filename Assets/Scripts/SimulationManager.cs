@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEditor;
 
@@ -18,9 +19,13 @@ public class SimulationManager : MonoBehaviour
     
     private Dictionary<string, GenericObject> objectsDictionary;
     private PlanSolver _planSolver;
-
+    private HudController _hudController;
     private void Start()
     {
+        _hudController = FindObjectOfType<HudController>();
+        _hudController.SetCurrentAction("--", "--");
+        _hudController.SetSimulationStatus(SimStatus.None);
+        
         _planSolver = GetComponent<PlanSolver>();
         // SET holders game objects in scene
         SetHolders();
@@ -41,12 +46,40 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
+   
+    
     private IEnumerator SimulatePlan()
     {
+        // Check if plan exist, or generate
         if (simulationEnvironment.plan.actions.Count == 0)
         {
             yield return GeneratePlan();
         }
+        
+        // Update HUD
+        _hudController.SetSimulationStatus(SimStatus.Init);
+        // Run Initialization block
+        yield return InitSimulation();
+        
+        // Update HUD
+        _hudController.SetSimulationStatus(SimStatus.PlanExecution);
+        // Plan execution
+        yield return PlanExecution();
+        
+        // Update HUD
+        _hudController.SetSimulationStatus(SimStatus.None);
+        // Simulation end
+        yield return null;
+    }
+    
+    private IEnumerator InitSimulation()
+    {
+        //TODO run initialization block
+        yield return null;
+    }
+
+    private IEnumerator PlanExecution()
+    {
         foreach (var action in simulationEnvironment.plan.actions)
         {
             var effects = simulationSettings.GetActionEffects(action.name);
@@ -55,16 +88,21 @@ public class SimulationManager : MonoBehaviour
             {
                 // check action behaviour
                 var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
-                if (behaviour)
-                {
-                    List<GenericObject> param = GetObjects(action.parameters);
-                    behaviour.SetAttributes(param);
-                    yield return behaviour.Execute(predicate.negate);
-                }
+                
+                if (!behaviour) continue;
+                
+                // get parameters
+                var param = GetObjects(action.parameters);
+                behaviour.SetAttributes(param);
+                
+                // update HUD actions
+                _hudController.SetCurrentAction(action.name, predicate.predicateName);
+                
+                //TODO update HUD on object
+                // run predicate command
+                yield return behaviour.Execute(predicate.negate);
             }
         }
-
-
         yield return null;
     }
 
@@ -80,15 +118,6 @@ public class SimulationManager : MonoBehaviour
             if (gameObj == null) continue;
             var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity, _objectsHolder);
             clone.name = simulationEnvironment.objects[i].name;
-        }
-        
-        var custom =Resources.LoadAll("Assets/Simulations/" + simulationEnvironment.simulationName +
-                                          "/Custom Objects");
-        for (int i = 0; i < custom.Length; i++)
-        {
-            Debug.Log(i);
-            var clone = custom[i] as GameObject;
-            Instantiate(clone, _customHolder);
         }
     }
     private IEnumerator GeneratePlan()
@@ -154,17 +183,6 @@ public class SimulationManager : MonoBehaviour
             // save position
             simulationEnvironment.objectsPositions[i] = obj.transform.position;
         }
-        
-        for (int i = 0; i < _customHolder.childCount; i++)
-        {
-            var obj = _customHolder.GetChild(i).gameObject;
-            var localPath = AssetDatabase.GenerateUniqueAssetPath("Assets/Simulations/" + simulationEnvironment.simulationName +
-                                                                  "/Custom Objects/"+obj.name+".prefab");
-            PrefabUtility.SaveAsPrefabAssetAndConnect(obj,localPath
-                , InteractionMode.AutomatedAction);
-        }
-        
-        
         simulationEnvironment.Save();
     }
 }

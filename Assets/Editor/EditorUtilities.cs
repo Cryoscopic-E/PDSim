@@ -73,12 +73,15 @@ namespace Editor
             var newSimEnvPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Environment.asset");
             AssetDatabase.CreateAsset (newSimEnv, newSimEnvPath);
             
-            // Create Folder for Types MOdels
+            // Create Folder for Types Models
             Directory.CreateDirectory(path+"/Types Models");
-            // Create Folder for Simulation Objects
-            Directory.CreateDirectory(path+"/Custom Objects");
+            
             // Create Folder for Predicates Behaviours
             Directory.CreateDirectory(path+"/Predicates Behaviours");
+            
+            //TODO Create Scene
+            //TODO Instantiate Scene Manager in the new scene
+            //TODO Instantiate Scene Elements in the new scene
             
             // Save changes
             AssetDatabase.SaveAssets ();

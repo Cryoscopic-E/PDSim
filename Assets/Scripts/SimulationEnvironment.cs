@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+[CreateAssetMenu(fileName = "Simulation Environment")]
 public class SimulationEnvironment : ScriptableObject
 {
     // ================
