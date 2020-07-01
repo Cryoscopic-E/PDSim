@@ -1,6 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
 
 
@@ -14,7 +15,11 @@ public class GenericObject : MonoBehaviour
     private Transform back;
     
     private GameObject stateCanvas;
-    private MaterialPropertyBlock _materialPropertyBlock;
+    private Text nameText;
+    private Text statesText;
+    private Dictionary<string,bool> objectStates;
+    
+    
     [Header("Object Options")]
     
     public bool randomColor = false;
@@ -43,6 +48,16 @@ public class GenericObject : MonoBehaviour
             var modelRenderer = transform.Find("3DModel").GetComponentInChildren<Renderer>();
             modelRenderer.material.color = GenerateRandomColor();
         }
+        
+        objectStates = new Dictionary<string, bool>();
+
+        var texts = stateCanvas.GetComponentsInChildren<Text>();
+        
+        nameText = texts[0];
+        statesText = texts[1];
+        
+        nameText.text = "Object "  + "'" +gameObject.name +"'";
+        statesText.text = "";
     }
 
     private Color GenerateRandomColor()
@@ -54,6 +69,23 @@ public class GenericObject : MonoBehaviour
             );
     }
 
+    public void SetState(string name, bool negate)
+    {
+        objectStates[name] = negate;
+        UpdateStateCanvas();
+    }
+
+    private void UpdateStateCanvas()
+    {
+        string message = "";
+        foreach (var key in objectStates.Keys)
+        {
+            message += key + " " + !objectStates[key] + "\n";
+        }
+
+        statesText.text = message;
+    }
+    
     private void OnMouseEnter()
     {
         stateCanvas.SetActive(true);

@@ -5,7 +5,8 @@ using UnityEngine;
 public class ObjectMoveToPoint : PredicateCommand
 {
     [SerializeField] public Vector3 target;
-
+    [SerializeField] public bool randomRadius;
+    [SerializeField] public float radius;
 
     protected override IEnumerator PreActivate()
     {
@@ -20,7 +21,17 @@ public class ObjectMoveToPoint : PredicateCommand
     protected override IEnumerator ActivatePositive()
     {
         var x = attributes[0];
-        yield return x.Move(target);
+        var newTarget = target;
+        if (randomRadius)
+        {
+            newTarget.x += Random.Range(-radius,radius);
+            newTarget.z += Random.Range(-radius, radius);
+            yield return x.Move(newTarget);
+        }
+        else
+        {
+            yield return x.Move(target);
+        }
         yield return new WaitForSeconds(0.4f);
     }
 

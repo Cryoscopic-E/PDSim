@@ -20,11 +20,12 @@ public struct PddlEffect
 {
     public string predicateName;
     public bool negate;
-
-    public PddlEffect(string name, bool neg)
+    public List<int> paramIndexes;
+    public PddlEffect(string name, bool neg, List<int> pi)
     {
         predicateName = name;
         negate = neg;
+        paramIndexes = pi;
     }
 }
 

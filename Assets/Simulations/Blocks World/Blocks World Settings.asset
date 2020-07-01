@@ -16,64 +16,82 @@ MonoBehaviour:
   actions:
   - name: pick-up
     parameters:
-    - name: ?x - block
+    - name: ?x
       type: block
     effects:
     - predicateName: ontable
       negate: 1
+      paramIndexes: 00000000
     - predicateName: clear
       negate: 1
+      paramIndexes: 00000000
     - predicateName: handempty
       negate: 1
+      paramIndexes: 
     - predicateName: holding
       negate: 0
+      paramIndexes: 00000000
   - name: put-down
     parameters:
-    - name: ?x - block
+    - name: ?x
       type: block
     effects:
     - predicateName: holding
       negate: 1
+      paramIndexes: 00000000
     - predicateName: clear
       negate: 0
+      paramIndexes: 00000000
     - predicateName: handempty
       negate: 0
+      paramIndexes: 
     - predicateName: ontable
       negate: 0
+      paramIndexes: 00000000
   - name: stack
     parameters:
-    - name: ?x - block
+    - name: ?x
       type: block
-    - name: ?y - block
+    - name: ?y
       type: block
     effects:
     - predicateName: holding
       negate: 1
+      paramIndexes: 00000000
     - predicateName: clear
       negate: 1
+      paramIndexes: 01000000
     - predicateName: clear
       negate: 0
+      paramIndexes: 00000000
     - predicateName: handempty
       negate: 0
+      paramIndexes: 
     - predicateName: on
       negate: 0
+      paramIndexes: 0000000001000000
   - name: unstack
     parameters:
-    - name: ?x - block
+    - name: ?x
       type: block
-    - name: ?y - block
+    - name: ?y
       type: block
     effects:
     - predicateName: holding
       negate: 0
+      paramIndexes: 00000000
     - predicateName: clear
       negate: 0
+      paramIndexes: 01000000
     - predicateName: clear
       negate: 1
+      paramIndexes: 00000000
     - predicateName: handempty
       negate: 1
+      paramIndexes: 
     - predicateName: on
       negate: 1
+      paramIndexes: 0000000001000000
   predicates:
   - name: on
     parameters:

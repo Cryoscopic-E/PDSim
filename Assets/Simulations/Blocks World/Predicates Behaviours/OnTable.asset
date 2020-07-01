@@ -9,7 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f14e63dea794675ad736373f65b5842, type: 3}
-  m_Name: Stack
+  m_Script: {fileID: 11500000, guid: a62581e9999346a899e2662f4355b396, type: 3}
+  m_Name: OnTable
   m_EditorClassIdentifier: 
-  alignment: 1
+  target: {x: 4, y: 3.75, z: 2}
+  randomRadius: 1
+  radius: 2

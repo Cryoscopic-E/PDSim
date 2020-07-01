@@ -87,7 +87,7 @@ MonoBehaviour:
   typesModels:
   - {fileID: 1429926797308826272, guid: 8948523b8864cb34fa958b263ddb7ea4, type: 3}
   objectsPositions:
-  - {x: 0, y: 0, z: -0.5}
-  - {x: -2.25, y: 0, z: 0}
-  - {x: -1.75, y: 0, z: 2}
-  - {x: 0, y: 0, z: 2.75}
+  - {x: 2.5, y: 0, z: 0}
+  - {x: 0, y: 0, z: 3.25}
+  - {x: -2.25, y: 0, z: 1.5}
+  - {x: 0, y: 0, z: 0}

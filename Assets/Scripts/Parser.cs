@@ -50,7 +50,7 @@ public static class Parser
                 foreach (var parameter in action.Parameters)
                 {
                     // parameter in form name-type added to parameters list
-                    actionParams.Add(new PddlObject(parameter.ToString(), parameter.Type.ToString()));
+                    actionParams.Add(new PddlObject(parameter.Value.ToString(), parameter.Type.ToString()));
                 }
 
                 /* Action's Effects */
@@ -65,12 +65,26 @@ public static class Parser
                     if (predicate.Type == EffectKind.Negated)
                     {
                         var negatedPredicate = (NegatedEffect) predicate;
-                        effects.Add(new PddlEffect(negatedPredicate.Effects.Name.Value, true));
+                        
+                        var indexes = new List<int>();
+                        foreach (var parameter in negatedPredicate.Effects.Parameters)
+                        {
+                            var t = actionParams.FindIndex(a => a.name.Equals(parameter.ToString()));
+                            Debug.Log(t);
+                            indexes.Add(actionParams.FindIndex(a => a.name.Equals(parameter.ToString())));
+                        }
+                        effects.Add(new PddlEffect(negatedPredicate.Effects.Name.Value, true, indexes));
                     }
                     else
                     {
                         var regularPredicate = (RegularEffect) predicate;
-                        effects.Add(new PddlEffect(regularPredicate.Effects.Name.Value, false));
+                        var indexes = new List<int>();
+                        foreach (var parameter in regularPredicate.Effects.Parameters)
+                        {
+                            indexes.Add(actionParams.FindIndex(a => a.name.Equals(parameter.ToString())));
+                        }
+                        effects.Add(new PddlEffect(regularPredicate.Effects.Name.Value, false, indexes));
+                        
                     }
                 }
 

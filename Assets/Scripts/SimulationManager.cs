@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.iOS;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -74,7 +75,31 @@ public class SimulationManager : MonoBehaviour
     
     private IEnumerator InitSimulation()
     {
-        //TODO run initialization block
+        foreach (var predicate in simulationEnvironment.initBlock)
+        {
+            // if is not a parameter-less predicate
+            if (predicate.parameters.Count > 0)
+            {
+                // first parameter if the object that changes the state
+                var theObjectName = predicate.parameters[0].ToLower();
+                var theObject = GetObject(theObjectName);
+                theObject.SetState(predicate.predicateName, predicate.negate);
+            }
+
+            // check action behaviour
+            var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
+            if (!behaviour) continue;
+            
+            // get parameters
+            var param = GetObjects(predicate.parameters);
+           
+            behaviour.SetAttributes(param);
+            
+            _hudController.SetCurrentAction("---", predicate.predicateName);
+            // run predicate command
+            yield return behaviour.Execute(predicate.negate);
+            
+        }
         yield return null;
     }
 
@@ -89,6 +114,14 @@ public class SimulationManager : MonoBehaviour
                 // check action behaviour
                 var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
                 
+                // update states on object
+                if (predicate.paramIndexes.Count > 0)
+                {
+                    var theObject = GetObject(action.parameters[predicate.paramIndexes[0]].ToLower());
+                    theObject.SetState(predicate.predicateName, predicate.negate); 
+                }
+                
+                
                 if (!behaviour) continue;
                 
                 // get parameters
@@ -97,8 +130,7 @@ public class SimulationManager : MonoBehaviour
                 
                 // update HUD actions
                 _hudController.SetCurrentAction(action.name, predicate.predicateName);
-                
-                //TODO update HUD on object
+
                 // run predicate command
                 yield return behaviour.Execute(predicate.negate);
             }
@@ -131,12 +163,17 @@ public class SimulationManager : MonoBehaviour
         yield return null;
     }
 
+    private GenericObject GetObject(string name)
+    {
+        return objectsDictionary[name];
+    }
+    
     private List<GenericObject> GetObjects(List<string> names)
     {
-        List<GenericObject> list = new List<GenericObject>();
+        var list = new List<GenericObject>();
         for (int i = 0; i < names.Count; i++)
         {
-            list.Add(objectsDictionary[names[i]]);
+            list.Add(objectsDictionary[names[i].ToLower()]);
         }
 
         return list;
