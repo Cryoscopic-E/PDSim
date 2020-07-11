@@ -34,7 +34,7 @@ public class SimulationSettings : ScriptableObject
     {
         foreach (var a in actions)
         {
-            if (a.name == actionName)
+            if (a.name.ToLower() == actionName.ToLower())
             {
                 return a.effects;
             }

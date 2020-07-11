@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class PredicateCommand : ScriptableObject
 {
+    public float timeBetweenActivations = 0.4f;
     protected List<GenericObject> attributes;
 
     protected abstract IEnumerator PreActivate();

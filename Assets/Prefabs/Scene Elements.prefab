@@ -852,8 +852,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7b69df7765c4e6080f1887b9b587987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strafeSpeed: 50
-  moveSpeed: 50
+  moveSpeed: 15
+  lookSpeed: 5
+  rotationX: 0
+  rotationY: 0
 --- !u!1 &4415014582189770910
 GameObject:
   m_ObjectHideFlags: 0

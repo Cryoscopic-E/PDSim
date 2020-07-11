@@ -98,7 +98,7 @@ namespace Editor
             {
                 Undo.RecordObject(_simulationSettings, "Predicate Behaviour Set");
                 _simulationSettings.predicatesBehaviours[index] = behavior;
-                EditorUtility.SetDirty(this);
+                EditorUtility.SetDirty(_simulationSettings);
             }
         
             GUILayout.EndHorizontal();

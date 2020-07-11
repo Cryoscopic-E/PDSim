@@ -1,6 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.IO;
+using UnityEditor.SceneManagement;
+
 namespace Editor
 {
     internal class NewSimulationWindow : EditorWindow
@@ -79,13 +81,19 @@ namespace Editor
             // Create Folder for Predicates Behaviours
             Directory.CreateDirectory(path+"/Predicates Behaviours");
             
-            //TODO Create Scene
-            //TODO Instantiate Scene Manager in the new scene
-            //TODO Instantiate Scene Elements in the new scene
+            
+            var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            newScene.name = _simulationName;
+            var sceneManager = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/SimulationManager.prefab");
+            var sceneElements = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Scene Elements.prefab");
+            PrefabUtility.InstantiatePrefab(sceneElements);
+            PrefabUtility.InstantiatePrefab(sceneManager);
             
             // Save changes
+            EditorSceneManager.SaveScene(newScene, "Assets/Scenes/"+_simulationName+".unity");
             AssetDatabase.SaveAssets ();
             AssetDatabase.Refresh();
+            Lightmapping.BakeAsync();
             Close();
         }
     }

@@ -108,7 +108,6 @@ public class SimulationManager : MonoBehaviour
         foreach (var action in simulationEnvironment.plan.actions)
         {
             var effects = simulationSettings.GetActionEffects(action.name);
-
             foreach (var predicate in effects)
             {
                 // check action behaviour

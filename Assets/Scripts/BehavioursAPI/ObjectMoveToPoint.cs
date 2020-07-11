@@ -7,9 +7,16 @@ public class ObjectMoveToPoint : PredicateCommand
     [SerializeField] public Vector3 target;
     [SerializeField] public bool randomRadius;
     [SerializeField] public float radius;
-
+    [SerializeField] public bool matchHeightFirst;
     protected override IEnumerator PreActivate()
     {
+       
+        if (matchHeightFirst)
+        {
+            var x = attributes[0];
+            var newTarget = new Vector3(x.transform.position.x, target.y, x.transform.position.z);
+            yield return x.Move(newTarget);
+        }
         yield return null;
     }
 
@@ -32,7 +39,7 @@ public class ObjectMoveToPoint : PredicateCommand
         {
             yield return x.Move(target);
         }
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(timeBetweenActivations);
     }
 
     protected override IEnumerator PostActivate()

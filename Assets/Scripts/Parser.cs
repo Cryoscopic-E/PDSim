@@ -70,7 +70,6 @@ public static class Parser
                         foreach (var parameter in negatedPredicate.Effects.Parameters)
                         {
                             var t = actionParams.FindIndex(a => a.name.Equals(parameter.ToString()));
-                            Debug.Log(t);
                             indexes.Add(actionParams.FindIndex(a => a.name.Equals(parameter.ToString())));
                         }
                         effects.Add(new PddlEffect(negatedPredicate.Effects.Name.Value, true, indexes));
@@ -86,6 +85,7 @@ public static class Parser
                         effects.Add(new PddlEffect(regularPredicate.Effects.Name.Value, false, indexes));
                         
                     }
+                    Debug.Log(effect);
                 }
 
                 // add action to list

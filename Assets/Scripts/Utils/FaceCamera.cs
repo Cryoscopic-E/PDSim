@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class FaceCamera : MonoBehaviour
 {
@@ -12,6 +9,7 @@ public class FaceCamera : MonoBehaviour
     }
     void Update()
     {
+        // Billboard effect for object gui
         transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, 
                          canvas.worldCamera.transform.rotation * Vector3.up);
     }

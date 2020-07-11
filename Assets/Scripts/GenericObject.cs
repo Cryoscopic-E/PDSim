@@ -1,32 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
-public enum Alignment { NONE, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK };
+using Random = UnityEngine.Random;
+
+public enum Alignment { None, Top, Bottom, Left, Right, Front, Back };
 
 
 public class GenericObject : MonoBehaviour
 {
-    private Transform top;
-    private Transform bottom;
-    private Transform left;
-    private Transform right;
-    private Transform front;
-    private Transform back;
+    // Offsets
+    private Transform _top;
+    private Transform _bottom;
+    private Transform _left;
+    private Transform _right;
+    private Transform _front;
+    private Transform _back;
     
-    private GameObject stateCanvas;
-    private Text nameText;
-    private Text statesText;
-    private Dictionary<string,bool> objectStates;
+    // UI
+    private GameObject _stateCanvas;
+    private Text _nameText;
+    private Text _statesText;
+    private Dictionary<string,bool> _objectStates;
     
     
     [Header("Object Options")]
-    
-    public bool randomColor = false;
-
-    public bool usePathPlanning = false;
+    public bool randomColor;
+    public bool usePathPlanning;
+    private NavMeshAgent _navMeshAgent;
     
     [Space] 
+    
     [Header("Debug")] 
     public bool showDebugGizmos = true;
 
@@ -34,33 +40,42 @@ public class GenericObject : MonoBehaviour
     {
         // Get internal references
         var transforms = transform.Find("Transforms");
-        top = transforms.Find("Top");
-        bottom = transforms.Find("Bottom");
-        left = transforms.Find("Left");
-        right = transforms.Find("Right");
-        front = transforms.Find("Front");
-        back = transforms.Find("Back");
-        stateCanvas = transform.Find("State Canvas").gameObject;
-        
+        _top = transforms.Find("Top");
+        _bottom = transforms.Find("Bottom");
+        _left = transforms.Find("Left");
+        _right = transforms.Find("Right");
+        _front = transforms.Find("Front");
+        _back = transforms.Find("Back");
+        _stateCanvas = transform.Find("State Canvas").gameObject;
         // set color if random
         if (randomColor)
         {
             var modelRenderer = transform.Find("3DModel").GetComponentInChildren<Renderer>();
             modelRenderer.material.color = GenerateRandomColor();
         }
+        // attach nav mesh agent
+        if (usePathPlanning)
+        {
+            _navMeshAgent = gameObject.AddComponent(typeof(NavMeshAgent)) as NavMeshAgent;
+        }
+        // create states dictionary
+        _objectStates = new Dictionary<string, bool>();
         
-        objectStates = new Dictionary<string, bool>();
-
-        var texts = stateCanvas.GetComponentsInChildren<Text>();
+        // set HUD references
+        var texts = _stateCanvas.GetComponentsInChildren<Text>();
+        _nameText = texts[0];
+        _statesText = texts[1];
         
-        nameText = texts[0];
-        statesText = texts[1];
-        
-        nameText.text = "Object "  + "'" +gameObject.name +"'";
-        statesText.text = "";
+        // set up HUD messages
+        _nameText.text = "Object "  + "'" +gameObject.name +"'";
+        _statesText.text = "";
     }
-
-    private Color GenerateRandomColor()
+    
+    /// <summary>
+    /// Generate Random color for 3D model material
+    /// </summary>
+    /// <returns>Material's color</returns>
+    private static Color GenerateRandomColor()
     {
         return new Color(
             Random.Range(0f,1f),
@@ -69,109 +84,175 @@ public class GenericObject : MonoBehaviour
             );
     }
 
-    public void SetState(string name, bool negate)
+    public void SetState(string stateName, bool negate)
     {
-        objectStates[name] = negate;
+        _objectStates[stateName] = negate;
         UpdateStateCanvas();
     }
-
+    
+    /// <summary>
+    /// Update HUD messages with states status
+    /// </summary>
     private void UpdateStateCanvas()
     {
-        string message = "";
-        foreach (var key in objectStates.Keys)
+        var message = "";
+        foreach (var key in _objectStates.Keys)
         {
-            message += key + " " + !objectStates[key] + "\n";
+            message += key + " " + !_objectStates[key] + "\n";
         }
-
-        statesText.text = message;
+        _statesText.text = message;
     }
     
+    /// <summary>
+    /// Activate HUD object canvas on mouse exit
+    /// </summary>
     private void OnMouseEnter()
     {
-        stateCanvas.SetActive(true);
+        _stateCanvas.SetActive(true);
     }
-
+    
+    /// <summary>
+    /// Deactivate HUD object canvas on mouse exit
+    /// </summary>
     private void OnMouseExit()
     {
-        stateCanvas.SetActive(false);
+        _stateCanvas.SetActive(false);
     }
-
-    // ANIMATIONS
-
-    public IEnumerator Move(Vector3 end)
-    {
-        StopAllCoroutines();
-        yield return StartCoroutine(MoveTo(transform.position, end));
-    }
-
+    /* ================================= */
+    /* ========== ANIMATIONS =========== */
+    /* ================================= */
     
-
-    public IEnumerator MoveToObjectAlignedTo(GenericObject obj, Alignment align = Alignment.NONE)
+    /// <summary>
+    /// Simple move method
+    /// </summary>
+    /// <param name="target">Target point in space (Vector3)</param>
+    /// <returns>Coroutine</returns>
+    public IEnumerator Move(Vector3 target)
     {
         StopAllCoroutines();
-        switch (align)
+        yield return StartCoroutine(MoveTo(transform.position, target));
+    }
+    
+    /// <summary>
+    /// Move the object to another object considering the offsets alignments 
+    /// </summary>
+    /// <param name="targetObject">Target object</param>
+    /// <param name="alignment">Alignment enumerator</param>
+    /// <param name="offset">Offset Vector3</param>
+    /// <returns></returns>
+    public IEnumerator MoveToObjectAlignedTo(GenericObject targetObject, Alignment alignment = Alignment.None, Vector3 offset = new Vector3())
+    {
+        StopAllCoroutines();
+        switch (alignment)
         {
-            case Alignment.TOP:
-                yield return StartCoroutine(MoveTo(bottom.position, obj.top.position));
+            case Alignment.Top:
+                yield return StartCoroutine(MoveTo(_bottom.position, targetObject._top.position + offset));
                 break;
-            case Alignment.BOTTOM:
-                yield return StartCoroutine(MoveTo(top.position, obj.bottom.position));
+            case Alignment.Bottom:
+                yield return StartCoroutine(MoveTo(_top.position, targetObject._bottom.position + offset));
                 break;
-            case Alignment.LEFT:
-                yield return StartCoroutine(MoveTo(right.position, obj.left.position));
+            case Alignment.Left:
+                yield return StartCoroutine(MoveTo(_right.position, targetObject._left.position + offset));
                 break;
-            case Alignment.RIGHT:
-                yield return StartCoroutine(MoveTo(left.position, obj.right.position));
+            case Alignment.Right:
+                yield return StartCoroutine(MoveTo(_left.position, targetObject._right.position + offset));
                 break;
-            case Alignment.FRONT:
-                yield return StartCoroutine(MoveTo(back.position, obj.front.position));
+            case Alignment.Front:
+                yield return StartCoroutine(MoveTo(_back.position, targetObject._front.position + offset));
                 break;
-            case Alignment.BACK:
-                yield return StartCoroutine(MoveTo(front.position, obj.back.position));
+            case Alignment.Back:
+                yield return StartCoroutine(MoveTo(_front.position, targetObject._back.position + offset));
                 break;
             default:
-                yield return StartCoroutine(MoveTo(transform.position, obj.transform.position));
+                yield return StartCoroutine(MoveTo(transform.position, targetObject.transform.position + offset));
                 break;
         }
 
         yield return null;
     }
-
     
-
-    IEnumerator MoveTo(Vector3 start, Vector3 end)
+    /// <summary>
+    /// Main movement Coroutine
+    /// </summary>
+    /// <param name="start">Start point in world</param>
+    /// <param name="target">Target point in world</param>
+    /// <returns></returns>
+    private IEnumerator MoveTo(Vector3 start, Vector3 target)
     {
-        Vector3 pointOffset = transform.position - start;
-        Vector3 adjustEnd = end + pointOffset;
+        var position1 = transform.position;
+        var pointOffset = position1 - start;
+        var newTarget = target + pointOffset;
 
-        Vector3 offSet = transform.position - adjustEnd;
-        float sqrOffSet = offSet.sqrMagnitude;
-        while (sqrOffSet > 0.05f)
+        if (!usePathPlanning)
         {
-            transform.position = Vector3.Lerp(transform.position, adjustEnd, 0.1f);
-            offSet = transform.position - adjustEnd;
-            sqrOffSet = offSet.sqrMagnitude;
-            yield return new WaitForSeconds(0.1f);
+            var offSet = position1 - newTarget;
+            var sqrOffSet = offSet.sqrMagnitude;
+            while (sqrOffSet > 0.05f)
+            {
+                var position = transform.position;
+                position = Vector3.Lerp(position, newTarget, 0.1f);
+                transform.position = position;
+                offSet = position - newTarget;
+                sqrOffSet = offSet.sqrMagnitude;
+                yield return new WaitForSeconds(0.1f);
+            }
+            transform.position = newTarget;
         }
-        transform.position = adjustEnd;
+        else
+        {
+            _navMeshAgent.SetDestination(newTarget);
+            while (true)
+            {
+                if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance < 0.03f)
+                {
+                    break;
+                }
+                yield return null;
+            }
+        }
+        
         yield return null;
     }
-
-    void OnDrawGizmos()
+    
+    /// <summary>
+    /// Draw debug gizmos
+    /// </summary>
+    private void OnDrawGizmos()
     {
-        if (showDebugGizmos)
+        if (!showDebugGizmos) return;
+        Gizmos.color = Color.red;
+        var position = transform.position;
+        Gizmos.DrawWireCube(position, Vector3.one);
+        Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
+        Gizmos.DrawCube(position, Vector3.one);
+        Gizmos.color = Color.gray;
+    }
+    
+    /// <summary>
+    /// Get Alignment offset's position in the world
+    /// </summary>
+    /// <param name="alignment">Alignment enumerator</param>
+    /// <returns></returns>
+    public Vector3 GetAlignmentPoint(Alignment alignment)
+    {
+        switch (alignment)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position, Vector3.one);
-            Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
-            Gizmos.DrawCube(transform.position, Vector3.one);
-            Gizmos.color = Color.gray;
-            Gizmos.DrawSphere(top.position, 0.1f);
-            Gizmos.DrawSphere(bottom.position, 0.1f);
-            Gizmos.DrawSphere(left.position, 0.1f);
-            Gizmos.DrawSphere(right.position, 0.1f);
-            Gizmos.DrawSphere(back.position, 0.1f);
-            Gizmos.DrawSphere(front.position, 0.1f);
+            case Alignment.Top:
+                return _top.position;
+            case Alignment.Bottom:
+                return _bottom.position;
+            case Alignment.Left:
+                return _left.position;
+            case Alignment.Right:
+                return _right.position;
+            case Alignment.Front:
+                return _front.position;
+            case Alignment.Back:
+                return _back.position;
+            case Alignment.None:
+                return transform.position;
+            default:
+                return _top.position;
         }
     }
 }

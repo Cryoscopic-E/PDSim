@@ -44,9 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c2d348959ba1c5438f913bee70f47a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationSettings: {fileID: 11400000, guid: 3787795b113367b4ca507f8d36d3ecb9, type: 2}
-  simulationEnvironment: {fileID: 11400000, guid: 760911ee386dac9418aad248a197d4b4,
-    type: 2}
+  simulationSettings: {fileID: 0}
+  simulationEnvironment: {fileID: 0}
 --- !u!114 &7358683173160899226
 MonoBehaviour:
   m_ObjectHideFlags: 0

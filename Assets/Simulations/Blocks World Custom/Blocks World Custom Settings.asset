@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8864ee0c87bd72fbeb5690b1db497702, type: 3}
+  m_Name: Blocks World Custom Settings
+  m_EditorClassIdentifier: 
+  domain: {fileID: 4900000, guid: 527187fb0d3d6ac4e98b72c237c3c4e4, type: 3}
+  actions:
+  - name: pick-up
+    parameters:
+    - name: ?x
+      type: block
+    - name: ?t
+      type: table
+    effects:
+    - predicateName: ontable
+      negate: 1
+      paramIndexes: 0000000001000000
+    - predicateName: clear
+      negate: 1
+      paramIndexes: 00000000
+    - predicateName: handempty
+      negate: 1
+      paramIndexes: 
+    - predicateName: holding
+      negate: 0
+      paramIndexes: 00000000
+  - name: put-down
+    parameters:
+    - name: ?x
+      type: block
+    - name: ?t
+      type: table
+    effects:
+    - predicateName: holding
+      negate: 1
+      paramIndexes: 00000000
+    - predicateName: clear
+      negate: 0
+      paramIndexes: 00000000
+    - predicateName: handempty
+      negate: 0
+      paramIndexes: 
+    - predicateName: ontable
+      negate: 0
+      paramIndexes: 0000000001000000
+  - name: stack
+    parameters:
+    - name: ?x
+      type: block
+    - name: ?y
+      type: block
+    effects:
+    - predicateName: holding
+      negate: 1
+      paramIndexes: 00000000
+    - predicateName: clear
+      negate: 1
+      paramIndexes: 01000000
+    - predicateName: clear
+      negate: 0
+      paramIndexes: 00000000
+    - predicateName: handempty
+      negate: 0
+      paramIndexes: 
+    - predicateName: on
+      negate: 0
+      paramIndexes: 0000000001000000
+  - name: unstack
+    parameters:
+    - name: ?x
+      type: block
+    - name: ?y
+      type: block
+    effects:
+    - predicateName: holding
+      negate: 0
+      paramIndexes: 00000000
+    - predicateName: clear
+      negate: 0
+      paramIndexes: 01000000
+    - predicateName: clear
+      negate: 1
+      paramIndexes: 00000000
+    - predicateName: handempty
+      negate: 1
+      paramIndexes: 
+    - predicateName: on
+      negate: 1
+      paramIndexes: 0000000001000000
+  predicates:
+  - name: on
+    parameters:
+    - name: ?x - block
+      type: block
+    - name: ?y - block
+      type: block
+    negate: 0
+  - name: ontable
+    parameters:
+    - name: ?x - block
+      type: block
+    - name: ?t - table
+      type: table
+    negate: 0
+  - name: clear
+    parameters:
+    - name: ?x - block
+      type: block
+    negate: 0
+  - name: handempty
+    parameters: []
+    negate: 0
+  - name: holding
+    parameters:
+    - name: ?x - block
+      type: block
+    negate: 0
+  predicatesBehaviours:
+  - {fileID: 11400000, guid: 8bdebf9845a078d4f94b194bae0924ef, type: 2}
+  - {fileID: 11400000, guid: 7848dd5d15a05374d9d73fb5b8e93c64, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: dfa7187ce783fa846b13b86ffae476bc, type: 2}

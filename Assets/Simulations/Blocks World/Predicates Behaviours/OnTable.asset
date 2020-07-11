@@ -15,3 +15,4 @@ MonoBehaviour:
   target: {x: 4, y: 3.75, z: 2}
   randomRadius: 1
   radius: 2
+  matchHeightFirst: 1
