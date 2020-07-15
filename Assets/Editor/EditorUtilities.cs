@@ -66,12 +66,13 @@ namespace Editor
             
             // Create Simulation Setting Prefab
             var newSimSetting = CreateInstance<SimulationSettings> ();
+            newSimSetting.simulationName = _simulationName;
             var newSimSettingsPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Settings.asset");
             AssetDatabase.CreateAsset (newSimSetting, newSimSettingsPath);
             
             // Create Simulation Environment Prefab
             var newSimEnv = CreateInstance<SimulationEnvironment> ();
-            newSimEnv.simulationName = _simulationName;
+            
             var newSimEnvPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Environment.asset");
             AssetDatabase.CreateAsset (newSimEnv, newSimEnvPath);
             

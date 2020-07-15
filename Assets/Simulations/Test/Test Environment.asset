@@ -1,0 +1,1720 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0e36ac41634e339ece15a48c90f05c, type: 3}
+  m_Name: test Environment
+  m_EditorClassIdentifier: 
+  problem: {fileID: 4900000, guid: a60c648725e54de3a0018fba7c6e9cc3, type: 3}
+  types:
+  - direction
+  - player
+  - location
+  - stone
+  plan:
+    actions:
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-5
+      - pos-5-4
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-4
+      - pos-5-3
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-3
+      - pos-4-3
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-3
+      - pos-4-2
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-2
+      - pos-3-2
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-2
+      - pos-2-2
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-2-2
+      - pos-2-3
+      - dir-down
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-2-3
+      - pos-3-3
+      - pos-4-3
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-3
+      - pos-3-4
+      - dir-down
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-02
+      - pos-3-4
+      - pos-4-4
+      - pos-5-4
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-4
+      - pos-3-4
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-4
+      - pos-3-3
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-3
+      - pos-3-2
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-2
+      - pos-4-2
+      - dir-right
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-4-2
+      - pos-4-3
+      - pos-4-4
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-3
+      - pos-5-3
+      - dir-right
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-02
+      - pos-5-3
+      - pos-5-4
+      - pos-5-5
+      - dir-down
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-02
+      - pos-5-4
+      - pos-5-5
+      - pos-5-6
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-5
+      - pos-6-5
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-5
+      - pos-6-6
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-6
+      - pos-6-7
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-7
+      - pos-5-7
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-7
+      - pos-4-7
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-7
+      - pos-4-6
+      - dir-up
+    - actionName: push-to-goal
+      parameters:
+      - player-01
+      - stone-02
+      - pos-4-6
+      - pos-5-6
+      - pos-6-6
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-6
+      - pos-5-5
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-5
+      - pos-5-4
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-4
+      - pos-5-3
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-3
+      - pos-4-3
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-3
+      - pos-3-3
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-3-3
+      - pos-3-4
+      - dir-down
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-3-4
+      - pos-4-4
+      - pos-5-4
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-4
+      - pos-4-3
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-3
+      - pos-5-3
+      - dir-right
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-5-3
+      - pos-5-4
+      - pos-5-5
+      - dir-down
+    - actionName: push-to-nongoal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-5-4
+      - pos-5-5
+      - pos-5-6
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-5
+      - pos-6-5
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-5
+      - pos-7-5
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-7-5
+      - pos-8-5
+      - dir-right
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-8-5
+      - pos-8-6
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-8-6
+      - pos-8-7
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-8-7
+      - pos-7-7
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-7-7
+      - pos-6-7
+      - dir-left
+    - actionName: push-to-goal
+      parameters:
+      - player-01
+      - stone-02
+      - pos-6-7
+      - pos-6-6
+      - pos-6-5
+      - dir-up
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-6
+      - pos-6-7
+      - dir-down
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-6-7
+      - pos-5-7
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-5-7
+      - pos-4-7
+      - dir-left
+    - actionName: move
+      parameters:
+      - player-01
+      - pos-4-7
+      - pos-4-6
+      - dir-up
+    - actionName: push-to-goal
+      parameters:
+      - player-01
+      - stone-01
+      - pos-4-6
+      - pos-5-6
+      - pos-6-6
+      - dir-right
+  objects:
+  - objectName: dir-down
+    objectType:
+      typeName: direction
+  - objectName: dir-left
+    objectType:
+      typeName: direction
+  - objectName: dir-right
+    objectType:
+      typeName: direction
+  - objectName: dir-up
+    objectType:
+      typeName: direction
+  - objectName: player-01
+    objectType:
+      typeName: player
+  - objectName: pos-1-1
+    objectType:
+      typeName: location
+  - objectName: pos-1-2
+    objectType:
+      typeName: location
+  - objectName: pos-1-3
+    objectType:
+      typeName: location
+  - objectName: pos-1-4
+    objectType:
+      typeName: location
+  - objectName: pos-1-5
+    objectType:
+      typeName: location
+  - objectName: pos-1-6
+    objectType:
+      typeName: location
+  - objectName: pos-1-7
+    objectType:
+      typeName: location
+  - objectName: pos-1-8
+    objectType:
+      typeName: location
+  - objectName: pos-2-1
+    objectType:
+      typeName: location
+  - objectName: pos-2-2
+    objectType:
+      typeName: location
+  - objectName: pos-2-3
+    objectType:
+      typeName: location
+  - objectName: pos-2-4
+    objectType:
+      typeName: location
+  - objectName: pos-2-5
+    objectType:
+      typeName: location
+  - objectName: pos-2-6
+    objectType:
+      typeName: location
+  - objectName: pos-2-7
+    objectType:
+      typeName: location
+  - objectName: pos-2-8
+    objectType:
+      typeName: location
+  - objectName: pos-3-1
+    objectType:
+      typeName: location
+  - objectName: pos-3-2
+    objectType:
+      typeName: location
+  - objectName: pos-3-3
+    objectType:
+      typeName: location
+  - objectName: pos-3-4
+    objectType:
+      typeName: location
+  - objectName: pos-3-5
+    objectType:
+      typeName: location
+  - objectName: pos-3-6
+    objectType:
+      typeName: location
+  - objectName: pos-3-7
+    objectType:
+      typeName: location
+  - objectName: pos-3-8
+    objectType:
+      typeName: location
+  - objectName: pos-4-1
+    objectType:
+      typeName: location
+  - objectName: pos-4-2
+    objectType:
+      typeName: location
+  - objectName: pos-4-3
+    objectType:
+      typeName: location
+  - objectName: pos-4-4
+    objectType:
+      typeName: location
+  - objectName: pos-4-5
+    objectType:
+      typeName: location
+  - objectName: pos-4-6
+    objectType:
+      typeName: location
+  - objectName: pos-4-7
+    objectType:
+      typeName: location
+  - objectName: pos-4-8
+    objectType:
+      typeName: location
+  - objectName: pos-5-1
+    objectType:
+      typeName: location
+  - objectName: pos-5-2
+    objectType:
+      typeName: location
+  - objectName: pos-5-3
+    objectType:
+      typeName: location
+  - objectName: pos-5-4
+    objectType:
+      typeName: location
+  - objectName: pos-5-5
+    objectType:
+      typeName: location
+  - objectName: pos-5-6
+    objectType:
+      typeName: location
+  - objectName: pos-5-7
+    objectType:
+      typeName: location
+  - objectName: pos-5-8
+    objectType:
+      typeName: location
+  - objectName: pos-6-1
+    objectType:
+      typeName: location
+  - objectName: pos-6-2
+    objectType:
+      typeName: location
+  - objectName: pos-6-3
+    objectType:
+      typeName: location
+  - objectName: pos-6-4
+    objectType:
+      typeName: location
+  - objectName: pos-6-5
+    objectType:
+      typeName: location
+  - objectName: pos-6-6
+    objectType:
+      typeName: location
+  - objectName: pos-6-7
+    objectType:
+      typeName: location
+  - objectName: pos-6-8
+    objectType:
+      typeName: location
+  - objectName: pos-7-1
+    objectType:
+      typeName: location
+  - objectName: pos-7-2
+    objectType:
+      typeName: location
+  - objectName: pos-7-3
+    objectType:
+      typeName: location
+  - objectName: pos-7-4
+    objectType:
+      typeName: location
+  - objectName: pos-7-5
+    objectType:
+      typeName: location
+  - objectName: pos-7-6
+    objectType:
+      typeName: location
+  - objectName: pos-7-7
+    objectType:
+      typeName: location
+  - objectName: pos-7-8
+    objectType:
+      typeName: location
+  - objectName: pos-8-1
+    objectType:
+      typeName: location
+  - objectName: pos-8-2
+    objectType:
+      typeName: location
+  - objectName: pos-8-3
+    objectType:
+      typeName: location
+  - objectName: pos-8-4
+    objectType:
+      typeName: location
+  - objectName: pos-8-5
+    objectType:
+      typeName: location
+  - objectName: pos-8-6
+    objectType:
+      typeName: location
+  - objectName: pos-8-7
+    objectType:
+      typeName: location
+  - objectName: pos-8-8
+    objectType:
+      typeName: location
+  - objectName: pos-9-1
+    objectType:
+      typeName: location
+  - objectName: pos-9-2
+    objectType:
+      typeName: location
+  - objectName: pos-9-3
+    objectType:
+      typeName: location
+  - objectName: pos-9-4
+    objectType:
+      typeName: location
+  - objectName: pos-9-5
+    objectType:
+      typeName: location
+  - objectName: pos-9-6
+    objectType:
+      typeName: location
+  - objectName: pos-9-7
+    objectType:
+      typeName: location
+  - objectName: pos-9-8
+    objectType:
+      typeName: location
+  - objectName: stone-01
+    objectType:
+      typeName: stone
+  - objectName: stone-02
+    objectType:
+      typeName: stone
+  initBlock:
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-1-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-2-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-3-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-4-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-5-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-7-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-8-8
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-1
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-2
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-3
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-4
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-5
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-6
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-7
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    objectParameters:
+    - pos-9-8
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-1-5
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-1-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-1-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-1-8
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-2-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-2-3
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-2-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-2-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-2-8
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-3-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-3-4
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-4-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-4-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-4-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-5-3
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-5-4
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-5-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-6-1
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-6-5
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-6-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-6-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-7-1
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-7-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-7-3
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-7-5
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-7-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-1
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-3
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-5
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-6
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-8-7
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-9-1
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-9-2
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - pos-9-3
+  - predicateName: IS-GOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-5
+  - predicateName: IS-GOAL
+    isNegated: 0
+    objectParameters:
+    - pos-6-6
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-5
+    - pos-1-6
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-6
+    - pos-1-5
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-6
+    - pos-1-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-6
+    - pos-2-6
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-7
+    - pos-1-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-7
+    - pos-1-8
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-7
+    - pos-2-7
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-8
+    - pos-1-7
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-1-8
+    - pos-2-8
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-2
+    - pos-2-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-2
+    - pos-3-2
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-3
+    - pos-2-2
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-3
+    - pos-3-3
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-6
+    - pos-1-6
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-6
+    - pos-2-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-7
+    - pos-1-7
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-7
+    - pos-2-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-7
+    - pos-2-8
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-8
+    - pos-1-8
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-2-8
+    - pos-2-7
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-2
+    - pos-2-2
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-2
+    - pos-3-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-2
+    - pos-4-2
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-3
+    - pos-2-3
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-3
+    - pos-3-2
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-3
+    - pos-3-4
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-3
+    - pos-4-3
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-4
+    - pos-3-3
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-3-4
+    - pos-4-4
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-2
+    - pos-3-2
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-2
+    - pos-4-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+    - pos-3-3
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+    - pos-4-2
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+    - pos-4-4
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-3
+    - pos-5-3
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-4
+    - pos-3-4
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-4
+    - pos-4-3
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-4
+    - pos-5-4
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-6
+    - pos-4-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-6
+    - pos-5-6
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-7
+    - pos-4-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-4-7
+    - pos-5-7
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-3
+    - pos-4-3
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-3
+    - pos-5-4
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-4
+    - pos-4-4
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-4
+    - pos-5-3
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-4
+    - pos-5-5
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-5
+    - pos-5-4
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-5
+    - pos-5-6
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-5
+    - pos-6-5
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+    - pos-4-6
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+    - pos-5-5
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+    - pos-5-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-6
+    - pos-6-6
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-7
+    - pos-4-7
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-7
+    - pos-5-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-5-7
+    - pos-6-7
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-1
+    - pos-7-1
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-5
+    - pos-5-5
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-5
+    - pos-6-6
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-5
+    - pos-7-5
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-6
+    - pos-5-6
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-6
+    - pos-6-5
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-6
+    - pos-6-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-7
+    - pos-5-7
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-7
+    - pos-6-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-6-7
+    - pos-7-7
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-1
+    - pos-6-1
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-1
+    - pos-7-2
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-1
+    - pos-8-1
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-2
+    - pos-7-1
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-2
+    - pos-7-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-2
+    - pos-8-2
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-3
+    - pos-7-2
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-3
+    - pos-8-3
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-5
+    - pos-6-5
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-5
+    - pos-8-5
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-7
+    - pos-6-7
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-7-7
+    - pos-8-7
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-1
+    - pos-7-1
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-1
+    - pos-8-2
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-1
+    - pos-9-1
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+    - pos-7-2
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+    - pos-8-1
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+    - pos-8-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-2
+    - pos-9-2
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-3
+    - pos-7-3
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-3
+    - pos-8-2
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-3
+    - pos-9-3
+    - dir-right
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-5
+    - pos-7-5
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-5
+    - pos-8-6
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-6
+    - pos-8-5
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-6
+    - pos-8-7
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-7
+    - pos-7-7
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-8-7
+    - pos-8-6
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-1
+    - pos-8-1
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-1
+    - pos-9-2
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-2
+    - pos-8-2
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-2
+    - pos-9-1
+    - dir-up
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-2
+    - pos-9-3
+    - dir-down
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-3
+    - pos-8-3
+    - dir-left
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    objectParameters:
+    - pos-9-3
+    - pos-9-2
+    - dir-up
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - player-01
+    - pos-5-5
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - stone-01
+    - pos-3-3
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - stone-02
+    - pos-4-4
+  objectsPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}

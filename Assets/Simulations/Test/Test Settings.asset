@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8864ee0c87bd72fbeb5690b1db497702, type: 3}
+  m_Name: test Settings
+  m_EditorClassIdentifier: 
+  domain: {fileID: 4900000, guid: 08d50e5479834bc9819470b75fbe5453, type: 3}
+  actions:
+  - actionName: move
+    parameters:
+    - objectName: ?p
+      objectType:
+        typeName: player
+    - objectName: ?from
+      objectType:
+        typeName: location
+    - objectName: ?to
+      objectType:
+        typeName: location
+    - objectName: ?dir
+      objectType:
+        typeName: direction
+    effects:
+    - predicateName: at
+      isNegated: 1
+      attributesIndexes: 0000000001000000
+    - predicateName: clear
+      isNegated: 1
+      attributesIndexes: 02000000
+    - predicateName: at
+      isNegated: 0
+      attributesIndexes: 0000000002000000
+    - predicateName: clear
+      isNegated: 0
+      attributesIndexes: 01000000
+  - actionName: push-to-nongoal
+    parameters:
+    - objectName: ?p
+      objectType:
+        typeName: player
+    - objectName: ?s
+      objectType:
+        typeName: stone
+    - objectName: ?ppos
+      objectType:
+        typeName: location
+    - objectName: ?from
+      objectType:
+        typeName: location
+    - objectName: ?to
+      objectType:
+        typeName: location
+    - objectName: ?dir
+      objectType:
+        typeName: direction
+    effects:
+    - predicateName: at
+      isNegated: 1
+      attributesIndexes: 0000000002000000
+    - predicateName: at
+      isNegated: 1
+      attributesIndexes: 0100000003000000
+    - predicateName: clear
+      isNegated: 1
+      attributesIndexes: 04000000
+    - predicateName: at
+      isNegated: 0
+      attributesIndexes: 0000000003000000
+    - predicateName: at
+      isNegated: 0
+      attributesIndexes: 0100000004000000
+    - predicateName: clear
+      isNegated: 0
+      attributesIndexes: 02000000
+    - predicateName: at-goal
+      isNegated: 1
+      attributesIndexes: 01000000
+  - actionName: push-to-goal
+    parameters:
+    - objectName: ?p
+      objectType:
+        typeName: player
+    - objectName: ?s
+      objectType:
+        typeName: stone
+    - objectName: ?ppos
+      objectType:
+        typeName: location
+    - objectName: ?from
+      objectType:
+        typeName: location
+    - objectName: ?to
+      objectType:
+        typeName: location
+    - objectName: ?dir
+      objectType:
+        typeName: direction
+    effects:
+    - predicateName: at
+      isNegated: 1
+      attributesIndexes: 0000000002000000
+    - predicateName: at
+      isNegated: 1
+      attributesIndexes: 0100000003000000
+    - predicateName: clear
+      isNegated: 1
+      attributesIndexes: 04000000
+    - predicateName: at
+      isNegated: 0
+      attributesIndexes: 0000000003000000
+    - predicateName: at
+      isNegated: 0
+      attributesIndexes: 0100000004000000
+    - predicateName: clear
+      isNegated: 0
+      attributesIndexes: 02000000
+    - predicateName: at-goal
+      isNegated: 0
+      attributesIndexes: 01000000
+  predicates:
+  - predicateName: clear
+    isNegated: 0
+    parameters:
+    - objectName: l
+      objectType:
+        typeName: location
+    parametersDescription: 'l - location   '
+    parametersTypes:
+    - location
+    predicateCommandSettings:
+    - predicateTypeIndex: 0
+      commandBehavior: {fileID: 11400000, guid: 431f63f964521ff4e89392af8baced7f,
+        type: 2}
+      orderOfExecution: 0
+  - predicateName: at
+    isNegated: 0
+    parameters:
+    - objectName: t
+      objectType:
+        typeName: thing
+    - objectName: l
+      objectType:
+        typeName: location
+    parametersDescription: 't - thing   l - location   '
+    parametersTypes:
+    - thing
+    - player
+    - stone
+    - location
+    predicateCommandSettings:
+    - predicateTypeIndex: 1
+      commandBehavior: {fileID: 11400000, guid: 10f4c3ef37b525a408e024d8d4c31a72,
+        type: 2}
+      orderOfExecution: 1
+    - predicateTypeIndex: 2
+      commandBehavior: {fileID: 11400000, guid: 10f4c3ef37b525a408e024d8d4c31a72,
+        type: 2}
+      orderOfExecution: 0
+  - predicateName: at-goal
+    isNegated: 0
+    parameters:
+    - objectName: s
+      objectType:
+        typeName: stone
+    parametersDescription: 's - stone   '
+    parametersTypes:
+    - stone
+    predicateCommandSettings: []
+  - predicateName: IS-GOAL
+    isNegated: 0
+    parameters:
+    - objectName: l
+      objectType:
+        typeName: location
+    parametersDescription: 'l - location   '
+    parametersTypes:
+    - location
+    predicateCommandSettings:
+    - predicateTypeIndex: 0
+      commandBehavior: {fileID: 11400000, guid: 4c9ba25db16ac454ba770bea6cee76bc,
+        type: 2}
+      orderOfExecution: 0
+    - predicateTypeIndex: 0
+      commandBehavior: {fileID: 11400000, guid: 98c480671f893e9459d74f46e18d5788,
+        type: 2}
+      orderOfExecution: 0
+  - predicateName: IS-NONGOAL
+    isNegated: 0
+    parameters:
+    - objectName: l
+      objectType:
+        typeName: location
+    parametersDescription: 'l - location   '
+    parametersTypes:
+    - location
+    predicateCommandSettings:
+    - predicateTypeIndex: 0
+      commandBehavior: {fileID: 11400000, guid: f43b994086b6b5c4f9199d365dc58032,
+        type: 2}
+      orderOfExecution: 0
+    - predicateTypeIndex: 0
+      commandBehavior: {fileID: 11400000, guid: 4c9ba25db16ac454ba770bea6cee76bc,
+        type: 2}
+      orderOfExecution: 0
+  - predicateName: MOVE-DIR
+    isNegated: 0
+    parameters:
+    - objectName: from
+      objectType:
+        typeName: location
+    - objectName: to
+      objectType:
+        typeName: location
+    - objectName: dir
+      objectType:
+        typeName: direction
+    parametersDescription: 'from - location   to - location   dir - direction   '
+    parametersTypes:
+    - location
+    - location
+    - direction
+    predicateCommandSettings: []
+  typesToDefine:
+  - thing
+  - location
+  - direction
+  - player
+  - stone
+  typesDefined: 04000000010000000200000003000000
+  types:
+  - typeName: thing
+  - typeName: location
+  - typeName: direction
+  - typeName: player
+  - typeName: stone
+  simulationName: test
+  typesGameObject:
+  - {fileID: 2350759475463616906, guid: d5126a623643afd4283550ca9f5f51a2, type: 3}
+  - {fileID: 3360494420869595706, guid: edf5843fa9334a5468308421c66001fc, type: 3}
+  - {fileID: 1139628524368045505, guid: d4ffdc19bb05cf44ba5429e7cdaaa66d, type: 3}
+  - {fileID: 7539346794628098940, guid: 398c4516c496fc5498824070c519f3c1, type: 3}

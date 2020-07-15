@@ -1,10 +1,7 @@
-﻿using System.IO;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.iOS;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -13,12 +10,14 @@ public class SimulationManager : MonoBehaviour
     
     public SimulationSettings simulationSettings;
     public SimulationEnvironment simulationEnvironment;
-
+    
 
     private Transform _objectsHolder;
     private Transform _customHolder;
     
-    private Dictionary<string, GenericObject> objectsDictionary;
+    private Dictionary<string, GenericObject> _objectsDictionary;
+    private Dictionary<string, PddlType> _objectsTypeDictionary;
+    private Dictionary<string, List<PredicateCommandSettings>> _predicatesCommandsDictionary;
     private PlanSolver _planSolver;
     private HudController _hudController;
     private void Start()
@@ -39,11 +38,26 @@ public class SimulationManager : MonoBehaviour
     private void SetupSimulation()
     {
         // ADD PROBLEM OBJECTS TO DICTIONARY
-        objectsDictionary = new Dictionary<string, GenericObject>();
-        for (int i = 0; i < _objectsHolder.childCount; i++)
+        _objectsDictionary = new Dictionary<string, GenericObject>();
+        for (var i = 0; i < _objectsHolder.childCount; i++)
         {
-            GenericObject obj = _objectsHolder.GetChild(i).GetComponent<GenericObject>();
-            objectsDictionary.Add(obj.gameObject.name, obj);
+            var obj = _objectsHolder.GetChild(i).GetComponent<GenericObject>();
+            _objectsDictionary.Add(obj.gameObject.name, obj);
+        }
+        // CREATE PREDICATES DICTIONARY
+        _predicatesCommandsDictionary = new Dictionary<string, List<PredicateCommandSettings>>();
+        foreach (var predicate in simulationSettings.predicates)
+        {
+            var orderCommandsExecution = predicate.predicateCommandSettings
+                .OrderBy(p => p.orderOfExecution).ToList();
+            _predicatesCommandsDictionary.Add(predicate.predicateName.ToLower(), orderCommandsExecution);
+        }
+        
+        //CREATE OBJECTS TYPES DICTIONARY
+        _objectsTypeDictionary = new Dictionary<string, PddlType>();
+        foreach (var problemObject in simulationEnvironment.objects)
+        {
+            _objectsTypeDictionary.Add(problemObject.objectName.ToLower(), problemObject.objectType);
         }
     }
 
@@ -77,28 +91,43 @@ public class SimulationManager : MonoBehaviour
     {
         foreach (var predicate in simulationEnvironment.initBlock)
         {
-            // if is not a parameter-less predicate
-            if (predicate.parameters.Count > 0)
-            {
-                // first parameter if the object that changes the state
-                var theObjectName = predicate.parameters[0].ToLower();
-                var theObject = GetObject(theObjectName);
-                theObject.SetState(predicate.predicateName, predicate.negate);
-            }
+            var predicateName = predicate.predicateName.ToLower();
+            var commandsSettings = _predicatesCommandsDictionary[predicateName];
+            // execute commands only if they have been defined
+            if (commandsSettings.Count <= 0) continue;
+            
+            var objCalled = predicate.objectParameters[0].ToLower();
+                
+            //HUD UPDATE in object
+            var genericObject = GetObject(objCalled);
+            genericObject.SetState(predicate.predicateName, predicate.isNegated);
+            // group by execution order
+            var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
 
-            // check action behaviour
-            var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
-            if (!behaviour) continue;
-            
-            // get parameters
-            var param = GetObjects(predicate.parameters);
-           
-            behaviour.SetAttributes(param);
-            
-            _hudController.SetCurrentAction("---", predicate.predicateName);
-            // run predicate command
-            yield return behaviour.Execute(predicate.negate);
-            
+            foreach (var group in executions)
+            {
+                var coroutineToStart = new List<PredicateCommand>();
+                foreach (var order in @group)
+                {
+                    //if same type or children
+                    if (simulationEnvironment.types[order.predicateTypeIndex] ==
+                        _objectsTypeDictionary[objCalled].typeName )
+                        // ||
+                        // simulationEnvironment.types[order.predicateTypeIndex] ==
+                        // _objectsTypeDictionary[objCalled].parentType.typeName)
+                    {
+                        coroutineToStart.Add(order.commandBehavior);
+                    }
+                    coroutineToStart.Add(order.commandBehavior);
+                }
+                // starts all coroutines
+                foreach (var command in coroutineToStart)
+                {
+                    var objects = GetObjects(predicate.objectParameters);
+                    command.SetAttributes(objects);
+                    yield return command.Execute(predicate.isNegated);
+                }
+            }
         }
         yield return null;
     }
@@ -107,31 +136,51 @@ public class SimulationManager : MonoBehaviour
     {
         foreach (var action in simulationEnvironment.plan.actions)
         {
-            var effects = simulationSettings.GetActionEffects(action.name);
-            foreach (var predicate in effects)
+            Debug.Log(action.actionName);
+            var effects = simulationSettings.GetActionEffects(action.actionName);
+            foreach (var effect in effects)
             {
-                // check action behaviour
-                var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
+                var predicateName = effect.predicateName.ToLower();
+                var commandsSettings = _predicatesCommandsDictionary[predicateName];
                 
-                // update states on object
-                if (predicate.paramIndexes.Count > 0)
-                {
-                    var theObject = GetObject(action.parameters[predicate.paramIndexes[0]].ToLower());
-                    theObject.SetState(predicate.predicateName, predicate.negate); 
-                }
+                if (commandsSettings.Count <= 0) continue;
                 
                 
-                if (!behaviour) continue;
+                var theObject = GetObject(action.parameters[effect.attributesIndexes[0]].ToLower());
+                theObject.SetState(effect.predicateName, effect.isNegated);
                 
-                // get parameters
-                var param = GetObjects(action.parameters);
-                behaviour.SetAttributes(param);
-                
-                // update HUD actions
-                _hudController.SetCurrentAction(action.name, predicate.predicateName);
+                var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
 
-                // run predicate command
-                yield return behaviour.Execute(predicate.negate);
+                foreach (var group in executions)
+                {
+                    var coroutineToStart = new List<PredicateCommand>();
+                    foreach (var order in @group)
+                    {
+                        // if same type or children
+                        if (simulationEnvironment.types[order.predicateTypeIndex] ==
+                            _objectsTypeDictionary[theObject.name].typeName)
+                            // ||
+                            // simulationEnvironment.types[order.predicateTypeIndex] ==
+                            // _objectsTypeDictionary[objCalled].parentType.typeName)
+                        {
+                            
+                        }
+                        coroutineToStart.Add(order.commandBehavior);
+                    }
+                    // starts all coroutines
+                    foreach (var command in coroutineToStart)
+                    {
+                        var parameters = new List<string>();
+                        foreach (var indx in effect.attributesIndexes)
+                        {
+                            Debug.Log(action.parameters[indx]);
+                            parameters.Add(action.parameters[indx]);
+                        }
+                        var objects = GetObjects(parameters);
+                        command.SetAttributes(objects);
+                        yield return command.Execute(effect.isNegated);
+                    }
+                }
             }
         }
         yield return null;
@@ -140,15 +189,17 @@ public class SimulationManager : MonoBehaviour
     // CALLED FROM INSPECTOR
     public void GenerateScene()
     {
+        //TODO check types from problem with user defined types
+        
         SetHolders();
         
         // Generate Simulation Objects
         for (int i = 0; i < simulationEnvironment.objects.Count; i++)
         {
-            var gameObj = simulationEnvironment.GetPrefabWithType(simulationEnvironment.objects[i].type);
+            var gameObj = simulationSettings.GetPrefabWithType(simulationEnvironment.objects[i].objectType);
             if (gameObj == null) continue;
             var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity, _objectsHolder);
-            clone.name = simulationEnvironment.objects[i].name;
+            clone.name = simulationEnvironment.objects[i].objectName;
         }
     }
     private IEnumerator GeneratePlan()
@@ -164,7 +215,7 @@ public class SimulationManager : MonoBehaviour
 
     private GenericObject GetObject(string name)
     {
-        return objectsDictionary[name];
+        return _objectsDictionary[name];
     }
     
     private List<GenericObject> GetObjects(List<string> names)
@@ -172,7 +223,7 @@ public class SimulationManager : MonoBehaviour
         var list = new List<GenericObject>();
         for (int i = 0; i < names.Count; i++)
         {
-            list.Add(objectsDictionary[names[i].ToLower()]);
+            list.Add(_objectsDictionary[names[i].ToLower()]);
         }
 
         return list;

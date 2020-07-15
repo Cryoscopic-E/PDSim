@@ -21,34 +21,22 @@ public class SimulationEnvironment : ScriptableObject
     [SerializeField] public List<PddlObject> objects;
 
     // Initialization block
-    [SerializeField] public List<PddlInit> initBlock;
+    [SerializeField] public List<PddlInitPredicate> initBlock;
 
     // =====================
     // UNITY REPRESENTATIONS
     // =====================
-    
-    // name of simulation
-    [SerializeField] public string simulationName;
-    
-    // Model mesh or game object that represent a PDDL type in the scene
-    [SerializeField] public GameObject[] typesModels;
 
     // Start transform at instantiation
-    [SerializeField] public Vector3[] objectsPositions;
+    [SerializeField] public List<Vector3> objectsPositions;
 
     // ==============
     // PUBLIC METHODS
     // ==============
 
-    public GameObject GetPrefabWithType(string typeName)
-    {
-        var index = types.FindIndex(a => a.Contains(typeName));
-        return index != -1 ? typesModels[index] : null;
-    }
-
     public int GetObjectIndexPosition(string objName)
     {
-        return objects.FindIndex(a => a.name.Equals(name));
+        return objects.FindIndex(a => a.objectName.Equals(name));
     }
 
 
