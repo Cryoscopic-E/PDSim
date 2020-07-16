@@ -4,33 +4,25 @@ using System.Data;
 using UnityEngine;
 
 [Serializable]
-public class PddlType
+public class PddlType : IComparable<PddlType>
 {
     public  string typeName;
-    public  PddlType parentType;
+    public  string parentTypeName;
 
-    public PddlType(string typeName, PddlType parentType)
+    public PddlType(string typeName, string parentType = "")
     {
         this.typeName = typeName;
-        this.parentType = parentType;
+        parentTypeName = parentType;
     }
-    public PddlType(string typeName)
+
+    public int CompareTo(PddlType other)
     {
-        this.typeName = typeName;
-        this.parentType = null;
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        var typeNameComparison = string.Compare(typeName, other.typeName, StringComparison.OrdinalIgnoreCase);
+        return typeNameComparison != 0 ? typeNameComparison : string.Compare(parentTypeName, other.parentTypeName, StringComparison.OrdinalIgnoreCase);
     }
-    public override bool Equals(object obj)
-    {
-        var otherType = (PddlType) obj;
-        return otherType != null && string.Compare(typeName.ToLower(), otherType.typeName.ToLower(), StringComparison.Ordinal) == 0;
-    }
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((typeName != null ? typeName.GetHashCode() : 0) * 397) ^ (parentType != null ? parentType.GetHashCode() : 0);
-        }
-    }
+
     public override string ToString()
     {
         return typeName.ToLower();

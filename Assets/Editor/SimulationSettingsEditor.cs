@@ -244,6 +244,7 @@ namespace Editor
                     EditorGUILayout.BeginHorizontal();
                     // TYPE
                     EditorGUI.BeginChangeCheck();
+                    
                     var selectedParameterTypeIndex = EditorGUILayout.Popup(commandSettings.predicateTypeIndex,
                         _simulationSettings.predicates[index].parametersTypes.ToArray());
                     if (EditorGUI.EndChangeCheck())

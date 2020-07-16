@@ -39,7 +39,7 @@ public static class Parser
 
                 if (type.Parent is CustomType parent)
                 {
-                    var parsedTypeParent = new PddlType(parent.Name.Value);
+                    var parsedTypeParent = parent.Name.Value;
                     var parsedType = new PddlType(type.Name.Value, parsedTypeParent);
                     domainTypes.Add(parsedType);
                     tempTypesDictionary.Add(type.Name.Value, parsedType);
@@ -79,8 +79,8 @@ public static class Parser
                     foreach (var type in domainTypes)
                     {
                         
-                        if (type.parentType!= null && 
-                            type.parentType.typeName == parameter.objectType.typeName &&
+                        if (type.parentTypeName != string.Empty && 
+                            type.parentTypeName == parameter.objectType.typeName &&
                             !predicate.parametersTypes.Contains(type.typeName))
                         {
                             predicate.parametersTypes.Add(type.typeName);
