@@ -105,31 +105,37 @@ public class SimulationManager : MonoBehaviour
             var genericObject = GetObject(objCalled);
             genericObject.SetState(predicate.predicateName, predicate.isNegated);
             // group by execution order
-            var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
+            var executions = commandsSettings
+                .OrderBy(c=>c.orderOfExecution)
+                .GroupBy(c => c.orderOfExecution);
 
             foreach (var group in executions)
             {
-                var coroutineToStart = new List<PredicateCommand>();
+                var coroutineToStart = new List<CommandBase>();
                 foreach (var order in @group)
                 {
                     //if same type or children
-                    if (simulationEnvironment.types[order.predicateTypeIndex] ==
-                        _objectsTypeDictionary[objCalled].typeName)
-                        // ||
-                        // simulationEnvironment.types[order.predicateTypeIndex] ==
-                        // _objectsTypeDictionary[objCalled].parentType.typeName)
-                    {
-                        coroutineToStart.Add(order.commandBehavior);
-                    }
+                    var typeNameOfFirstParameterSetOnCommand = _predicatesDictionary[predicateName].parametersTypes[0];
+                        
+                    var firstParameterObjectName = predicate.objectParameters[0];
+                    var firstParameterObject = GetObject(firstParameterObjectName);
+                    var typeNameOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObject.name].typeName;
 
-                    coroutineToStart.Add(order.commandBehavior);
+                    var typeOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObjectName];
+                    var parentTypeOfFirstParameterOfEffect = typeOfFirstParameterOfEffect.parentTypeName;
+                    if (typeNameOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand ||
+                        parentTypeOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand
+                    )
+                    {
+                        coroutineToStart.Add(order.commandBaseBehavior);
+                    }
                 }
 
                 // starts all coroutines
                 foreach (var command in coroutineToStart)
                 {
                     var objects = GetObjects(predicate.objectParameters);
-                    command.SetAttributes(objects);
+                    command.Init(objects);
                     yield return command.Execute(predicate.isNegated);
                 }
             }
@@ -140,12 +146,6 @@ public class SimulationManager : MonoBehaviour
 
     private IEnumerator PlanExecution()
     {
-        // for each effect
-        // group commands by order of execution
-        // for each group
-        //for each command of same order
-        // start command coroutine and wait for all to finish
-        
         //NEW
         foreach (var action in simulationEnvironment.plan.actions)
         {
@@ -161,7 +161,9 @@ public class SimulationManager : MonoBehaviour
                 if (commandsSettings.Count <= 0) continue;
                 
                 // group commands by order of execution
-                var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
+                var executions = commandsSettings
+                    .OrderBy(c=>c.orderOfExecution)
+                    .GroupBy(c => c.orderOfExecution);
                 // for each group of commands
                 foreach (var group in executions)
                 {
@@ -191,7 +193,9 @@ public class SimulationManager : MonoBehaviour
                             {
                                 parameters.Add(action.parameters[index]);
                             }
-                            executionList.Add(new Execution(commandSettings.commandBehavior, parameters, effect.isNegated));
+
+                            var commandClone = Instantiate(commandSettings.commandBaseBehavior) as CommandBase;
+                            executionList.Add(new Execution(commandClone, parameters, effect.isNegated));
                         }
                     }
                 }
@@ -205,14 +209,14 @@ public class SimulationManager : MonoBehaviour
                 foreach (var execution in executionDictionary[executionOrder])
                 {
                     var objects = GetObjects(execution.parameterObjects);
-                    execution.commandCoroutine.SetAttributes(objects);
-                    yield return execution.commandCoroutine.Execute(execution.negatedEffect);
+                    execution.CommandBaseCoroutine.Init(objects);
+                    executingCommands.Add(StartCoroutine(execution.CommandBaseCoroutine.Execute(execution.negatedEffect)));
                 }
                 //wait all the coroutines to finish
-                // foreach(var command in executingCommands)
-                // {
-                //     yield return command;
-                // }
+                foreach(var command in executingCommands)
+                {
+                     yield return command;
+                }
             }
             
         }
@@ -383,11 +387,11 @@ public class SimulationManager : MonoBehaviour
     private class Execution
     {
         public List<string> parameterObjects;
-        public PredicateCommand commandCoroutine;
+        public CommandBase CommandBaseCoroutine;
         public bool negatedEffect;
-        public Execution(PredicateCommand commandCoroutine, List<string> parameterObjects, bool negatedEffect)
+        public Execution(CommandBase commandBaseCoroutine, List<string> parameterObjects, bool negatedEffect)
         {
-            this.commandCoroutine = commandCoroutine;
+            this.CommandBaseCoroutine = commandBaseCoroutine;
             this.parameterObjects = parameterObjects;
             this.negatedEffect = negatedEffect;
         }

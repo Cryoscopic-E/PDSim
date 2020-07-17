@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -33,6 +34,30 @@ public class SimulationEnvironment : ScriptableObject
     // ==============
     // PUBLIC METHODS
     // ==============
+
+    public void Initialize()
+    {
+        Parser.ParseProblem(problem.text, 
+            out types, 
+            out objects, 
+            out initBlock);
+        
+        // instantiate objects transforms array
+        objectsPositions = new List<Vector3>();
+        for (int i = 0; i < objects.Count; i++)
+        {
+            objectsPositions.Add(new Vector3());
+        }
+    }
+
+    public void Reset()
+    {
+        plan = null;
+        objects = null;
+        types = null;
+        objectsPositions = null;
+        initBlock = null;
+    }
 
     public int GetObjectIndexPosition(string objName)
     {

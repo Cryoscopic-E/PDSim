@@ -54,39 +54,12 @@ namespace Editor
                 _simulationSettings.domain = domain;
 
                 if (domain != null)
-                {
-                    // parse elements
-                    Parser.ParseDomain(
-                        _simulationSettings.domain.text,
-                        out _simulationSettings.types,
-                        out _simulationSettings.predicates,
-                        out  _simulationSettings.actions);
-                }
-                // Create list of types string to define from original list of types
-                _simulationSettings.typesToDefine = new List<string>();
-                foreach (var type in _simulationSettings.types)
-                {
-                    _simulationSettings.typesToDefine.Add(type.typeName);
-                }
-                // Create Empty list of defined types indexes(to help showing models in the inspector)
-                _simulationSettings.typesDefined = new List<int>();
-                // Create Empty list of game objects representing the models
-                _simulationSettings.typesGameObject = new List<GameObject>();
-                
+                    _simulationSettings.Initialize();
+                else
+                    _simulationSettings.Reset();
                 // save asset
                 EditorUtility.SetDirty(_simulationSettings);
             }
-            
-            // ==============================
-            // CHECK FILES AFTER MODIFICATION
-            // ==============================
-            if (domain != null) return;
-            _simulationSettings.actions = null;
-            _simulationSettings.predicates = null;
-            _simulationSettings.types = null;
-            _simulationSettings.typesDefined = null;
-            _simulationSettings.typesToDefine = null;
-            _simulationSettings.typesGameObject = null;
         }
 
         private void DrawGenericObjectModels()
@@ -256,12 +229,40 @@ namespace Editor
                     
                     // COMMAND BEHAVIOUR
                     EditorGUI.BeginChangeCheck();
-                    var behavior = (PredicateCommand)EditorGUILayout.ObjectField(commandSettings.commandBehavior, typeof(PredicateCommand),
+                    var behavior = (CommandBase)EditorGUILayout.ObjectField(commandSettings.commandBaseBehavior, typeof(CommandBase),
                         false, GUILayout.ExpandWidth(false));
                     if (EditorGUI.EndChangeCheck())
                     {
+                        if (behavior != null)
+                        {
+                            var behaviourBaseType = behavior.GetType().BaseType;
+                            var expectedParametersCount = _simulationSettings.predicates[index].parameters.Count;
+                            if (behaviourBaseType != null)
+                            {
+                                switch (behaviourBaseType.Name)
+                                {
+                                    case "OneAttributeCommand":
+                                        if(!CheckNumberAttributesCommand(expectedParametersCount, 1))
+                                            behavior = null;
+                                        break;
+                                    case "TwoAttributeCommand":
+                                        if(!CheckNumberAttributesCommand(expectedParametersCount, 2))
+                                            behavior = null;
+                                        break;
+                                    case "ThreeAttributeCommand":
+                                        if(!CheckNumberAttributesCommand(expectedParametersCount, 3))
+                                            behavior = null;
+                                        break;
+                                    case "CommandBase":
+                                        Alert("Change Base class to N_AttributeCommand");
+                                        behavior = null;
+                                        break;
+                                }
+                            }
+                        }
+                        
                         Undo.RecordObject(_simulationSettings, "Predicate Command Change");
-                        commandSettings.commandBehavior = behavior;
+                        commandSettings.commandBaseBehavior = behavior;
                         EditorUtility.SetDirty(_simulationSettings);
                     }
                     
@@ -286,9 +287,20 @@ namespace Editor
             
         }
 
+        private bool CheckNumberAttributesCommand(int expected, int provided)
+        {
+            if (expected == provided) return true;
+            Alert("Wrong number of attributes in defined command behaviour, expected: " + expected + ", found: " +provided);
+            return false;
+        }
+        private static void Alert(string message)
+        {
+            EditorApplication.Beep();
+            EditorUtility.DisplayDialog("Wrong Command",message, "Close");
+        }
         private GameObject CreateNewTypeModel(string typeName)
         {
-            var folderPath = NewSimulationWindow.SIMULATIONS_BASE_DIR + _simulationSettings.simulationName + "/Types Models";
+            var folderPath = NewSimulationWindow.SimulationsBaseDir + _simulationSettings.simulationName + "/Types Models";
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);

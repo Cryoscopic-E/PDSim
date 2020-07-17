@@ -7,17 +7,19 @@ namespace Editor
 {
     internal class NewSimulationWindow : EditorWindow
     {
-        public static readonly string SIMULATIONS_BASE_DIR = "Assets/Simulations/";
-        
+        public const string SimulationsBaseDir = "Assets/Simulations/";
+
         private string _simulationName;
+        private TextAsset _domain;
+        private TextAsset _problem;
         
         [ MenuItem( "PDDL Simulation/New Simulation" ) ]
         public static void Init()
         {
             var window = (NewSimulationWindow)GetWindow(typeof(NewSimulationWindow));
             window.titleContent = new GUIContent("New Simulation");
-            window.minSize = new Vector2(300,100);
-            window.maxSize = new Vector2(300,100);
+            window.minSize = new Vector2(300,200);
+            window.maxSize = new Vector2(300,200);
             window.Show();
             window.Focus();
         }
@@ -29,12 +31,46 @@ namespace Editor
             GUILayout.Space(10);
             _simulationName = EditorGUILayout.TextField(_simulationName);
             GUILayout.EndVertical();
+            
             GUILayout.Space(15);
+            
+            GUILayout.BeginVertical();
+            GUILayout.Label("Domain file:", EditorStyles.boldLabel);
+            EditorGUI.BeginChangeCheck();
+            var domain = (TextAsset) EditorGUILayout.ObjectField(_domain, typeof(TextAsset), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if(domain != null)
+                    _domain = domain;
+            }
+            GUILayout.EndVertical();
+            
+            GUILayout.BeginVertical();
+            GUILayout.Label("Problem file:", EditorStyles.boldLabel);
+            EditorGUI.BeginChangeCheck();
+            var problem = (TextAsset) EditorGUILayout.ObjectField(_problem, typeof(TextAsset), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if(problem != null)
+                    _problem = problem;
+            }
+            GUILayout.EndVertical();
+            
+            GUILayout.Space(15);
+            
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create"))
             {
-                CreateSimulation();
-                GUIUtility.ExitGUI();
+                if (_domain == null || _problem == null)
+                {
+                    EditorApplication.Beep();
+                    EditorUtility.DisplayDialog("File Missing","Please Provide Domain And Problem files", "Close");
+                }
+                else
+                {
+                    CreateSimulation();
+                    GUIUtility.ExitGUI();
+                }
             }
 
             if (GUILayout.Button("Cancel"))
@@ -53,7 +89,7 @@ namespace Editor
             }
             
             _simulationName = _simulationName.Trim();
-            var path = SIMULATIONS_BASE_DIR + _simulationName;
+            var path = SimulationsBaseDir + _simulationName;
             
             // Check if simulation name exist
             if(Directory.Exists(path))
@@ -67,12 +103,15 @@ namespace Editor
             // Create Simulation Setting Prefab
             var newSimSetting = CreateInstance<SimulationSettings> ();
             newSimSetting.simulationName = _simulationName;
+            newSimSetting.domain = _domain;
+            newSimSetting.Initialize();
             var newSimSettingsPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Settings.asset");
             AssetDatabase.CreateAsset (newSimSetting, newSimSettingsPath);
             
             // Create Simulation Environment Prefab
             var newSimEnv = CreateInstance<SimulationEnvironment> ();
-            
+            newSimEnv.problem = _problem;
+            newSimEnv.Initialize();
             var newSimEnvPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Environment.asset");
             AssetDatabase.CreateAsset (newSimEnv, newSimEnvPath);
             

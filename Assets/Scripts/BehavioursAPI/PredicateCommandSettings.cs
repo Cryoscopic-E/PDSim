@@ -2,13 +2,13 @@
 public class PredicateCommandSettings
 {
     public int predicateTypeIndex;
-    public PredicateCommand commandBehavior;
+    public CommandBase commandBaseBehavior;
     public int orderOfExecution;
 
-    public PredicateCommandSettings(PredicateCommand commandBehavior,int predicateTypeIndex = 0, int orderOfExecution = 0)
+    public PredicateCommandSettings(CommandBase commandBaseBehavior,int predicateTypeIndex = 0, int orderOfExecution = 0)
     {
         this.predicateTypeIndex = predicateTypeIndex;
-        this.commandBehavior = commandBehavior;
+        this.commandBaseBehavior = commandBaseBehavior;
         this.orderOfExecution = orderOfExecution;
     }
 }
