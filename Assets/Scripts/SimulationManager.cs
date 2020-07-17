@@ -1,32 +1,34 @@
-﻿using System.IO;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.iOS;
 
 public class SimulationManager : MonoBehaviour
 {
     private readonly string SIM_OBJECT_HOLDER = "Simulation Objects";
     private readonly string CUSTOM_OBJECT_HOLDER = "Custom Objects";
-    
+
     public SimulationSettings simulationSettings;
     public SimulationEnvironment simulationEnvironment;
 
 
     private Transform _objectsHolder;
     private Transform _customHolder;
+
+    private Dictionary<string, GenericObject> _objectsDictionary;
+    private Dictionary<string, PddlType> _objectsTypeDictionary;
+    private Dictionary<string, PddlDomainPredicate> _predicatesDictionary;
     
-    private Dictionary<string, GenericObject> objectsDictionary;
     private PlanSolver _planSolver;
     private HudController _hudController;
+
     private void Start()
     {
         _hudController = FindObjectOfType<HudController>();
         _hudController.SetCurrentAction("--", "--");
         _hudController.SetSimulationStatus(SimStatus.None);
-        
+
         _planSolver = GetComponent<PlanSolver>();
         // SET holders game objects in scene
         SetHolders();
@@ -39,16 +41,31 @@ public class SimulationManager : MonoBehaviour
     private void SetupSimulation()
     {
         // ADD PROBLEM OBJECTS TO DICTIONARY
-        objectsDictionary = new Dictionary<string, GenericObject>();
-        for (int i = 0; i < _objectsHolder.childCount; i++)
+        _objectsDictionary = new Dictionary<string, GenericObject>();
+        for (var i = 0; i < _objectsHolder.childCount; i++)
         {
-            GenericObject obj = _objectsHolder.GetChild(i).GetComponent<GenericObject>();
-            objectsDictionary.Add(obj.gameObject.name, obj);
+            var obj = _objectsHolder.GetChild(i).GetComponent<GenericObject>();
+            _objectsDictionary.Add(obj.gameObject.name, obj);
+        }
+
+        // CREATE PREDICATES DICTIONARY
+        _predicatesDictionary = new Dictionary<string, PddlDomainPredicate>();
+        foreach (var predicate in simulationSettings.predicates)
+        {
+            _predicatesDictionary.Add(predicate.predicateName.ToLower(), predicate);
+        }
+
+        //CREATE OBJECTS TYPES DICTIONARY
+        _objectsTypeDictionary = new Dictionary<string, PddlType>();
+        foreach (var problemObject in simulationEnvironment.objects)
+        {
+            //check type tree
+            var type = simulationSettings.types.FindIndex(t => t.typeName == problemObject.objectType.typeName);
+            _objectsTypeDictionary.Add(problemObject.objectName.ToLower(), simulationSettings.types[type]);
         }
     }
 
-   
-    
+
     private IEnumerator SimulatePlan()
     {
         // Check if plan exist, or generate
@@ -56,123 +73,265 @@ public class SimulationManager : MonoBehaviour
         {
             yield return GeneratePlan();
         }
-        
+
         // Update HUD
         _hudController.SetSimulationStatus(SimStatus.Init);
         // Run Initialization block
         yield return InitSimulation();
-        
+
         // Update HUD
         _hudController.SetSimulationStatus(SimStatus.PlanExecution);
         // Plan execution
         yield return PlanExecution();
-        
+
         // Update HUD
         _hudController.SetSimulationStatus(SimStatus.None);
         // Simulation end
         yield return null;
     }
-    
+
     private IEnumerator InitSimulation()
     {
         foreach (var predicate in simulationEnvironment.initBlock)
         {
-            // if is not a parameter-less predicate
-            if (predicate.parameters.Count > 0)
-            {
-                // first parameter if the object that changes the state
-                var theObjectName = predicate.parameters[0].ToLower();
-                var theObject = GetObject(theObjectName);
-                theObject.SetState(predicate.predicateName, predicate.negate);
-            }
+            var predicateName = predicate.predicateName.ToLower();
+            var commandsSettings = _predicatesDictionary[predicateName].predicateCommandSettings;
+            // execute commands only if they have been defined
+            if (commandsSettings.Count <= 0) continue;
 
-            // check action behaviour
-            var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
-            if (!behaviour) continue;
-            
-            // get parameters
-            var param = GetObjects(predicate.parameters);
-           
-            behaviour.SetAttributes(param);
-            
-            _hudController.SetCurrentAction("---", predicate.predicateName);
-            // run predicate command
-            yield return behaviour.Execute(predicate.negate);
-            
+            var objCalled = predicate.objectParameters[0].ToLower();
+
+            //HUD UPDATE in object
+            var genericObject = GetObject(objCalled);
+            genericObject.SetState(predicate.predicateName, predicate.isNegated);
+            // group by execution order
+            var executions = commandsSettings
+                .OrderBy(c=>c.orderOfExecution)
+                .GroupBy(c => c.orderOfExecution);
+
+            foreach (var group in executions)
+            {
+                var coroutineToStart = new List<CommandBase>();
+                foreach (var order in @group)
+                {
+                    //if same type or children
+                    var typeNameOfFirstParameterSetOnCommand = _predicatesDictionary[predicateName].parametersTypes[0];
+                        
+                    var firstParameterObjectName = predicate.objectParameters[0];
+                    var firstParameterObject = GetObject(firstParameterObjectName);
+                    var typeNameOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObject.name].typeName;
+
+                    var typeOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObjectName];
+                    var parentTypeOfFirstParameterOfEffect = typeOfFirstParameterOfEffect.parentTypeName;
+                    if (typeNameOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand ||
+                        parentTypeOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand
+                    )
+                    {
+                        coroutineToStart.Add(order.commandBaseBehavior);
+                    }
+                }
+
+                // starts all coroutines
+                foreach (var command in coroutineToStart)
+                {
+                    var objects = GetObjects(predicate.objectParameters);
+                    command.Init(objects);
+                    yield return command.Execute(predicate.isNegated);
+                }
+            }
         }
+
         yield return null;
     }
 
     private IEnumerator PlanExecution()
     {
+        //NEW
         foreach (var action in simulationEnvironment.plan.actions)
         {
-            var effects = simulationSettings.GetActionEffects(action.name);
-            foreach (var predicate in effects)
+            var effects = simulationSettings.GetActionEffects(action.actionName);
+            var executionDictionary = new Dictionary<int, List<Execution>>();
+            foreach (var effect in effects)
             {
-                // check action behaviour
-                var behaviour = simulationSettings.GetPredicateBehaviour(predicate.predicateName);
+                // get predicate name
+                var predicateName = effect.predicateName.ToLower();
+                // get all command settings
+                var commandsSettings = _predicatesDictionary[predicateName].predicateCommandSettings;
+                // if no command continue loop
+                if (commandsSettings.Count <= 0) continue;
                 
-                // update states on object
-                if (predicate.paramIndexes.Count > 0)
+                // group commands by order of execution
+                var executions = commandsSettings
+                    .OrderBy(c=>c.orderOfExecution)
+                    .GroupBy(c => c.orderOfExecution);
+                // for each group of commands
+                foreach (var group in executions)
                 {
-                    var theObject = GetObject(action.parameters[predicate.paramIndexes[0]].ToLower());
-                    theObject.SetState(predicate.predicateName, predicate.negate); 
-                }
-                
-                
-                if (!behaviour) continue;
-                
-                // get parameters
-                var param = GetObjects(action.parameters);
-                behaviour.SetAttributes(param);
-                
-                // update HUD actions
-                _hudController.SetCurrentAction(action.name, predicate.predicateName);
+                    if (!executionDictionary.TryGetValue(group.Key, out var executionList))
+                    {
+                        executionList = new List<Execution>();
+                        executionDictionary[group.Key] = executionList;
+                    }
+                    // for each command in the same execution order
+                    foreach (var commandSettings in group)
+                    {
+                        var typeNameOfFirstParameterSetOnCommand = _predicatesDictionary[predicateName].parametersTypes[0];
+                        
+                        var firstParameterObjectName = action.parameters[effect.attributesIndexes[0]].ToLower();
+                        var firstParameterObject = GetObject(firstParameterObjectName);
+                        var typeNameOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObject.name].typeName;
 
-                // run predicate command
-                yield return behaviour.Execute(predicate.negate);
+                        var typeOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObjectName];
+                        var parentTypeOfFirstParameterOfEffect = typeOfFirstParameterOfEffect.parentTypeName;
+                        // if same type or children
+                        if (typeNameOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand ||
+                            parentTypeOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand
+                        )
+                        {
+                            var parameters = new List<string>();
+                            foreach (var index in effect.attributesIndexes)
+                            {
+                                parameters.Add(action.parameters[index]);
+                            }
+
+                            var commandClone = Instantiate(commandSettings.commandBaseBehavior) as CommandBase;
+                            executionList.Add(new Execution(commandClone, parameters, effect.isNegated));
+                        }
+                    }
+                }
             }
+            
+            // execute effects
+            foreach (var executionOrder in executionDictionary.Keys)
+            {
+                var executingCommands = new List<Coroutine>();
+                // start all same order coroutines
+                foreach (var execution in executionDictionary[executionOrder])
+                {
+                    var objects = GetObjects(execution.parameterObjects);
+                    execution.CommandBaseCoroutine.Init(objects);
+                    executingCommands.Add(StartCoroutine(execution.CommandBaseCoroutine.Execute(execution.negatedEffect)));
+                }
+                //wait all the coroutines to finish
+                foreach(var command in executingCommands)
+                {
+                     yield return command;
+                }
+            }
+            
         }
+
+
+        // OLD
+        // foreach (var action in simulationEnvironment.plan.actions)
+        // {
+        //     var effects = simulationSettings.GetActionEffects(action.actionName);
+        //     foreach (var effect in effects)
+        //     {
+        //         // get predicate name
+        //         var predicateName = effect.predicateName.ToLower();
+        //         // get all command settings
+        //         var commandsSettings = _predicatesDictionary[predicateName].predicateCommandSettings;
+        //         // if no command continue loop
+        //         if (commandsSettings.Count <= 0) continue;
+        //
+        //         // todo move in predicate
+        //         // get first object on the action parameters
+        //         var theObject = GetObject(action.parameters[effect.attributesIndexes[0]].ToLower());
+        //         // change its state description in HUD
+        //         theObject.SetState(effect.predicateName, effect.isNegated);
+        //
+        //         // group commands by order of execution
+        //         var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
+        //
+        //         // for each group of commands
+        //         foreach (var group in executions)
+        //         {
+        //             // coroutine list to start
+        //             var coroutineToStart = new List<PredicateCommand>();
+        //             // for each command with same order of execution
+        //             foreach (var order in @group)
+        //             {
+        //                 var typeNameOfFirstParameterSetOnCommand = simulationEnvironment.types[order.predicateTypeIndex];
+        //                 typeNameOfFirstParameterSetOnCommand = _predicatesDictionary[predicateName].parametersTypes[0];
+        //                 
+        //                 var firstParameterObjectName = action.parameters[effect.attributesIndexes[0]].ToLower();
+        //                 var firstParameterObject = GetObject(firstParameterObjectName);
+        //                 var typeNameOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObject.name].typeName;
+        //
+        //                 var typeOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObjectName];
+        //                 var parentTypeOfFirstParameterOfEffect = typeOfFirstParameterOfEffect.parentTypeName;
+        //                 // if same type or children
+        //                 if(typeNameOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand ||
+        //                    parentTypeOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand
+        //                    )
+        //                 {
+        //                     Debug.Log(firstParameterObjectName);
+        //                     coroutineToStart.Add(order.commandBehavior);
+        //                 }
+        //
+        //                 
+        //             }
+        //             // starts all coroutines
+        //             foreach (var command in coroutineToStart)
+        //             {
+        //                 var parameters = new List<string>();
+        //                 foreach (var index in effect.attributesIndexes)
+        //                 {
+        //                     parameters.Add(action.parameters[index]);
+        //                 }
+        //
+        //                 var objects = GetObjects(parameters);
+        //                 command.SetAttributes(objects);
+        //                 yield return command.Execute(effect.isNegated);
+        //             }
+        //         }
+        //     }
+        // }
+
         yield return null;
     }
 
     // CALLED FROM INSPECTOR
     public void GenerateScene()
     {
+        //TODO check types from problem with user defined types
+
         SetHolders();
-        
+
         // Generate Simulation Objects
         for (int i = 0; i < simulationEnvironment.objects.Count; i++)
         {
-            var gameObj = simulationEnvironment.GetPrefabWithType(simulationEnvironment.objects[i].type);
+            var gameObj = simulationSettings.GetPrefabWithType(simulationEnvironment.objects[i].objectType);
             if (gameObj == null) continue;
-            var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity, _objectsHolder);
-            clone.name = simulationEnvironment.objects[i].name;
+            var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity,
+                _objectsHolder);
+            clone.name = simulationEnvironment.objects[i].objectName;
         }
     }
+
     private IEnumerator GeneratePlan()
     {
         var plan = new Plan();
         yield return _planSolver.RequestPlan(
-            simulationSettings.domain.text, 
-            simulationEnvironment.problem.text, 
-            value=> plan = value);
+            simulationSettings.domain.text,
+            simulationEnvironment.problem.text,
+            value => plan = value);
         simulationEnvironment.SavePlan(plan);
         yield return null;
     }
 
     private GenericObject GetObject(string name)
     {
-        return objectsDictionary[name];
+        return _objectsDictionary[name];
     }
-    
+
     private List<GenericObject> GetObjects(List<string> names)
     {
         var list = new List<GenericObject>();
         for (int i = 0; i < names.Count; i++)
         {
-            list.Add(objectsDictionary[names[i].ToLower()]);
+            list.Add(_objectsDictionary[names[i].ToLower()]);
         }
 
         return list;
@@ -184,7 +343,7 @@ public class SimulationManager : MonoBehaviour
         _objectsHolder = GetHolder(SIM_OBJECT_HOLDER);
         _customHolder = GetHolder(CUSTOM_OBJECT_HOLDER);
     }
-    
+
     private Transform GetHolder(string name)
     {
         var holder = GameObject.Find(name);
@@ -192,6 +351,7 @@ public class SimulationManager : MonoBehaviour
         {
             holder = new GameObject(name);
         }
+
         return holder.transform;
     }
 
@@ -219,6 +379,21 @@ public class SimulationManager : MonoBehaviour
             // save position
             simulationEnvironment.objectsPositions[i] = obj.transform.position;
         }
+
         simulationEnvironment.Save();
+    }
+
+
+    private class Execution
+    {
+        public List<string> parameterObjects;
+        public CommandBase CommandBaseCoroutine;
+        public bool negatedEffect;
+        public Execution(CommandBase commandBaseCoroutine, List<string> parameterObjects, bool negatedEffect)
+        {
+            this.CommandBaseCoroutine = commandBaseCoroutine;
+            this.parameterObjects = parameterObjects;
+            this.negatedEffect = negatedEffect;
+        }
     }
 }

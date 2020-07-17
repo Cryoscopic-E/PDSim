@@ -1,20 +1,25 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using PDDL.Parser;
 using PDDL.Model.PDDL12;
 using PDDL.Model.PDDL12.Effects;
+using PDDL.Model.PDDL12.Types;
 using SimpleJSON;
 
 public static class Parser
 {
-    public static void ParseDomain(string domainText, out List<PddlPredicate> predicates, out List<PddlAction> actions)
+    public static void ParseDomain(string domainText,out List<PddlType>types, out List<PddlDomainPredicate> predicates, out List<PddlAction> actions)
     {
         // Instancing the PDDL parser 
         var parser = new PDDL12Parser();
 
-        var domainPredicates = new List<PddlPredicate>();
+        var domainPredicates = new List<PddlDomainPredicate>();
         var domainActions = new List<PddlAction>();
-
+        var domainTypes = new List<PddlType>();
+        var tempTypesDictionary = new Dictionary<string, PddlType>();
+        
         # region DOMAIN PARSE
 
         try
@@ -23,7 +28,29 @@ public static class Parser
             var list = parser.Parse(domainText);
             // Get Domain
             var domain = (Domain) list[0];
+            
+            
+            /* CREATE TYPES */
+            var typesList = domain.Types;
+            foreach (var t in typesList)
+            {
+                var type = t as CustomType;
+                if (type == null) continue;
 
+                if (type.Parent is CustomType parent)
+                {
+                    var parsedTypeParent = parent.Name.Value;
+                    var parsedType = new PddlType(type.Name.Value, parsedTypeParent);
+                    domainTypes.Add(parsedType);
+                    tempTypesDictionary.Add(type.Name.Value, parsedType);
+                    continue;
+                }
+
+                var rootType = new PddlType(type.Name.Value);
+                domainTypes.Add(rootType);
+                tempTypesDictionary.Add(type.Name.Value, rootType);
+            }
+            
             /* CREATE PDDL PREDICATES*/
             // Loop through all predicates
             foreach (var predicate in domain.Predicates)
@@ -34,11 +61,32 @@ public static class Parser
                 foreach (var parameter in predicate.Parameters)
                 {
                     // parameter in form name-type added to parameters list
-                    predicateParams.Add(new PddlObject(parameter.ToString(), parameter.Type.ToString()));
+                    predicateParams.Add(new PddlObject(parameter.Value.Name.Value, tempTypesDictionary[parameter.Type.ToString()]));
                 }
 
                 // add predicate to list
-                domainPredicates.Add(new PddlPredicate(predicate.Name.ToString(), predicateParams));
+                domainPredicates.Add(new PddlDomainPredicate(predicate.Name.Value, predicateParams));
+            }
+            
+            //create list of predicate types for each predicate parameter to account the type inheritance
+            foreach (var predicate in domainPredicates)
+            {
+                foreach (var parameter in predicate.parameters)
+                {
+                    // add the parameter type
+                    predicate.parametersTypes.Add(parameter.objectType.typeName);
+                    // check children
+                    foreach (var type in domainTypes)
+                    {
+                        
+                        if (type.parentTypeName != string.Empty && 
+                            type.parentTypeName == parameter.objectType.typeName &&
+                            !predicate.parametersTypes.Contains(type.typeName))
+                        {
+                            predicate.parametersTypes.Add(type.typeName);
+                        }
+                    }
+                }
             }
 
             /* CREATE PDDL ACTIONS*/
@@ -50,11 +98,11 @@ public static class Parser
                 foreach (var parameter in action.Parameters)
                 {
                     // parameter in form name-type added to parameters list
-                    actionParams.Add(new PddlObject(parameter.Value.ToString(), parameter.Type.ToString()));
+                    actionParams.Add(new PddlObject(parameter.Value.ToString(), tempTypesDictionary[parameter.Type.ToString()]));
                 }
 
                 /* Action's Effects */
-                var effects = new List<PddlEffect>();
+                var effects = new List<PddlEffectPredicate>();
                 // Get effects list in PDDL (and (..)..) conjunction effect list of predicates
                 var effect = (ConjunctionEffect) action.Effect;
                 // Loop through effects list
@@ -69,10 +117,9 @@ public static class Parser
                         var indexes = new List<int>();
                         foreach (var parameter in negatedPredicate.Effects.Parameters)
                         {
-                            var t = actionParams.FindIndex(a => a.name.Equals(parameter.ToString()));
-                            indexes.Add(actionParams.FindIndex(a => a.name.Equals(parameter.ToString())));
+                            indexes.Add(actionParams.FindIndex(a => a.objectName.Equals(parameter.ToString())));
                         }
-                        effects.Add(new PddlEffect(negatedPredicate.Effects.Name.Value, true, indexes));
+                        effects.Add(new PddlEffectPredicate(negatedPredicate.Effects.Name.Value, true, indexes));
                     }
                     else
                     {
@@ -80,12 +127,10 @@ public static class Parser
                         var indexes = new List<int>();
                         foreach (var parameter in regularPredicate.Effects.Parameters)
                         {
-                            indexes.Add(actionParams.FindIndex(a => a.name.Equals(parameter.ToString())));
+                            indexes.Add(actionParams.FindIndex(a => a.objectName.Equals(parameter.ToString())));
                         }
-                        effects.Add(new PddlEffect(regularPredicate.Effects.Name.Value, false, indexes));
-                        
+                        effects.Add(new PddlEffectPredicate(regularPredicate.Effects.Name.Value, false, indexes));
                     }
-                    Debug.Log(effect);
                 }
 
                 // add action to list
@@ -101,42 +146,43 @@ public static class Parser
 
         predicates = domainPredicates;
         actions = domainActions;
+        types = domainTypes;
     }
 
 
     public static void ParseProblem(string problemText, out List<string> pTypes, out List<PddlObject> objects,
-        out List<PddlInit> initPredicates)
+        out List<PddlInitPredicate> initPredicates)
     {
         // Instancing the PDDL parser 
         var parser = new PDDL12Parser();
 
         var problemTypes = new List<string>();
         var problemObjects = new List<PddlObject>();
-        var problemInit = new List<PddlInit>();
+        var problemInit = new List<PddlInitPredicate>();
 
         #region PROBLEM PARSE
 
         try
         {
             IReadOnlyList<IDefinition> list = parser.Parse(problemText);
-            var p = (Problem) list[0];
+            var problem = (Problem) list[0];
 
             // OBJECTS & TYPES
             // using set to remove duplicates types
-            HashSet<string> types = new HashSet<string>();
-            foreach (IObject o in p.Objects)
+            var types = new HashSet<string>();
+            foreach (var _object in problem.Objects)
             {
                 // only if type doesn't exist in set add to the domain elements
-                if (types.Add(o.Type.ToString()))
+                if (types.Add(_object.Type.ToString()))
                 {
-                    problemTypes.Add(o.Type.ToString());
+                    problemTypes.Add(_object.Type.ToString());
                 }
 
-                problemObjects.Add(new PddlObject(o.Value.ToString().ToLower(), o.Type.ToString()));
+                problemObjects.Add(new PddlObject(_object.Value.ToString().ToLower(), new PddlType(_object.Type.ToString())));
             }
 
             // INIT CODE
-            foreach (var predicate in p.Initial)
+            foreach (var predicate in problem.Initial)
             {
                 /* Predicate Parameters*/
                 var predicateParams = new List<string>();
@@ -147,7 +193,7 @@ public static class Parser
                     predicateParams.Add(parameter.Value);
                 }
 
-                problemInit.Add(new PddlInit(predicate.Name.Value, predicateParams, !predicate.Positive));
+                problemInit.Add(new PddlInitPredicate(predicate.Name.Value, predicateParams, !predicate.Positive));
             }
         }
         catch (PDDLSyntaxException pe)
@@ -164,7 +210,7 @@ public static class Parser
 
     public static List<PlanAction> ParsePlan(JSONNode response)
     {
-        List<PlanAction> actions = new List<PlanAction>();
+        var actions = new List<PlanAction>();
         var planLength = int.Parse(response["result"]["length"]);
         for (var i = 0; i < planLength; i++)
         {

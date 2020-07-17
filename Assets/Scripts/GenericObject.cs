@@ -24,7 +24,7 @@ public class GenericObject : MonoBehaviour
     private Text _nameText;
     private Text _statesText;
     private Dictionary<string,bool> _objectStates;
-    
+    private Renderer modelRenderer;
     
     [Header("Object Options")]
     public bool randomColor;
@@ -47,10 +47,10 @@ public class GenericObject : MonoBehaviour
         _front = transforms.Find("Front");
         _back = transforms.Find("Back");
         _stateCanvas = transform.Find("State Canvas").gameObject;
+        modelRenderer = transform.Find("3DModel").GetComponentInChildren<Renderer>();
         // set color if random
         if (randomColor)
         {
-            var modelRenderer = transform.Find("3DModel").GetComponentInChildren<Renderer>();
             modelRenderer.material.color = GenerateRandomColor();
         }
         // attach nav mesh agent
@@ -121,16 +121,17 @@ public class GenericObject : MonoBehaviour
     /* ================================= */
     /* ========== ANIMATIONS =========== */
     /* ================================= */
-    
+
     /// <summary>
     /// Simple move method
     /// </summary>
     /// <param name="target">Target point in space (Vector3)</param>
+    /// <param name="instant">instant movement</param>
     /// <returns>Coroutine</returns>
-    public IEnumerator Move(Vector3 target)
+    public IEnumerator Move(Vector3 target, bool instant = false)
     {
         StopAllCoroutines();
-        yield return StartCoroutine(MoveTo(transform.position, target));
+        yield return StartCoroutine(MoveTo(transform.position, target,instant));
     }
     
     /// <summary>
@@ -140,44 +141,45 @@ public class GenericObject : MonoBehaviour
     /// <param name="alignment">Alignment enumerator</param>
     /// <param name="offset">Offset Vector3</param>
     /// <returns></returns>
-    public IEnumerator MoveToObjectAlignedTo(GenericObject targetObject, Alignment alignment = Alignment.None, Vector3 offset = new Vector3())
+    public IEnumerator MoveToObjectAlignedTo(GenericObject targetObject, Alignment alignment = Alignment.None, Vector3 offset = new Vector3(), bool instant = false)
     {
         StopAllCoroutines();
         switch (alignment)
         {
             case Alignment.Top:
-                yield return StartCoroutine(MoveTo(_bottom.position, targetObject._top.position + offset));
+                yield return StartCoroutine(MoveTo(_bottom.position, targetObject._top.position + offset,instant));
                 break;
             case Alignment.Bottom:
-                yield return StartCoroutine(MoveTo(_top.position, targetObject._bottom.position + offset));
+                yield return StartCoroutine(MoveTo(_top.position, targetObject._bottom.position + offset,instant));
                 break;
             case Alignment.Left:
-                yield return StartCoroutine(MoveTo(_right.position, targetObject._left.position + offset));
+                yield return StartCoroutine(MoveTo(_right.position, targetObject._left.position + offset,instant));
                 break;
             case Alignment.Right:
-                yield return StartCoroutine(MoveTo(_left.position, targetObject._right.position + offset));
+                yield return StartCoroutine(MoveTo(_left.position, targetObject._right.position + offset,instant));
                 break;
             case Alignment.Front:
-                yield return StartCoroutine(MoveTo(_back.position, targetObject._front.position + offset));
+                yield return StartCoroutine(MoveTo(_back.position, targetObject._front.position + offset,instant));
                 break;
             case Alignment.Back:
-                yield return StartCoroutine(MoveTo(_front.position, targetObject._back.position + offset));
+                yield return StartCoroutine(MoveTo(_front.position, targetObject._back.position + offset,instant));
                 break;
             default:
-                yield return StartCoroutine(MoveTo(transform.position, targetObject.transform.position + offset));
+                yield return StartCoroutine(MoveTo(transform.position, targetObject.transform.position + offset,instant));
                 break;
         }
 
         yield return null;
     }
-    
+
     /// <summary>
     /// Main movement Coroutine
     /// </summary>
     /// <param name="start">Start point in world</param>
     /// <param name="target">Target point in world</param>
+    /// <param name="instant">instant movement</param>
     /// <returns></returns>
-    private IEnumerator MoveTo(Vector3 start, Vector3 target)
+    private IEnumerator MoveTo(Vector3 start, Vector3 target, bool instant)
     {
         var position1 = transform.position;
         var pointOffset = position1 - start;
@@ -185,16 +187,19 @@ public class GenericObject : MonoBehaviour
 
         if (!usePathPlanning)
         {
-            var offSet = position1 - newTarget;
-            var sqrOffSet = offSet.sqrMagnitude;
-            while (sqrOffSet > 0.05f)
+            if (!instant)
             {
-                var position = transform.position;
-                position = Vector3.Lerp(position, newTarget, 0.1f);
-                transform.position = position;
-                offSet = position - newTarget;
-                sqrOffSet = offSet.sqrMagnitude;
-                yield return new WaitForSeconds(0.1f);
+                var offSet = position1 - newTarget;
+                var sqrOffSet = offSet.sqrMagnitude;
+                while (sqrOffSet > 0.05f)
+                {
+                    var position = transform.position;
+                    position = Vector3.Lerp(position, newTarget, 0.2f);
+                    transform.position = position;
+                    offSet = position - newTarget;
+                    sqrOffSet = offSet.sqrMagnitude;
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
             transform.position = newTarget;
         }
@@ -226,6 +231,15 @@ public class GenericObject : MonoBehaviour
         Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
         Gizmos.DrawCube(position, Vector3.one);
         Gizmos.color = Color.gray;
+    }
+
+    /// <summary>
+    /// Set new color to mesh 3D model
+    /// </summary>
+    /// <param name="newColor"></param>
+    public void ChangeColor(Color newColor)
+    {
+        modelRenderer.material.color = newColor;
     }
     
     /// <summary>
