@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e2c8e0c3f2247c5bbb9aeb09c37b9c4, type: 3}
-  m_Name: nongoal
+  m_Name: ChangeColor
   m_EditorClassIdentifier: 
   waitBetweenActivations: 0
   timeBetweenActivations: 0.3

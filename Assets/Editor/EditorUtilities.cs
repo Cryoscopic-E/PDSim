@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.IO;
 using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Editor
 {
@@ -99,15 +100,7 @@ namespace Editor
             }
             // Create simulation base folder
             Directory.CreateDirectory(path);
-            
-            // Create Simulation Setting Prefab
-            var newSimSetting = CreateInstance<SimulationSettings> ();
-            newSimSetting.simulationName = _simulationName;
-            newSimSetting.domain = _domain;
-            newSimSetting.Initialize();
-            var newSimSettingsPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Settings.asset");
-            AssetDatabase.CreateAsset (newSimSetting, newSimSettingsPath);
-            
+
             // Create Simulation Environment Prefab
             var newSimEnv = CreateInstance<SimulationEnvironment> ();
             newSimEnv.problem = _problem;
@@ -124,11 +117,14 @@ namespace Editor
             
             var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             newScene.name = _simulationName;
-            var sceneManager = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/SimulationManager.prefab");
-            var sceneElements = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Scene Elements.prefab");
-            PrefabUtility.InstantiatePrefab(sceneElements);
-            PrefabUtility.InstantiatePrefab(sceneManager);
-            
+            var simulationManagerAsset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/SimulationManager.prefab");
+            var sceneElementsAsset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Scene Elements.prefab");
+            Instantiate(sceneElementsAsset);
+            var simulationManager = Instantiate(simulationManagerAsset);
+            // Initialize simulation manager
+            simulationManager.GetComponent<SimulationManager>().domain = _domain;
+            simulationManager.GetComponent<SimulationManager>().Initialize();
+            simulationManager.GetComponent<SimulationManager>().simulationEnvironment = newSimEnv;
             // Save changes
             EditorSceneManager.SaveScene(newScene, "Assets/Scenes/"+_simulationName+".unity");
             AssetDatabase.SaveAssets ();

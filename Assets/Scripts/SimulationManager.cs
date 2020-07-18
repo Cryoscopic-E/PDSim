@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -9,20 +10,42 @@ public class SimulationManager : MonoBehaviour
     private readonly string SIM_OBJECT_HOLDER = "Simulation Objects";
     private readonly string CUSTOM_OBJECT_HOLDER = "Custom Objects";
 
-    public SimulationSettings simulationSettings;
     public SimulationEnvironment simulationEnvironment;
-
-
+    
     private Transform _objectsHolder;
     private Transform _customHolder;
+    private PlanSolver _planSolver;
+    private HudController _hudController;
 
     private Dictionary<string, GenericObject> _objectsDictionary;
     private Dictionary<string, PddlType> _objectsTypeDictionary;
     private Dictionary<string, PddlDomainPredicate> _predicatesDictionary;
     
-    private PlanSolver _planSolver;
-    private HudController _hudController;
+    
 
+    // ===============
+    // DOMAIN SETTINGS
+    // ===============
+    
+    // The domain file
+    [SerializeField] public TextAsset domain;
+    // Domain's list of actions
+    [SerializeField] public List<PddlAction> actions;
+    // Domain's list of predicates
+    [SerializeField] public List<PddlDomainPredicate> predicates;
+    // Domain's list of types
+    [SerializeField] public List<string> typesToDefine;
+    [SerializeField] public List<int> typesDefined; //maps indexes to typesToDefine
+    [SerializeField] public List<PddlType> types;
+    
+    
+    // name of simulation
+    [SerializeField] public string simulationName;
+    
+
+    // Generic object models for types
+    [SerializeField] public List<GameObject> typesGameObject;
+    
     private void Start()
     {
         _hudController = FindObjectOfType<HudController>();
@@ -50,7 +73,7 @@ public class SimulationManager : MonoBehaviour
 
         // CREATE PREDICATES DICTIONARY
         _predicatesDictionary = new Dictionary<string, PddlDomainPredicate>();
-        foreach (var predicate in simulationSettings.predicates)
+        foreach (var predicate in predicates)
         {
             _predicatesDictionary.Add(predicate.predicateName.ToLower(), predicate);
         }
@@ -60,8 +83,8 @@ public class SimulationManager : MonoBehaviour
         foreach (var problemObject in simulationEnvironment.objects)
         {
             //check type tree
-            var type = simulationSettings.types.FindIndex(t => t.typeName == problemObject.objectType.typeName);
-            _objectsTypeDictionary.Add(problemObject.objectName.ToLower(), simulationSettings.types[type]);
+            var type = types.FindIndex(t => t.typeName == problemObject.objectType.typeName);
+            _objectsTypeDictionary.Add(problemObject.objectName.ToLower(), types[type]);
         }
     }
 
@@ -149,7 +172,7 @@ public class SimulationManager : MonoBehaviour
         //NEW
         foreach (var action in simulationEnvironment.plan.actions)
         {
-            var effects = simulationSettings.GetActionEffects(action.actionName);
+            var effects = GetActionEffects(action.actionName);
             var executionDictionary = new Dictionary<int, List<Execution>>();
             foreach (var effect in effects)
             {
@@ -220,79 +243,9 @@ public class SimulationManager : MonoBehaviour
             }
             
         }
-
-
-        // OLD
-        // foreach (var action in simulationEnvironment.plan.actions)
-        // {
-        //     var effects = simulationSettings.GetActionEffects(action.actionName);
-        //     foreach (var effect in effects)
-        //     {
-        //         // get predicate name
-        //         var predicateName = effect.predicateName.ToLower();
-        //         // get all command settings
-        //         var commandsSettings = _predicatesDictionary[predicateName].predicateCommandSettings;
-        //         // if no command continue loop
-        //         if (commandsSettings.Count <= 0) continue;
-        //
-        //         // todo move in predicate
-        //         // get first object on the action parameters
-        //         var theObject = GetObject(action.parameters[effect.attributesIndexes[0]].ToLower());
-        //         // change its state description in HUD
-        //         theObject.SetState(effect.predicateName, effect.isNegated);
-        //
-        //         // group commands by order of execution
-        //         var executions = commandsSettings.GroupBy(c => c.orderOfExecution);
-        //
-        //         // for each group of commands
-        //         foreach (var group in executions)
-        //         {
-        //             // coroutine list to start
-        //             var coroutineToStart = new List<PredicateCommand>();
-        //             // for each command with same order of execution
-        //             foreach (var order in @group)
-        //             {
-        //                 var typeNameOfFirstParameterSetOnCommand = simulationEnvironment.types[order.predicateTypeIndex];
-        //                 typeNameOfFirstParameterSetOnCommand = _predicatesDictionary[predicateName].parametersTypes[0];
-        //                 
-        //                 var firstParameterObjectName = action.parameters[effect.attributesIndexes[0]].ToLower();
-        //                 var firstParameterObject = GetObject(firstParameterObjectName);
-        //                 var typeNameOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObject.name].typeName;
-        //
-        //                 var typeOfFirstParameterOfEffect = _objectsTypeDictionary[firstParameterObjectName];
-        //                 var parentTypeOfFirstParameterOfEffect = typeOfFirstParameterOfEffect.parentTypeName;
-        //                 // if same type or children
-        //                 if(typeNameOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand ||
-        //                    parentTypeOfFirstParameterOfEffect == typeNameOfFirstParameterSetOnCommand
-        //                    )
-        //                 {
-        //                     Debug.Log(firstParameterObjectName);
-        //                     coroutineToStart.Add(order.commandBehavior);
-        //                 }
-        //
-        //                 
-        //             }
-        //             // starts all coroutines
-        //             foreach (var command in coroutineToStart)
-        //             {
-        //                 var parameters = new List<string>();
-        //                 foreach (var index in effect.attributesIndexes)
-        //                 {
-        //                     parameters.Add(action.parameters[index]);
-        //                 }
-        //
-        //                 var objects = GetObjects(parameters);
-        //                 command.SetAttributes(objects);
-        //                 yield return command.Execute(effect.isNegated);
-        //             }
-        //         }
-        //     }
-        // }
-
         yield return null;
     }
-
-    // CALLED FROM INSPECTOR
+    
     public void GenerateScene()
     {
         //TODO check types from problem with user defined types
@@ -302,7 +255,7 @@ public class SimulationManager : MonoBehaviour
         // Generate Simulation Objects
         for (int i = 0; i < simulationEnvironment.objects.Count; i++)
         {
-            var gameObj = simulationSettings.GetPrefabWithType(simulationEnvironment.objects[i].objectType);
+            var gameObj = GetPrefabWithType(simulationEnvironment.objects[i].objectType);
             if (gameObj == null) continue;
             var clone = Instantiate(gameObj, simulationEnvironment.objectsPositions[i], Quaternion.identity,
                 _objectsHolder);
@@ -314,7 +267,7 @@ public class SimulationManager : MonoBehaviour
     {
         var plan = new Plan();
         yield return _planSolver.RequestPlan(
-            simulationSettings.domain.text,
+            domain.text,
             simulationEnvironment.problem.text,
             value => plan = value);
         simulationEnvironment.SavePlan(plan);
@@ -354,8 +307,7 @@ public class SimulationManager : MonoBehaviour
 
         return holder.transform;
     }
-
-
+    
     public void Play()
     {
         Time.timeScale = 1.0f;
@@ -382,8 +334,7 @@ public class SimulationManager : MonoBehaviour
 
         simulationEnvironment.Save();
     }
-
-
+    
     private class Execution
     {
         public List<string> parameterObjects;
@@ -395,5 +346,63 @@ public class SimulationManager : MonoBehaviour
             this.parameterObjects = parameterObjects;
             this.negatedEffect = negatedEffect;
         }
+    }
+    
+    
+    public List<PredicateCommandSettings> GetPredicateCommandSettings(string predicateName)
+    {
+        var index = predicates.FindIndex(a => a.predicateName.Contains(predicateName));
+        return predicates[index].predicateCommandSettings;
+    }
+    
+    public List<PddlEffectPredicate> GetActionEffects(string actionName)
+    {
+        foreach (var action in actions)
+        {
+            if (string.Equals(action.actionName, actionName, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return action.effects;
+            }
+        }
+        return null;
+    }
+    
+    public GameObject GetPrefabWithType(PddlType type)
+    {
+        var index = typesToDefine.FindIndex(a => a.Contains(type.typeName));
+
+        var definedIndex = typesDefined.FindIndex(t => t == index);
+        return index != -1 ? typesGameObject[definedIndex] : null;
+    }
+
+    public void Initialize()
+    {
+        // parse elements
+        Parser.ParseDomain(
+            domain.text,
+            out types,
+            out predicates,
+            out  actions);
+                    
+        // Create list of types string to define from original list of types
+        typesToDefine = new List<string>();
+        foreach (var type in types)
+        {
+            typesToDefine.Add(type.typeName);
+        }
+        // Create Empty list of defined types indexes(to help showing models in the inspector)
+        typesDefined = new List<int>();
+        // Create Empty list of game objects representing the models
+        typesGameObject = new List<GameObject>();
+    }
+
+    public void Reset()
+    {
+        actions = null;
+        predicates = null;
+        types = null;
+        typesDefined = null;
+        typesToDefine = null;
+        typesGameObject = null;
     }
 }
