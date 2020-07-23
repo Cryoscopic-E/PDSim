@@ -123,8 +123,10 @@ namespace Editor
             var simulationManager = Instantiate(simulationManagerAsset);
             // Initialize simulation manager
             simulationManager.GetComponent<SimulationManager>().domain = _domain;
+            simulationManager.GetComponent<SimulationManager>().simulationName = _simulationName;
             simulationManager.GetComponent<SimulationManager>().Initialize();
             simulationManager.GetComponent<SimulationManager>().simulationEnvironment = newSimEnv;
+            
             // Save changes
             EditorSceneManager.SaveScene(newScene, "Assets/Scenes/"+_simulationName+".unity");
             AssetDatabase.SaveAssets ();

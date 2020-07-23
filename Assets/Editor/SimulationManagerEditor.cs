@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -30,7 +32,24 @@ namespace Editor
             {
                 if (GUILayout.Button("Generate Scene"))
                 {
-                    _simulationManager.GenerateScene();
+                    _simulationManager.SetHolders();
+                    // all environment types defined
+                    var listDefined = _simulationManager.typesDefined.Select(t => _simulationManager.typesToDefine[t]).ToList();
+                    var typesEnvironment = _simulationManager.simulationEnvironment.types;
+                    var allTypesDefined = typesEnvironment.Intersect(listDefined).Count() == typesEnvironment.Count();
+                    if (allTypesDefined)
+                    {
+                        if (!(_simulationManager.GetHolder(_simulationManager.SIM_OBJECT_HOLDER).childCount > 0))
+                        {
+                            _simulationManager.GenerateScene();
+                        }
+                    }
+                    else
+                    {
+                        EditorApplication.Beep();
+                        EditorUtility.DisplayDialog("Types Models Missing","Please define all types Models", "Close");
+                    }
+                    
                 }
                 if (GUILayout.Button("Save Environment"))
                 {

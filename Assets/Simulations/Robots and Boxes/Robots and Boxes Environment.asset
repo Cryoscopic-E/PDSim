@@ -1,0 +1,244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0e36ac41634e339ece15a48c90f05c, type: 3}
+  m_Name: Robots and Boxes Environment
+  m_EditorClassIdentifier: 
+  problem: {fileID: 4900000, guid: 6b24e83a3c41cc14f8b670223e99ce03, type: 3}
+  types:
+  - room
+  - robot
+  - box
+  plan:
+    actions:
+    - actionName: move_robot
+      parameters:
+      - robot2
+      - a
+      - f
+    - actionName: pick_up_box
+      parameters:
+      - robot2
+      - box1
+      - f
+    - actionName: move_robot
+      parameters:
+      - robot2
+      - f
+      - a
+    - actionName: drop_down_box
+      parameters:
+      - robot2
+      - box1
+      - a
+    - actionName: move_robot
+      parameters:
+      - robot1
+      - d
+      - c
+    - actionName: move_robot
+      parameters:
+      - robot2
+      - a
+      - f
+    - actionName: move_robot
+      parameters:
+      - robot2
+      - f
+      - e
+    - actionName: pick_up_box
+      parameters:
+      - robot2
+      - box3
+      - e
+    - actionName: move_robot
+      parameters:
+      - robot2
+      - e
+      - f
+    - actionName: drop_down_box
+      parameters:
+      - robot2
+      - box3
+      - f
+    - actionName: move_robot
+      parameters:
+      - robot1
+      - c
+      - d
+    - actionName: move_robot
+      parameters:
+      - robot1
+      - d
+      - b
+    - actionName: pick_up_box
+      parameters:
+      - robot1
+      - box2
+      - b
+    - actionName: move_robot
+      parameters:
+      - robot1
+      - b
+      - d
+    - actionName: move_robot
+      parameters:
+      - robot1
+      - d
+      - c
+    - actionName: drop_down_box
+      parameters:
+      - robot1
+      - box2
+      - c
+  objects:
+  - objectName: a
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: b
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: c
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: d
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: e
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: f
+    objectType:
+      typeName: room
+      parentTypeName: 
+  - objectName: robot1
+    objectType:
+      typeName: robot
+      parentTypeName: 
+  - objectName: robot2
+    objectType:
+      typeName: robot
+      parentTypeName: 
+  - objectName: box1
+    objectType:
+      typeName: box
+      parentTypeName: 
+  - objectName: box2
+    objectType:
+      typeName: box
+      parentTypeName: 
+  - objectName: box3
+    objectType:
+      typeName: box
+      parentTypeName: 
+  initBlock:
+  - predicateName: at_location
+    isNegated: 0
+    objectParameters:
+    - robot2
+    - a
+  - predicateName: at_location
+    isNegated: 0
+    objectParameters:
+    - robot1
+    - d
+  - predicateName: at_location
+    isNegated: 0
+    objectParameters:
+    - box1
+    - f
+  - predicateName: at_location
+    isNegated: 0
+    objectParameters:
+    - box2
+    - b
+  - predicateName: at_location
+    isNegated: 0
+    objectParameters:
+    - box3
+    - e
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - a
+    - c
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - c
+    - a
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - a
+    - f
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - f
+    - a
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - f
+    - e
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - e
+    - f
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - c
+    - d
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - d
+    - c
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - b
+    - d
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - d
+    - b
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - b
+    - e
+  - predicateName: path
+    isNegated: 0
+    objectParameters:
+    - e
+    - b
+  objectsPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}

@@ -32,19 +32,17 @@ public class FirstPersonCamera : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.C))
             controlEnabled = !controlEnabled;
 
-        if (controlEnabled)
-        {
-            rotX += Input.GetAxis("Mouse X")*lookSpeed;
-            rotY += Input.GetAxis("Mouse Y")*lookSpeed;
-            rotY = Mathf.Clamp (rotY, -90, 90);
+        if (!controlEnabled) return;
+        rotX += Input.GetAxis("Mouse X")*lookSpeed;
+        rotY += Input.GetAxis("Mouse Y")*lookSpeed;
+        rotY = Mathf.Clamp (rotY, -90, 90);
  
-            transform.localRotation = Quaternion.AngleAxis(rotX, Vector3.up);
-            transform.localRotation *= Quaternion.AngleAxis(rotY, Vector3.left);
+        transform.localRotation = Quaternion.AngleAxis(rotX, Vector3.up);
+        transform.localRotation *= Quaternion.AngleAxis(rotY, Vector3.left);
  
-            transform.position += transform.forward*moveSpeed*Input.GetAxis("Vertical")*_delta;
-            transform.position += transform.right*moveSpeed*Input.GetAxis("Horizontal")*_delta;
-        }
-        
-        
+        transform.position += transform.forward*moveSpeed*Input.GetAxisRaw("Vertical")*_delta;
+        transform.position += transform.right*moveSpeed*Input.GetAxisRaw("Horizontal")*_delta;
+
+
     }
 }

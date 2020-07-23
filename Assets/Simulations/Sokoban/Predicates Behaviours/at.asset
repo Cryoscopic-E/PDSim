@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f14e63dea794675ad736373f65b5842, type: 3}
   m_Name: at
   m_EditorClassIdentifier: 
-  waitBetweenActivations: 0
-  timeBetweenActivations: 0.3
-  alignment: 0
+  waitBetweenActivations: 1
+  timeBetweenActivations: 0.1
+  alignment: 1
+  attachDetachToTarget: 0
   randomRadius: 0
   radius: 0
   matchHeightFirst: 0

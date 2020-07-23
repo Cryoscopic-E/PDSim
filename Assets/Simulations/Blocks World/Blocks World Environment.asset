@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0e36ac41634e339ece15a48c90f05c, type: 3}
+  m_Name: Blocks World Environment
+  m_EditorClassIdentifier: 
+  problem: {fileID: 4900000, guid: 32651a0998e4b504899638e44d376fad, type: 3}
+  types:
+  - block
+  plan:
+    actions:
+    - actionName: pick-up
+      parameters:
+      - b
+    - actionName: stack
+      parameters:
+      - b
+      - a
+    - actionName: pick-up
+      parameters:
+      - c
+    - actionName: stack
+      parameters:
+      - c
+      - b
+    - actionName: pick-up
+      parameters:
+      - d
+    - actionName: stack
+      parameters:
+      - d
+      - c
+  objects:
+  - objectName: d
+    objectType:
+      typeName: block
+      parentTypeName: 
+  - objectName: b
+    objectType:
+      typeName: block
+      parentTypeName: 
+  - objectName: a
+    objectType:
+      typeName: block
+      parentTypeName: 
+  - objectName: c
+    objectType:
+      typeName: block
+      parentTypeName: 
+  initBlock:
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - c
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - a
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - b
+  - predicateName: clear
+    isNegated: 0
+    objectParameters:
+    - d
+  - predicateName: ontable
+    isNegated: 0
+    objectParameters:
+    - c
+  - predicateName: ontable
+    isNegated: 0
+    objectParameters:
+    - a
+  - predicateName: ontable
+    isNegated: 0
+    objectParameters:
+    - b
+  - predicateName: ontable
+    isNegated: 0
+    objectParameters:
+    - d
+  - predicateName: handempty
+    isNegated: 0
+    objectParameters: []
+  objectsPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e2c8e0c3f2247c5bbb9aeb09c37b9c4, type: 3}
-  m_Name: ChangeColor
+  m_Name: clear
   m_EditorClassIdentifier: 
-  waitBetweenActivations: 0
-  timeBetweenActivations: 0.3
-  positiveColor: {r: 0, g: 0, b: 0, a: 0}
-  negativeColor: {r: 0, g: 0, b: 0, a: 0}
+  waitBetweenActivations: 1
+  timeBetweenActivations: 0.05
+  positiveColor: {r: 0.8117647, g: 0.8117647, b: 0.8117647, a: 0}
+  negativeColor: {r: 0.5754717, g: 0.24158953, b: 0.5302748, a: 0}

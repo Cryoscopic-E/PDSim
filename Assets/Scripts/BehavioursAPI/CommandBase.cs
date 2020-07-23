@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Base Class for commands
+/// </summary>
 public abstract class CommandBase : ScriptableObject
 {
     public bool waitBetweenActivations = false;

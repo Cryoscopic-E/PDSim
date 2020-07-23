@@ -1,0 +1,292 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0e36ac41634e339ece15a48c90f05c, type: 3}
+  m_Name: Logistic Environment
+  m_EditorClassIdentifier: 
+  problem: {fileID: 4900000, guid: 21cc7f18cb69c4c4fa9069cb6f62290c, type: 3}
+  types:
+  - airplane
+  - airport
+  - location
+  - city
+  - truck
+  - package
+  plan:
+    actions:
+    - actionName: load-truck
+      parameters:
+      - obj23
+      - tru2
+      - pos2
+    - actionName: load-truck
+      parameters:
+      - obj21
+      - tru2
+      - pos2
+    - actionName: drive-truck
+      parameters:
+      - tru2
+      - pos2
+      - apt2
+      - cit2
+    - actionName: load-truck
+      parameters:
+      - obj13
+      - tru1
+      - pos1
+    - actionName: load-truck
+      parameters:
+      - obj11
+      - tru1
+      - pos1
+    - actionName: drive-truck
+      parameters:
+      - tru1
+      - pos1
+      - apt1
+      - cit1
+    - actionName: unload-truck
+      parameters:
+      - obj11
+      - tru1
+      - apt1
+    - actionName: unload-truck
+      parameters:
+      - obj13
+      - tru1
+      - apt1
+    - actionName: unload-truck
+      parameters:
+      - obj21
+      - tru2
+      - apt2
+    - actionName: load-airplane
+      parameters:
+      - obj21
+      - apn1
+      - apt2
+    - actionName: fly-airplane
+      parameters:
+      - apn1
+      - apt2
+      - apt1
+    - actionName: unload-airplane
+      parameters:
+      - obj21
+      - apn1
+      - apt1
+    - actionName: load-truck
+      parameters:
+      - obj21
+      - tru1
+      - apt1
+    - actionName: drive-truck
+      parameters:
+      - tru1
+      - apt1
+      - pos1
+      - cit1
+    - actionName: unload-truck
+      parameters:
+      - obj21
+      - tru1
+      - pos1
+    - actionName: unload-truck
+      parameters:
+      - obj23
+      - tru2
+      - apt2
+    - actionName: fly-airplane
+      parameters:
+      - apn1
+      - apt1
+      - apt2
+    - actionName: load-airplane
+      parameters:
+      - obj23
+      - apn1
+      - apt2
+    - actionName: fly-airplane
+      parameters:
+      - apn1
+      - apt2
+      - apt1
+    - actionName: unload-airplane
+      parameters:
+      - obj23
+      - apn1
+      - apt1
+    - actionName: drive-truck
+      parameters:
+      - tru1
+      - pos1
+      - apt1
+      - cit1
+    - actionName: load-truck
+      parameters:
+      - obj23
+      - tru1
+      - apt1
+    - actionName: drive-truck
+      parameters:
+      - tru1
+      - apt1
+      - pos1
+      - cit1
+    - actionName: unload-truck
+      parameters:
+      - obj23
+      - tru1
+      - pos1
+  objects:
+  - objectName: apn1
+    objectType:
+      typeName: airplane
+      parentTypeName: 
+  - objectName: apt1
+    objectType:
+      typeName: airport
+      parentTypeName: 
+  - objectName: apt2
+    objectType:
+      typeName: airport
+      parentTypeName: 
+  - objectName: pos2
+    objectType:
+      typeName: location
+      parentTypeName: 
+  - objectName: pos1
+    objectType:
+      typeName: location
+      parentTypeName: 
+  - objectName: cit2
+    objectType:
+      typeName: city
+      parentTypeName: 
+  - objectName: cit1
+    objectType:
+      typeName: city
+      parentTypeName: 
+  - objectName: tru2
+    objectType:
+      typeName: truck
+      parentTypeName: 
+  - objectName: tru1
+    objectType:
+      typeName: truck
+      parentTypeName: 
+  - objectName: obj23
+    objectType:
+      typeName: package
+      parentTypeName: 
+  - objectName: obj22
+    objectType:
+      typeName: package
+      parentTypeName: 
+  - objectName: obj21
+    objectType:
+      typeName: package
+      parentTypeName: 
+  - objectName: obj13
+    objectType:
+      typeName: package
+      parentTypeName: 
+  - objectName: obj12
+    objectType:
+      typeName: package
+      parentTypeName: 
+  - objectName: obj11
+    objectType:
+      typeName: package
+      parentTypeName: 
+  initBlock:
+  - predicateName: in-city
+    isNegated: 0
+    objectParameters:
+    - pos1
+    - cit1
+  - predicateName: in-city
+    isNegated: 0
+    objectParameters:
+    - apt1
+    - cit1
+  - predicateName: in-city
+    isNegated: 0
+    objectParameters:
+    - pos2
+    - cit2
+  - predicateName: in-city
+    isNegated: 0
+    objectParameters:
+    - apt2
+    - cit2
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - apn1
+    - apt2
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - tru1
+    - pos1
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj11
+    - pos1
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj12
+    - pos1
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj13
+    - pos1
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - tru2
+    - pos2
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj21
+    - pos2
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj22
+    - pos2
+  - predicateName: at
+    isNegated: 0
+    objectParameters:
+    - obj23
+    - pos2
+  objectsPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
