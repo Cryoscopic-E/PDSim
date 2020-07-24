@@ -5,4 +5,4 @@
 The documentation of the project containing the unity project is available [here](https://docs.google.com/document/d/1vBPuKCpab_yow1uSjSZyELfBAA3isySp8ECWjnVoWls/edit?usp=sharing) 
 
 ## Acknowledgement
-[@sunsided[(https://github.com/sunsided) for his [pddl parser](https://github.com/sunsided/pddl)
+[@sunsided](https://github.com/sunsided) for his [pddl parser](https://github.com/sunsided/pddl)
