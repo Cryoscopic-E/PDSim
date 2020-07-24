@@ -1,4 +1,4 @@
-# PddlPlanVisualizer
+# PDSim
  MSc dissertation project. Visualization and animation of PDDL plans.
 
 ## Documentation
