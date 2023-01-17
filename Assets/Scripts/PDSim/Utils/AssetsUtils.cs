@@ -1,3 +1,6 @@
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEditor.SceneTemplate;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
@@ -8,6 +11,7 @@ namespace PDSim.Utils
         private const string SimulationsRootFolder = "Assets/_PDSim_Simulations/";
         private const string SimObjectsFolder = "Objects/";
         private const string SimProblemFolder = "Problems/";
+        private const string SceneTemplatePath = "Assets/Scenes/Templates/PDSimSceneTemplate.scenetemplate";
 
         private static void CreateFolderIfDontExist(string path)
         {
@@ -101,6 +105,19 @@ namespace PDSim.Utils
             var simulationPath = SimulationsRootFolder + simulationName + "/";
 
             return DirectoryExist(simulationPath);
+        }
+
+        public  static  void  CreateSimulationScene(string simulationName)
+        {
+            var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(SceneTemplatePath);
+
+            var newScenePath =  GetCurrentSimulationScenePath(simulationName);
+            
+            CreateFolders(simulationName);
+            
+            var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
+            
+            EditorSceneManager.SaveScene(result.scene, newScenePath);
         }
     }
 }

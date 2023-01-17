@@ -24,6 +24,7 @@ namespace Editor.UI
         private Button _createSimulationButton;
         private Button _cancelButton;
         
+        private  ServerStatus _serverStatus;
         public void CreateGUI()
         {
             // Set Window not resizable
@@ -88,6 +89,49 @@ namespace Editor.UI
             yield return null;
         }
 
+        /// <summary>
+        ///  Send Parse request to PDSim Backend Server
+        /// </summary>
+        /// <returns></returns>
+
+        private IEnumerator ParseFiles()
+        {
+            var request = new BackendParseRequest(_domainPathText.value, _problemPathText.value);
+            
+            // Check  for errors (parse_error, syntax_error, assertion_error,error)
+            var response = request.Connect();
+            if (response["status"]?.ToString() == "OK")
+            {
+                Debug.Log("Parse Successful");
+                Debug.Log(response["plan"]);
+            }
+            else
+            {
+                if (response["parse_error"] != null)
+                {
+                    EditorUtility.DisplayDialog("Parse Error", response["parse_error"].ToString(), "OK");
+                    yield break;
+                }
+                if (response["syntax_error"] != null)
+                {
+                    EditorUtility.DisplayDialog("Syntax Error", response["syntax_error"].ToString(), "OK");
+                    yield break;
+                }
+                if (response["assertion_error"] != null)
+                {
+                    EditorUtility.DisplayDialog("Assertion Error", response["assertion_error"].ToString(), "OK");
+                    yield break;
+                }
+                if (response["error"] != null)
+                {
+                    EditorUtility.DisplayDialog("Error", response["error"].ToString(), "OK");
+                    yield break;
+                }
+                
+            }
+            yield return null;
+        }
+
         private IEnumerator InitSimulation()
         {
             // Disable buttons
@@ -95,6 +139,7 @@ namespace Editor.UI
             
             // Check  connection
             yield return  EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
+                
             // Check if connection is successful
             if (!_connectionStatus)
             {
@@ -104,6 +149,13 @@ namespace Editor.UI
                 yield break;
             }
             
+            // Display loading bar 
+            EditorUtility.DisplayProgressBar("Parsing Files", "Creating Simulation", 0.5f);
+            
+            // Launch Parsing
+            yield return  EditorCoroutineUtility.StartCoroutine(ParseFiles(), this);
+            
+            EditorUtility.ClearProgressBar();
             
             // Create scene from template
             
@@ -114,13 +166,15 @@ namespace Editor.UI
             
             yield return null;
         }
-        
+        /// <summary>
+        ///  Toggle buttons on/off
+        /// </summary>
+        /// <param name="enabled"></param>
         private void ToggleButtons(bool enabled)
         {
             _createSimulationButton.SetEnabled(enabled);
             _cancelButton.SetEnabled(enabled);
         }
-        
         
         /// <summary>
         ///   Validates the form. Returns true if the form is valid, false otherwise.
@@ -271,5 +325,16 @@ namespace Editor.UI
             EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
         }
         #endregion
+    }
+
+    internal struct ServerStatus
+    {
+        public  bool IsConnected { get; set; }
+        public bool ParseRequested { get; set; }
+        public bool PlanRequested { get; set; }
+        public bool ParseError { get; set; }
+        public bool PlanError { get; set; }
+        public string ParseErrorMessage { get; set; }
+        public string PlanErrorMessage { get; set; }
     }
 }
