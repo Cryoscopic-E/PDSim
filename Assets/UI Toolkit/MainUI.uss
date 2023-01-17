@@ -1,0 +1,88 @@
+.buttons {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 20px;
+    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-text-align: middle-center;
+    letter-spacing: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button04.png?fileID=2800000&guid=45545cdd40e4ab64e98cab74e55062d6&type=3#red_button04');
+    -unity-slice-left: 30;
+    -unity-slice-top: 30;
+    -unity-slice-right: 30;
+    -unity-slice-bottom: 30;
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+}
+
+.buttons:hover {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 20px;
+    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-text-align: middle-center;
+    letter-spacing: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button08.png?fileID=2800000&guid=1b7fbbc3cc105c040b1324a760a984b7&type=3#red_button08');
+    -unity-slice-left: 30;
+    -unity-slice-top: 30;
+    -unity-slice-right: 30;
+    -unity-slice-bottom: 30;
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+    color: rgb(118, 118, 118);
+}
+
+.buttons:active {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 20px;
+    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-text-align: middle-center;
+    letter-spacing: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button03.png?fileID=2800000&guid=2bacff7ad0f0ed84b876beea564d506d&type=3#red_button03');
+    -unity-slice-left: 30;
+    -unity-slice-top: 30;
+    -unity-slice-right: 30;
+    -unity-slice-bottom: 30;
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+    color: rgb(118, 118, 118);
+}
+
+.text-header {
+    -unity-font-definition: url('project://database/Assets/UI/Fonts/Header-Font.asset?fileID=11400000&guid=95aef50e924647a4e9223bf631198676&type=2#Header-Font');
+    font-size: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}

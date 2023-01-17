@@ -1,0 +1,31 @@
+.label-header {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(37, 56, 79);
+    text-shadow: 0 0 0 rgba(0, 0, 0, 255);
+    letter-spacing: 0;
+    word-spacing: 0;
+    background-color: rgba(13, 214, 175, 255);
+    -unity-text-align: upper-center;
+}
+
+.unity-text-field {
+    align-items: center;
+    justify-content: center;
+}
+
+.unity-group-box {
+    visibility: visible;
+}
+
+.status-ok {
+    color: rgba(67, 248, 86, 255);
+}
+
+.status-error {
+    color: rgb(255, 48, 0);
+}
+
+.status-warning {
+    color: rgb(255, 244, 0);
+}

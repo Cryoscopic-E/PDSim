@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public abstract class CommandBase : ScriptableObject
 {
+    
     public bool waitBetweenActivations = false;
     public float timeBetweenActivations = 0.3f;
     protected virtual IEnumerator PreExecution()
