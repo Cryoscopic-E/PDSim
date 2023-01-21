@@ -1,4 +1,4 @@
-﻿using PDSim.Types;
+﻿using PDSim.Components;
 using UnityEngine.UIElements;
 
 public class ActionEntryController
@@ -12,7 +12,7 @@ public class ActionEntryController
     }
 
 
-    public void SetActionData(PDAction data)
+    public void SetActionData(PdAction data)
     {
         label.text = data.ToString();
     }

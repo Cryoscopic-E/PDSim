@@ -1,6 +1,8 @@
 using System.Collections;
+using Newtonsoft.Json.Linq;
 using PDSim.Utils;
 using PDSim.Connection;
+using PDSim.Simulation;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -23,7 +25,7 @@ namespace Editor.UI
         private TextField _problemPathText;
         private Button _createSimulationButton;
         private Button _cancelButton;
-        
+        private JObject _parsedJson;
         private  ServerStatus _serverStatus;
         public void CreateGUI()
         {
@@ -129,6 +131,7 @@ namespace Editor.UI
                 }
                 
             }
+            _parsedJson = response;
             yield return null;
         }
 
@@ -159,6 +162,17 @@ namespace Editor.UI
             
             // Create scene from template
             
+            // Create PdSim Environment Scriptable Object
+
+            if (_parsedJson != null && (_parsedJson!= null || !_parsedJson.ContainsKey("error")))
+            {
+                var instance = CreateInstance<PdSimEnvironment>();
+                instance.name = _simulationNameField.value;
+                instance.CreateInstance("dew", "fwe", _parsedJson);
+                AssetDatabase.CreateAsset(instance, "Assets/" + _simulationNameField.value + ".asset");
+            }
+            
+
             // Save json to simulation folder
             
             // Close window

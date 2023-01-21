@@ -1,5 +1,5 @@
-﻿using PDSim.Types;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PDSim.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -22,9 +22,9 @@ public class PlanActionsListController
         actionsList.onSelectionChange += OnActionSelected;
     }
 
-    List<PDAction> planActions;
+    List<PdAction> planActions;
 
-    public void SetPlanActions(List<PDAction> actions)
+    public void SetPlanActions(List<PdAction> actions)
     {
         planActions = actions;
     }
@@ -67,7 +67,7 @@ public class PlanActionsListController
     {
         foreach (var item in selectedItems)
         {
-            Debug.Log("Selected item: " + (PDAction)item);
+            Debug.Log("Selected item: " + (PdAction)item);
         }
     }
 }
