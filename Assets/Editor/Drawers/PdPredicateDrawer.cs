@@ -30,7 +30,7 @@ namespace Editor.Drawers
 
 
             // Draw label
-            label.text = name + "(" + stringParameters + ")";
+            label.text = name + " (" + stringParameters + ")";
             EditorGUI.LabelField(position, label);
         }
 

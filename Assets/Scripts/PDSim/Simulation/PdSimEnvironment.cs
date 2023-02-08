@@ -17,22 +17,22 @@ namespace PDSim.Simulation
         public List<PdAction> actions;
         public PdTypeTree typeTree;
         public PdProblem problem;
-        public Plan plan;
+        public PdPlan plan;
         public string DomainText { get; set; }
         public string ProblemText { get; set; }
 
-        public void CreateInstance( string domainText, string problemText, JObject parsedPddl )
+        public void CreateInstance( string domainText, string problemText, JObject responseJObject )
         {
             DomainText = domainText;
             ProblemText = problemText;
             
-            //Types
-            typeTree = new PdTypeTree();
-            typeTree.Populate(parsedPddl["types"] as JObject);
+            // //Types
+            // typeTree = new PdTypeTree();
+            // typeTree.Populate(parsedPddl["types"] as JObject);
             
             //Predicates
             fluents = new List<PdTypedPredicate>();
-            var predicates = parsedPddl["predicates"];
+            var predicates = responseJObject["predicates"];
             foreach (var k in predicates.Children<JProperty>())
             {
                 var fluent = new PdTypedPredicate()
@@ -54,7 +54,7 @@ namespace PDSim.Simulation
             // Actions
 
             actions = new List<PdAction>();
-            var parsedActions = parsedPddl["actions"];
+            var parsedActions = responseJObject["actions"];
             foreach (var k in parsedActions.Children<JProperty>())
             {
                 var action = new PdAction
@@ -91,37 +91,58 @@ namespace PDSim.Simulation
             //Initial State
             var initialState = new PdState();
             initialState.fluents = new List<PdBooleanPredicate>();
-            var init = parsedPddl["init"];
+            var init = responseJObject["init"];
             foreach (var k in init.Children<JProperty>())
             {
-                var fluent = new PdBooleanPredicate
-                {
-                    name = k.Name,
-                    attributes = new List<string>()
-                };
                 foreach (var v in k.Value.Children<JObject>())
                 {
-                    fluent.value = v["value"].ToObject<bool>();
+                    var fluent = new PdBooleanPredicate
+                    {
+                        name = k.Name,
+                        attributes = new List<string>(),
+                        value = v["value"].ToObject<bool>()
+                    };
+
                     foreach (var a in v["args"])
                     {
                         fluent.attributes.Add(a.ToString());
                     }
+                    
                     initialState.fluents.Add(fluent);
                 }
             }
             
-            //Goal State
-            // TODO: Implement goal state
-            
             //Objects
-            var objects = parsedPddl["objects"];
+            var objects = responseJObject["objects"];
             var listOfObjects = objects.Children<JProperty>().Select(k => new PdObject { name = k.Name, type = k.Value.ToString() }).ToList();
+            
+            //Plan
+            var parsedPlan = responseJObject["plan"]["actions"];
+            Debug.Log(parsedPlan);
+            plan = new PdPlan
+            {
+                actions = new List<PdPlanAction>()
+            };
+          
+            foreach (var k in parsedPlan.Children<JObject>())
+            {
+                var planAction = new PdPlanAction
+                {
+                    name = k["action_name"].ToString(),
+                    parameters = new List<string>()
+                };
+                Debug.Log(planAction.name);
+                foreach (var v in k["parameters"].Children())
+                {
+                    planAction.parameters.Add(v.ToString());
+                }
+                plan.actions.Add(planAction);
+            }
             
             //Problem
             problem = new PdProblem
             {
                 initialState = initialState,
-                goalState = new PdState(),
                 objects = listOfObjects
             };
 
