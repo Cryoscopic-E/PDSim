@@ -14,7 +14,7 @@ namespace Editor
         private TextAsset _domain;
         private TextAsset _problem;
         
-        [ MenuItem( "PDDL Simulation/New Simulation" ) ]
+        //[ MenuItem( "PDDL Simulation/New Simulation" ) ]
         public static void Init()
         {
             var window = (NewSimulationWindow)GetWindow(typeof(NewSimulationWindow));

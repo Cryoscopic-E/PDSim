@@ -105,7 +105,6 @@ namespace Editor.UI
             if (response["status"]?.ToString() == "OK")
             {
                 Debug.Log("Parse Successful");
-                Debug.Log(response["plan"]);
             }
             else
             {
