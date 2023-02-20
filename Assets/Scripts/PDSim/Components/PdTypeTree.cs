@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace PDSim.Components
 {
-    public class PdTypeTree : ISerializationCallbackReceiver
+    [Serializable, Inspectable]
+    public class PdTypeTree :  ISerializationCallbackReceiver
     {
         public class TypeNode
         {

@@ -29,7 +29,7 @@ namespace PDSim.Simulation
             //Types
             typeTree = new PdTypeTree();
             typeTree.Populate(parsedPddl["types"] as JObject);
-            
+            Debug.Log(typeTree.GetRoot());
             //Predicates
             fluents = new List<PdTypedPredicate>();
             var predicates = parsedPddl["predicates"];

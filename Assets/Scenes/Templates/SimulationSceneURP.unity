@@ -841,15 +841,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2017000297}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c2d348959ba1c5438f913bee70f47a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 50da83f2eb464e25834412907a54a127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationEnvironment: {fileID: 0}
-  domain: {fileID: 0}
-  actions: []
-  predicates: []
-  typesToDefine: []
-  typesDefined: 
-  types: []
-  simulationName: 
-  typesGameObject: []
+  environment: {fileID: 11400000, guid: 739354f0fefa08598950f8904aa43b46, type: 2}

@@ -168,6 +168,7 @@ namespace Editor.UI
                 var instance = CreateInstance<PdSimEnvironment>();
                 instance.name = _simulationNameField.value;
                 instance.CreateInstance("dew", "fwe", _parsedJson);
+                EditorUtility.SetDirty(instance);
                 AssetDatabase.CreateAsset(instance, "Assets/" + _simulationNameField.value + ".asset");
             }
             
