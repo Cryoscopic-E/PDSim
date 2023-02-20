@@ -11,5 +11,7 @@ namespace PDSim.Components
         public List<PdObject> objects;
         [Inspectable]
         public PdState initialState;
+        [Inspectable]
+        public PdState goalState;
     }
 }
