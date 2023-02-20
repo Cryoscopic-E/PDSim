@@ -738,6 +738,7 @@ GameObject:
   - component: {fileID: 1885405247}
   - component: {fileID: 1885405249}
   - component: {fileID: 1885405248}
+  - component: {fileID: 1885405250}
   m_Layer: 0
   m_Name: Simulation Variables
   m_TagString: Untagged
@@ -787,6 +788,18 @@ MonoBehaviour:
   _data:
     _json: '{"declarations":{"Kind":"Scene","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
     _objectReferences: []
+--- !u!114 &1885405250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885405246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a10fa21bcc9d436adf12881c2baea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2017000297
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,7 +16,6 @@ public class SimulationManager : MonoBehaviour
     
     private Transform _objectsHolder;
     private Transform _customHolder;
-    private PlanSolver _planSolver;
     private HudController _hudController;
 
     private Dictionary<string, GenericObject> _objectsDictionary;
@@ -54,7 +53,6 @@ public class SimulationManager : MonoBehaviour
         _hudController.SetCurrentAction("--", "--");
         _hudController.SetSimulationStatus(SimStatus.None);
 
-        _planSolver = GetComponent<PlanSolver>();
         // SET holders game objects in scene
         SetHolders();
         // SETUP SIMULATION WITH SETTINGS
@@ -93,12 +91,6 @@ public class SimulationManager : MonoBehaviour
 
     private IEnumerator SimulatePlan()
     {
-        // Check if plan exist, or generate
-        if (simulationEnvironment.plan.actions.Count == 0)
-        {
-            yield return GeneratePlan();
-        }
-
         // Update HUD
         _hudController.SetSimulationStatus(SimStatus.Init);
         // Run Initialization block
@@ -291,17 +283,6 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
-    private IEnumerator GeneratePlan()
-    {
-        var plan = new Plan();
-        yield return _planSolver.RequestPlan(
-            domain.text,
-            simulationEnvironment.problem.text,
-            value => plan = value);
-        simulationEnvironment.SavePlan(plan);
-        yield return null;
-    }
-
     private GenericObject GetObject(string name)
     {
         return _objectsDictionary[name.ToLower()];
@@ -404,28 +385,6 @@ public class SimulationManager : MonoBehaviour
         var definedIndex = typesDefined.FindIndex(t => t == index);
         return index != -1 ? typesGameObject[definedIndex] : null;
     }
-
-    public void Initialize()
-    {
-        // parse elements
-        Parser.ParseDomain(
-            domain.text,
-            out types,
-            out predicates,
-            out  actions);
-                    
-        // Create list of types string to define from original list of types
-        typesToDefine = new List<string>();
-        foreach (var type in types)
-        {
-            typesToDefine.Add(type.typeName);
-        }
-        // Create Empty list of defined types indexes(to help showing models in the inspector)
-        typesDefined = new List<int>();
-        // Create Empty list of game objects representing the models
-        typesGameObject = new List<GameObject>();
-    }
-
     public void Reset()
     {
         actions = null;

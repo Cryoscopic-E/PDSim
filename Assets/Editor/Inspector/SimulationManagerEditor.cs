@@ -96,11 +96,7 @@ namespace Editor
             {
                 Undo.RecordObject(_simulationManager, "Domain File Change");
                 _simulationManager.domain = domain;
-
-                if (domain != null)
-                    _simulationManager.Initialize();
-                else
-                    _simulationManager.Reset();
+                
                 // save asset
                 EditorUtility.SetDirty(_simulationManager);
             }

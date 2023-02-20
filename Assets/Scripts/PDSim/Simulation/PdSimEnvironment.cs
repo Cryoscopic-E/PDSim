@@ -17,7 +17,7 @@ namespace PDSim.Simulation
         public List<PdAction> actions;
         public PdTypeTree typeTree;
         public PdProblem problem;
-        public Plan plan;
+        public PdPlan plan;
         public string DomainText { get; set; }
         public string ProblemText { get; set; }
 
@@ -94,14 +94,16 @@ namespace PDSim.Simulation
             var init = parsedPddl["init"];
             foreach (var k in init.Children<JProperty>())
             {
-                var fluent = new PdBooleanPredicate
-                {
-                    name = k.Name,
-                    attributes = new List<string>()
-                };
                 foreach (var v in k.Value.Children<JObject>())
                 {
+                    var fluent = new PdBooleanPredicate
+                    {
+                        name = k.Name,
+                        attributes = new List<string>()
+                    };
+                    
                     fluent.value = v["value"].ToObject<bool>();
+                    
                     foreach (var a in v["args"])
                     {
                         fluent.attributes.Add(a.ToString());
@@ -111,17 +113,56 @@ namespace PDSim.Simulation
             }
             
             //Goal State
-            // TODO: Implement goal state
+            var goalState = new PdState();
+            goalState.fluents = new List<PdBooleanPredicate>();
+            var goal = parsedPddl["goal"];
+            foreach (var k in goal.Children<JProperty>())
+            {
+                foreach (var v in k.Value.Children<JObject>())
+                {
+                    var fluent = new PdBooleanPredicate
+                    {
+                        name = k.Name,
+                        attributes = new List<string>()
+                    };
+                    
+                    fluent.value = v["value"].ToObject<bool>();
+                    
+                    foreach (var a in v["args"])
+                    {
+                        fluent.attributes.Add(a.ToString());
+                    }
+                    goalState.fluents.Add(fluent);
+                }
+            }
             
             //Objects
             var objects = parsedPddl["objects"];
             var listOfObjects = objects.Children<JProperty>().Select(k => new PdObject { name = k.Name, type = k.Value.ToString() }).ToList();
             
+            // Plan
+            plan = new PdPlan();
+            plan.actions = new List<PdPlanAction>();
+
+            foreach (var action in parsedPddl["plan"]["actions"])
+            {
+                var planAction = new PdPlanAction
+                {
+                    name = action["action_name"].ToString(),
+                    parameters = new List<string>()
+                };
+                foreach (var param in action["parameters"])
+                {
+                    planAction.parameters.Add(param.ToString());
+                }
+                plan.actions.Add(planAction);
+            }
+            
             //Problem
             problem = new PdProblem
             {
                 initialState = initialState,
-                goalState = new PdState(),
+                goalState = goalState,
                 objects = listOfObjects
             };
 

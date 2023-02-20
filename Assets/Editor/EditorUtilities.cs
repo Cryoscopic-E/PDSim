@@ -104,7 +104,6 @@ namespace Editor
             // Create Simulation Environment Prefab
             var newSimEnv = CreateInstance<SimulationEnvironment> ();
             newSimEnv.problem = _problem;
-            newSimEnv.Initialize();
             var newSimEnvPath = AssetDatabase.GenerateUniqueAssetPath (path + "/" + _simulationName + " Environment.asset");
             AssetDatabase.CreateAsset (newSimEnv, newSimEnvPath);
             
@@ -124,7 +123,6 @@ namespace Editor
             // Initialize simulation manager
             simulationManager.GetComponent<SimulationManager>().domain = _domain;
             simulationManager.GetComponent<SimulationManager>().simulationName = _simulationName;
-            simulationManager.GetComponent<SimulationManager>().Initialize();
             simulationManager.GetComponent<SimulationManager>().simulationEnvironment = newSimEnv;
             
             // Save changes
