@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 
 namespace PDSim.Components
@@ -23,6 +24,12 @@ namespace PDSim.Components
 
         [Inspectable]
         public List<PdParameter> parameters;
+        
+        public override string ToString()
+        {
+            // format: name-type1-type2-...
+            return parameters.Aggregate(name, (current, parameter) => current + ("-" + parameter.type));
+        }
     }
     
     [Serializable, Inspectable]
