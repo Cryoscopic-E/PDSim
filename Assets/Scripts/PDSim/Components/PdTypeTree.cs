@@ -40,7 +40,10 @@ namespace PDSim.Components
         public void Populate(JObject types, TypeNode node = null)
         {
             node ??= GetRoot();
-
+            
+            if (types == null)
+                return;
+            
             // if node name is a leaf node
             if (!types.ContainsKey(node.Name))
                 return;

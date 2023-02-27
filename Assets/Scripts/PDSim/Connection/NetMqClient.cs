@@ -36,7 +36,7 @@ namespace PDSim.Connection
                 // Wait for response
                 while (!received)
                 {
-                    if (socket.TryReceiveFrameString(TimeSpan.FromMilliseconds(10000), out var response))
+                    if (socket.TryReceiveFrameString(TimeSpan.FromMilliseconds(2000), out var response))
                     {
                         Debug.Log("Received response: " + response);
                         jsonResponse = JObject.Parse(response);
