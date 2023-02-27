@@ -5,24 +5,19 @@ using Unity.VisualScripting;
 namespace PDSim.Components
 {
     
-    [Serializable, Inspectable]
-    public class PdPredicate
+    [Serializable]
+    public abstract class PdPredicate
     {
         [Inspectable]
         public string name;
 
         [Inspectable]
         public List<string> attributes;
-    }
-    
-    [Serializable, Inspectable]
-    public class PdTypedPredicate
-    {
-        [Inspectable]
-        public string name;
-
-        [Inspectable]
-        public List<PdParameter> parameters;
+        
+        public override string ToString()
+        {
+            return name + " " + string.Join(",", attributes);
+        }
     }
     
     [Serializable, Inspectable]
@@ -30,6 +25,22 @@ namespace PDSim.Components
     {
         [Inspectable]
         public bool value;
+        
+        public override string ToString()
+        {
+            return name + " (" + string.Join(",", attributes) + ") -> " + value;
+        }
     }
+    
+    [Serializable, Inspectable]
+    public class PdTypedPredicate 
+    {
+        [Inspectable]
+        public string name;
+
+        [Inspectable]
+        public List<PdObject> parameters;
+    }
+    
 }
 

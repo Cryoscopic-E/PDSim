@@ -844,4 +844,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50da83f2eb464e25834412907a54a127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  environment: {fileID: 11400000, guid: 739354f0fefa08598950f8904aa43b46, type: 2}
+  types: {fileID: 11400000, guid: 6f96b9a0c8d03beeda78c95b3a015650, type: 2}
+  fluents: {fileID: 11400000, guid: 95f1db87720df6d0ca0174be3d23ae06, type: 2}
+  actions: {fileID: 11400000, guid: 3f130540f2aaca7abbabe3a86f9cbd1b, type: 2}
+  plan: {fileID: 11400000, guid: 39aa0de5d0c93f807b20260e975559d0, type: 2}
+  problem: {fileID: 11400000, guid: 821b45cf5206e60c1ad8d38a7d2900c2, type: 2}

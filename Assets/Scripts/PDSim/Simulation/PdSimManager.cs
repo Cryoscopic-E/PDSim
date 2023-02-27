@@ -1,19 +1,21 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
+using PDSim.Simulation.Data;
 
-namespace PDSim.Simulation
+namespace PDSim.Simulation 
 {
+    [ExecuteAlways]
     public class PdSimManager : MonoBehaviour
     {
-        public PdSimEnvironment environment;
+        public CustomTypes types;
+        public Fluents fluents;
+        public Actions actions;
+        public Plan plan;
+        public Problem problem;
         
         private void Start()
         { 
-            Debug.Log(environment.typeTree.GetRoot().Name);
             
             
         }
-        
-        
-    }
+	}
 }

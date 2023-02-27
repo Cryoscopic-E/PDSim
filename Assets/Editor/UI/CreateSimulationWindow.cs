@@ -1,8 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using PDSim.Utils;
 using PDSim.Connection;
 using PDSim.Simulation;
+using PDSim.Simulation.Data;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -161,19 +163,27 @@ namespace Editor.UI
             
             // Create scene from template
             
-            // Create PdSim Environment Scriptable Object
+            // Create PdSim Environment Scriptable Objects
 
             if (_parsedJson != null && (_parsedJson!= null || !_parsedJson.ContainsKey("error")))
             {
-                var instance = CreateInstance<PdSimEnvironment>();
-                instance.name = _simulationNameField.value;
-                instance.CreateInstance("dew", "fwe", _parsedJson);
-                EditorUtility.SetDirty(instance);
-                AssetDatabase.CreateAsset(instance, "Assets/" + _simulationNameField.value + ".asset");
-            }
-            
+                var simData = new List<PdSimData>
+                {
+                    CreateInstance<CustomTypes>(),
+                    CreateInstance<Fluents>(),
+                    CreateInstance<Plan>(),
+                    CreateInstance<Actions>(),
+                    CreateInstance<Problem>()
+                };
 
-            // Save json to simulation folder
+                foreach (var so in simData)
+                {
+                    so.CreateInstance(_parsedJson);
+                    AssetDatabase.CreateAsset(so, "Assets/"+  _simulationNameField.value  + "_"+ so.GetType().Name + ".asset");
+                }
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
             
             // Close window
             Close();

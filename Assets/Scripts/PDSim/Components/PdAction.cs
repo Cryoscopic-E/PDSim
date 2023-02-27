@@ -10,7 +10,7 @@ namespace PDSim.Components
         [Inspectable]
         public string name;
         [Inspectable]
-        public List<PdParameter> parameters;
+        public List<PdObject> parameters;
         [Inspectable]
         public List<PdBooleanPredicate> effects;
 
@@ -36,10 +36,6 @@ namespace PDSim.Components
         
         [Inspectable]
         public List<string> parameters;
-
-        public override string ToString()
-        {
-            return name + " " + string.Join(" ", parameters);
-        }
+        
     }
 }

@@ -6,10 +6,13 @@ namespace PDSim.Components
     [Serializable, Inspectable]
     public class PdObject
     {
-        [Inspectable]
-        public string name;
         
-        [Inspectable]
+        public string name;
         public string type = "object";
+        
+        public override string ToString()
+        {
+            return name + " - " + type;
+        }
     }
 }
