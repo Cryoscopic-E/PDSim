@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb243872211d4f06b85be85166bbc1ca, type: 3}
+  m_Name: test_Actions
+  m_EditorClassIdentifier: 
+  actions:
+  - name: LOAD-TRUCK
+    parameters:
+    - name: pkg
+      type: package
+    - name: truck
+      type: truck
+    - name: loc
+      type: place
+    effects:
+    - name: at
+      attributes:
+      - pkg
+      - loc
+      value: 0
+    - name: in
+      attributes:
+      - pkg
+      - truck
+      value: 1
+  - name: LOAD-AIRPLANE
+    parameters:
+    - name: pkg
+      type: package
+    - name: airplane
+      type: airplane
+    - name: loc
+      type: place
+    effects:
+    - name: at
+      attributes:
+      - pkg
+      - loc
+      value: 0
+    - name: in
+      attributes:
+      - pkg
+      - airplane
+      value: 1
+  - name: UNLOAD-TRUCK
+    parameters:
+    - name: pk
+      type: package
+    - name: truck
+      type: truck
+    - name: loc
+      type: place
+    effects:
+    - name: in
+      attributes:
+      - pk
+      - truck
+      value: 0
+    - name: at
+      attributes:
+      - pk
+      - loc
+      value: 1
+  - name: UNLOAD-AIRPLANE
+    parameters:
+    - name: pkg
+      type: package
+    - name: airplane
+      type: airplane
+    - name: loc
+      type: place
+    effects:
+    - name: in
+      attributes:
+      - pkg
+      - airplane
+      value: 0
+    - name: at
+      attributes:
+      - pkg
+      - loc
+      value: 1
+  - name: DRIVE-TRUCK
+    parameters:
+    - name: truck
+      type: truck
+    - name: loc-from
+      type: place
+    - name: loc-to
+      type: place
+    - name: city
+      type: city
+    effects:
+    - name: at
+      attributes:
+      - truck
+      - loc-from
+      value: 0
+    - name: at
+      attributes:
+      - truck
+      - loc-to
+      value: 1
+  - name: FLY-AIRPLANE
+    parameters:
+    - name: airplane
+      type: airplane
+    - name: loc-from
+      type: airport
+    - name: loc-to
+      type: airport
+    effects:
+    - name: at
+      attributes:
+      - airplane
+      - loc-from
+      value: 0
+    - name: at
+      attributes:
+      - airplane
+      - loc-to
+      value: 1

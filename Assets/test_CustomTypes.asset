@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45fda609b3314df991490c8f171976c0, type: 3}
+  m_Name: test_CustomTypes
+  m_EditorClassIdentifier: 
+  typeTree:
+    serializableTypeNodes:
+    - name: object
+      childrenCount: 3
+      indexFirstChild: 1
+    - name: city
+      childrenCount: 0
+      indexFirstChild: 2
+    - name: place
+      childrenCount: 2
+      indexFirstChild: 3
+    - name: airport
+      childrenCount: 0
+      indexFirstChild: 4
+    - name: location
+      childrenCount: 0
+      indexFirstChild: 5
+    - name: physobj
+      childrenCount: 2
+      indexFirstChild: 6
+    - name: package
+      childrenCount: 0
+      indexFirstChild: 7
+    - name: vehicle
+      childrenCount: 2
+      indexFirstChild: 8
+    - name: truck
+      childrenCount: 0
+      indexFirstChild: 9
+    - name: airplane
+      childrenCount: 0
+      indexFirstChild: 10
