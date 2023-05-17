@@ -1,18 +1,17 @@
 ﻿using global::Unity.VisualScripting;
 using System.Collections.Generic;
 using UnityEngine;
+using PDSim.Simulation;
 
 namespace PDSim.Animation
 {
+    [UnitCategory("Events/PDSim")]
     public class ActionEffectEvent : EventUnit<EffectEventArgs>
     {
         protected override bool register => true;
 
         [SerializeAs(nameof(ArgumentCount))]
         private int _argumentCount;
-
-        [SerializeAs(nameof(IsNegative))]
-        private bool _isNegative;
 
         [SerializeAs(nameof(EffectName))]
         private string _effectName;
@@ -21,22 +20,13 @@ namespace PDSim.Animation
         private List<string> _effectArguments; // Match PDDL "object-type"
 
         [DoNotSerialize]
-        [Inspectable, UnitHeaderInspectable("Arguments")]
         public int ArgumentCount
         {
             get => _argumentCount;
             set => _argumentCount = Mathf.Clamp(value, 0, 10);
         }
 
-        [DoNotSerialize]
-        [Inspectable, UnitHeaderInspectable("Negative Effect")]
-        public bool IsNegative
-        {
-            get => _isNegative;
-            set => _isNegative = value;
-        }
-
-        [DoNotSerialize]
+        [SerializeAs(nameof(EffectName))]
         public string EffectName
         {
             get => _effectName;
@@ -53,8 +43,9 @@ namespace PDSim.Animation
         /// <summary>
         /// The name of the event.
         /// </summary>
-        [DoNotSerialize]
-        public ValueInput Name { get; private set; }
+        // [DoNotSerialize]
+        // [PortLabelHidden]
+        // protected ValueInput Name { get; private set;}
 
         [DoNotSerialize]
         public List<ValueOutput> ArgumentPorts { get; } = new List<ValueOutput>();
@@ -63,8 +54,9 @@ namespace PDSim.Animation
         protected override void Definition()
         {
             base.Definition();
+            coroutine = true;
 
-            Name = ValueInput(nameof(Name), EffectName);
+            //Name = ValueInput(nameof(Name), EffectName);
 
             ArgumentPorts.Clear();
 
@@ -82,7 +74,7 @@ namespace PDSim.Animation
 
         protected override bool ShouldTrigger(Flow flow, EffectEventArgs args)
         {
-            return CompareNames(flow, Name, args.name);
+            return EffectName == args.name;
         }
 
         protected override void AssignArguments(Flow flow, EffectEventArgs args)

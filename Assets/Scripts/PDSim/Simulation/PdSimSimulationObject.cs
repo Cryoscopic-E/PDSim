@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.SceneManagement;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -112,45 +110,17 @@ namespace PDSim.Simulation
             }
         }
 
-        // Rotate the object to a new rotation
-        public void RotateTo(Vector3 rotation)
+        public Transform GetPoint(string name)
         {
-            transform.eulerAngles = rotation;
-        }
+            foreach (var point in _points)
+            {
+                if (point.name == name)
+                {
+                    return point;
+                }
+            }
 
-        // Getters for world and local position, rotation, and scale
-        public Vector3 GetWorldPosition()
-        {
-            return transform.position;
-        }
-
-        public Vector3 GetWorldRotation()
-        {
-            return transform.eulerAngles;
-        }
-
-        public Vector3 GetWorldScale()
-        {
-            return transform.localScale;
-        }
-
-        public Vector3 GetLocalPosition()
-        {
-            return transform.localPosition;
-        }
-
-        public Vector3 GetLocalRotation()
-        {
-            return transform.localEulerAngles;
-        }
-
-        public Vector3 GetLocalScale()
-        {
-            return transform.localScale;
-        }
-        public List<Transform> GetPoints()
-        {
-            return _points;
+            return transform;
         }
 
     #endregion HELPER FUNCTIONS
