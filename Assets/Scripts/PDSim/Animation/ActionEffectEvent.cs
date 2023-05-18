@@ -1,7 +1,6 @@
-﻿using global::Unity.VisualScripting;
+﻿using Unity.VisualScripting;
 using System.Collections.Generic;
 using UnityEngine;
-using PDSim.Simulation;
 
 namespace PDSim.Animation
 {
@@ -68,7 +67,7 @@ namespace PDSim.Animation
 
         public override EventHook GetHook(GraphReference reference)
         {
-            return new EventHook(EventNames.actionEffectEvent);
+            return new EventHook(EventNames.actionEffectStart);
         }
 
 
@@ -87,7 +86,7 @@ namespace PDSim.Animation
 
         public static void Trigger(GameObject target, string name, params GameObject[] args)
         {
-            EventBus.Trigger(EventNames.actionEffectEvent, target, new CustomEventArgs(name, args));
+            EventBus.Trigger(EventNames.actionEffectStart, target, new CustomEventArgs(name, args));
         }
     }
 

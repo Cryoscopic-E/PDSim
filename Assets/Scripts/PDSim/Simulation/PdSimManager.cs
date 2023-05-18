@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using PDSim.Simulation.Data;
 using PDSim.Animation;
@@ -6,7 +7,6 @@ using Unity.VisualScripting;
 
 namespace PDSim.Simulation 
 {
-    [ExecuteAlways]
     public class PdSimManager : MonoBehaviour
     {
         public CustomTypes types;
@@ -16,18 +16,26 @@ namespace PDSim.Simulation
         public Problem problem;
         
         public List<GameObject> objs;
+        public List<GameObject> objs2;
+
+        public ScriptMachine at;
 
         private void Start()
         { 
             
-            EventBus.Register<ActionEffectEvent>(EventNames.actionEffectEvent, OnActionEffectEvent);
-            EventBus.Trigger(EventNames.actionEffectEvent, new EffectEventArgs("At-Robot-Cell", objs.ToArray()));
-            
+            //StartCoroutine(Simulate());
+            //EventBus.Trigger(EventNames.actionEffectEvent, new EffectEventArgs("At", objs2.ToArray()));
+            Debug.Log("ActionEffectEvent: At(robot, cell)");
+            EventBus.Register<string>(EventNames.actionEffectEnd, i =>
+            {
+                Debug.Log("RECEIVED " + i);
+            });
+            EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs("At(robot, cell)", objs.ToArray()));
         }
 
-        private void OnActionEffectEvent(ActionEffectEvent e)
+        private void OnActionEffectEnd(string obj)
         {
-            Debug.Log("ActionEffectEvent: " + e.EffectName);
+            Debug.Log("OnActionEffectEnd: " + obj);
         }
 	}
 }

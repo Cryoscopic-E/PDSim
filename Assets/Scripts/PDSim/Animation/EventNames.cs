@@ -2,6 +2,7 @@
 {
     public static class EventNames
     {
-        public static string actionEffectEvent = "OnEffect";
+        public static string actionEffectStart = "OnEffectStart";
+        public static string actionEffectEnd = "OnEffectEnd";
     }
 }

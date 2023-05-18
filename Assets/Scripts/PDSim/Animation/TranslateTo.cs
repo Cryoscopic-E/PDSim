@@ -58,7 +58,7 @@ namespace PDSim.Animation
                 yield return null;
             }
             resultValue = obj1.transform.position;
-            yield return null;
+            yield return exit;
         }
 
         protected override void Definition()
