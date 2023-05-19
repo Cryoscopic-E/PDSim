@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea259486413eaa447b5c931dfc89a7d3, type: 3}
-  m_Name: Cubes_Plan
+  m_Name: test_Plan
   m_EditorClassIdentifier: 
   actions:
   - name: pick-up

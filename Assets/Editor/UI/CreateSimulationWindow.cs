@@ -39,7 +39,7 @@ namespace Editor.UI
             var root = rootVisualElement;
             
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/CreateSimulationWindow.uxml"); // TODO: Change path to relative
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/EditorUI/CreateSimulationWindow.uxml");
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
             

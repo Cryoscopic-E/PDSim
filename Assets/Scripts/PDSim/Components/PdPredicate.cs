@@ -40,6 +40,11 @@ namespace PDSim.Components
 
         [Inspectable]
         public List<PdObject> parameters;
+
+        public override string ToString()
+        {
+            return name + " (" + string.Join(", ", parameters)+")";
+        }
     }
     
 }

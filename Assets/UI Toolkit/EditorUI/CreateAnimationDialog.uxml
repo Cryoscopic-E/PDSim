@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Root" focusable="false" style="width: 100%; height: 100%;">
+        <ui:VisualElement name="Header" style="flex-direction: row;">
+            <ui:Label text="Create Animation for:" display-tooltip-when-elided="true" style="-unity-font-definition: url(&apos;project://database/Assets/UI%20Toolkit/Fonts/Header-Font.asset?fileID=11400000&amp;guid=95aef50e924647a4e9223bf631198676&amp;type=2#Header-Font&apos;); -unity-font-style: bold;" />
+            <ui:Label display-tooltip-when-elided="true" name="PredicateName" text="at" style="-unity-font-definition: url(&apos;project://database/Assets/UI%20Toolkit/Fonts/Header-Font.asset?fileID=11400000&amp;guid=95aef50e924647a4e9223bf631198676&amp;type=2#Header-Font&apos;); -unity-font-style: bold; margin-left: 10px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="FluentOriginal">
+            <ui:Label text="(at ?x-object ?l-location)" display-tooltip-when-elided="true" style="margin-top: 10px; padding-left: 10px; padding-right: 10px; align-items: center; justify-content: center; flex-direction: row; -unity-text-align: middle-center; font-size: 15px; -unity-font-definition: url(&apos;project://database/Assets/UI%20Toolkit/Fonts/Text-Font.asset?fileID=11400000&amp;guid=2c4fcf671ad72124392a8074fb1f75a0&amp;type=2#Text-Font&apos;);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

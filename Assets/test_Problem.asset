@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2eca903834d78344e964f5dad0c3d751, type: 3}
-  m_Name: Cubes_Problem
+  m_Name: test_Problem
   m_EditorClassIdentifier: 
   objects:
   - name: a

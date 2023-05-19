@@ -13,6 +13,13 @@ namespace Editor.Inspector
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+
+            if (GUILayout.Button("Setup Animations"))
+            {
+                var pdSimManager = target as PdSimManager;
+                pdSimManager.SetUpAnimations();
+            }
+
             if (GUILayout.Button("Create Cube Object"))
             {
                 // Load the prefab

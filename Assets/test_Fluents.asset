@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa5dcfe9a1b748928775fc13d837038a, type: 3}
-  m_Name: Cubes_Fluents
+  m_Name: test_Fluents
   m_EditorClassIdentifier: 
   fluents:
   - name: on

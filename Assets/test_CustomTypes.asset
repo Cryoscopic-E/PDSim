@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45fda609b3314df991490c8f171976c0, type: 3}
-  m_Name: Cubes_CustomTypes
+  m_Name: test_CustomTypes
   m_EditorClassIdentifier: 
   typeTree:
     serializableTypeNodes:
