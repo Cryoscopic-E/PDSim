@@ -9,11 +9,14 @@ namespace Editor.Inspector
     [CustomEditor(typeof(FluentAnimation))]
     public class FluentAnimationEditor : UnityEditor.Editor
     {
+        private FluentAnimation fluentAnimation;
         private ReorderableList list;
 
         private void OnEnable()
         {
-            list = new ReorderableList(serializedObject, serializedObject.FindProperty("data"), true, false, true, true);
+            fluentAnimation = (FluentAnimation)target;
+
+            list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
 
             list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
@@ -25,7 +28,7 @@ namespace Editor.Inspector
 
                 var nameRect = new Rect(rect.x, rect.y, rect.width * 0.45f, rect.height);
                 var machineRect = new Rect(rect.x + rect.width * 0.32f, rect.y, rect.width * 0.5f, rect.height);
-                var orderRect = new Rect(rect.x + rect.width * 0.82f, rect.y, rect.width * 0.05f, rect.height);
+                var orderRect = new Rect(rect.x + rect.width * 0.95f, rect.y, rect.width * 0.05f, rect.height);
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.LabelField(nameRect, nameProperty.stringValue, EditorStyles.boldLabel);
@@ -36,15 +39,7 @@ namespace Editor.Inspector
 
             list.onAddCallback = (ReorderableList List) =>
             {
-                CreateAnimationWindow.ShowAsModal();
-
-                // var index = List.serializedProperty.arraySize;
-                // List.serializedProperty.arraySize++;
-                // List.index = index;
-                // var element = List.serializedProperty.GetArrayElementAtIndex(index);
-                // element.FindPropertyRelative("name").stringValue = "New Animation";
-                // element.FindPropertyRelative("machine").objectReferenceValue = null;
-                // element.FindPropertyRelative("order").intValue = 0;
+                CreateAnimationWindow.ShowAsModal(fluentAnimation.metaData, fluentAnimation);
             };
 
             list.onRemoveCallback = (ReorderableList List) =>
@@ -52,14 +47,25 @@ namespace Editor.Inspector
                 if (EditorUtility.DisplayDialog("Warning!", "Are you sure you want to delete the animation?", "Yes", "No"))
                 {
                     ReorderableList.defaultBehaviours.DoRemoveButton(List);
+                    // Remove from scene under Animations
+                    var animation = GameObject.Find("Animations");
+
+                    for (var i = 0; i < animation.transform.childCount; i++)
+                    {
+                        var child = animation.transform.GetChild(i);
+                        var selectedIndex = List.selectedIndices[0];
+                        if (child.name == fluentAnimation.animationData[selectedIndex].name)
+                        {
+                            Undo.DestroyObjectImmediate(child.gameObject);
+                        }
+                    }
                 }
             };
         }
 
         public override void OnInspectorGUI()
         {
-            var flentName = serializedObject.FindProperty("fluentName");
-            EditorGUILayout.LabelField(flentName.stringValue, EditorStyles.whiteLargeLabel, GUILayout.Height(20));
+            EditorGUILayout.LabelField(fluentAnimation.metaData.ToString(), EditorStyles.whiteLargeLabel, GUILayout.Height(20));
             EditorGUILayout.Space();
             serializedObject.Update();
             list.DoLayoutList();

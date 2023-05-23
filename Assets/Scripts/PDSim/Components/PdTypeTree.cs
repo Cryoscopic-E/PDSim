@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 namespace PDSim.Components
 {
     [Serializable, Inspectable]
-    public class PdTypeTree :  ISerializationCallbackReceiver
+    public class PdTypeTree : ISerializationCallbackReceiver
     {
         public class TypeNode
         {
@@ -40,10 +40,10 @@ namespace PDSim.Components
         public void Populate(JObject types, TypeNode node = null)
         {
             node ??= GetRoot();
-            
+
             if (types == null)
                 return;
-            
+
             // if node name is a leaf node
             if (!types.ContainsKey(node.Name))
                 return;
@@ -63,7 +63,7 @@ namespace PDSim.Components
             }
         }
 
-        public string[] GetSubtypesOf(string typeName)
+        public List<string> GetChildrenTypes(string typeName)
         {
             var root = GetRoot();
             var queue = new Queue<TypeNode>();
@@ -90,10 +90,10 @@ namespace PDSim.Components
                         childrenQueue.Enqueue(n);
                     }
                 }
-                return subTypes.ToArray();
+                return subTypes;
 
             }
-            return subTypes.ToArray();
+            return subTypes;
         }
         public List<string> GetLeafNodesFromType(string type)
         {

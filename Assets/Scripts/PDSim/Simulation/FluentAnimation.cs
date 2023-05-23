@@ -8,14 +8,30 @@ namespace PDSim.Simulation
     [System.Serializable]
     public class FluentAnimation : MonoBehaviour
     {
-        public string fluentName;
-        public List<FluentAnimationData> data;
+        public PdTypedPredicate metaData;
+        public List<FluentAnimationData> animationData;
 
-        public FluentAnimation(PdTypedPredicate fluent)
+        public bool AddAnimationData(ScriptMachine machine, int order = 0)
         {
-            fluentName = fluent.name;
-            data = new List<FluentAnimationData>();
+            // Check if same name is in list
+            foreach (var data in animationData)
+            {
+                if (data.name == machine.name)
+                {
+                    return false;
+                }
+            }
+
+
+            animationData.Add(new FluentAnimationData()
+            {
+                name = machine.name,
+                machine = machine,
+                order = order
+            });
+            return true;
         }
+
     }
 
 
@@ -26,5 +42,4 @@ namespace PDSim.Simulation
         public ScriptMachine machine;
         public int order;
     }
-
 }

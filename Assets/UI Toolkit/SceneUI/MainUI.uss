@@ -4,12 +4,12 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     font-size: 20px;
-    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-font-definition: url('project://database/Assets/UI Toolkit/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
     -unity-text-align: middle-center;
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button04.png?fileID=2800000&guid=45545cdd40e4ab64e98cab74e55062d6&type=3#red_button04');
+    background-image: url('project://database/Assets/UI Toolkit/PNGs/Elements/red_button04.png?fileID=2800000&guid=45545cdd40e4ab64e98cab74e55062d6&type=3#red_button04');
     -unity-slice-left: 30;
     -unity-slice-top: 30;
     -unity-slice-right: 30;
@@ -30,12 +30,12 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     font-size: 20px;
-    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-font-definition: url('project://database/Assets/UI Toolkit/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
     -unity-text-align: middle-center;
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button08.png?fileID=2800000&guid=1b7fbbc3cc105c040b1324a760a984b7&type=3#red_button08');
+    background-image: url('project://database/Assets/UI Toolkit/PNGs/Elements/red_button08.png?fileID=2800000&guid=1b7fbbc3cc105c040b1324a760a984b7&type=3#red_button08');
     -unity-slice-left: 30;
     -unity-slice-top: 30;
     -unity-slice-right: 30;
@@ -57,12 +57,12 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     font-size: 20px;
-    -unity-font-definition: url('project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
+    -unity-font-definition: url('project://database/Assets/UI Toolkit/Fonts/Text-Font.asset?fileID=11400000&guid=2c4fcf671ad72124392a8074fb1f75a0&type=2#Text-Font');
     -unity-text-align: middle-center;
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button03.png?fileID=2800000&guid=2bacff7ad0f0ed84b876beea564d506d&type=3#red_button03');
+    background-image: url('project://database/Assets/UI Toolkit/PNGs/Elements/red_button03.png?fileID=2800000&guid=2bacff7ad0f0ed84b876beea564d506d&type=3#red_button03');
     -unity-slice-left: 30;
     -unity-slice-top: 30;
     -unity-slice-right: 30;
@@ -79,7 +79,7 @@
 }
 
 .text-header {
-    -unity-font-definition: url('project://database/Assets/UI/Fonts/Header-Font.asset?fileID=11400000&guid=95aef50e924647a4e9223bf631198676&type=2#Header-Font');
+    -unity-font-definition: url('project://database/Assets/UI Toolkit/Fonts/Header-Font.asset?fileID=11400000&guid=95aef50e924647a4e9223bf631198676&type=2#Header-Font');
     font-size: 30px;
     padding-left: 15px;
     padding-right: 15px;

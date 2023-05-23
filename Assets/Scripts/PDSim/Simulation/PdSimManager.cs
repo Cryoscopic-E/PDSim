@@ -5,7 +5,7 @@ using PDSim.Simulation.Data;
 using PDSim.Animation;
 using Unity.VisualScripting;
 
-namespace PDSim.Simulation 
+namespace PDSim.Simulation
 {
     public class PdSimManager : MonoBehaviour
     {
@@ -14,10 +14,10 @@ namespace PDSim.Simulation
         public Actions actions;
         public Plan plan;
         public Problem problem;
-        
+
         private void Start()
-        { 
-            
+        {
+
         }
 
         private void TriggerAnimation()
@@ -43,9 +43,9 @@ namespace PDSim.Simulation
             foreach (var fluent in fluents.fluents)
             {
                 var fluentAnimation = animationsRootObject.AddComponent<FluentAnimation>();
-                fluentAnimation.fluentName = fluent.ToString();
-                fluentAnimation.data = new List<FluentAnimationData>();
+                fluentAnimation.metaData = fluent;
+                fluentAnimation.animationData = new List<FluentAnimationData>();
             }
         }
-	}
+    }
 }

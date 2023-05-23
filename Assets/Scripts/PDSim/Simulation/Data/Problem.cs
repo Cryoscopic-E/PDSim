@@ -7,65 +7,65 @@ using Unity.VisualScripting;
 
 namespace PDSim.Simulation.Data
 {
-	public class Problem : PdSimData
-	{
-		public List<PdObject> objects;
-		public List<PdBooleanPredicate> initialState;
-		public List<PdBooleanPredicate> goalState;
+    public class Problem : PdSimData
+    {
+        public List<PdObject> objects;
+        public List<PdBooleanPredicate> initialState;
+        public List<PdBooleanPredicate> goalState;
 
-		public override void CreateInstance(JObject parsedPddl)
-		{
-			//Initial State
-			initialState = new List<PdBooleanPredicate>();
-			var init = parsedPddl["init"];
-			foreach (var k in init.Children<JProperty>())
-			{
-				foreach (var v in k.Value.Children<JObject>())
-				{
-					var fluent = new PdBooleanPredicate
-					{
-						name = k.Name,
-						attributes = new List<string>()
-					};
+        public override void CreateInstance(JObject parsedPddl)
+        {
+            //Initial State
+            initialState = new List<PdBooleanPredicate>();
+            var init = parsedPddl["init"];
+            foreach (var k in init.Children<JProperty>())
+            {
+                foreach (var v in k.Value.Children<JObject>())
+                {
+                    var fluent = new PdBooleanPredicate
+                    {
+                        name = k.Name,
+                        attributes = new List<string>()
+                    };
 
-					fluent.value = v["value"].ToObject<bool>();
+                    fluent.value = v["value"].ToObject<bool>();
 
-					foreach (var a in v["args"])
-					{
-						fluent.attributes.Add(a.ToString());
-					}
+                    foreach (var a in v["args"])
+                    {
+                        fluent.attributes.Add(a.ToString());
+                    }
 
-					initialState.Add(fluent);
-				}
-			}
+                    initialState.Add(fluent);
+                }
+            }
 
-			//Goal State
-			goalState = new List<PdBooleanPredicate>();
-			var goal = parsedPddl["goal"];
-			foreach (var k in goal.Children<JProperty>())
-			{
-				foreach (var v in k.Value.Children<JObject>())
-				{
-					var fluent = new PdBooleanPredicate
-					{
-						name = k.Name,
-						attributes = new List<string>()
-					};
+            //Goal State
+            goalState = new List<PdBooleanPredicate>();
+            var goal = parsedPddl["goal"];
+            foreach (var k in goal.Children<JProperty>())
+            {
+                foreach (var v in k.Value.Children<JObject>())
+                {
+                    var fluent = new PdBooleanPredicate
+                    {
+                        name = k.Name,
+                        attributes = new List<string>()
+                    };
 
-					fluent.value = v["value"].ToObject<bool>();
+                    fluent.value = v["value"].ToObject<bool>();
 
-					foreach (var a in v["args"])
-					{
-						fluent.attributes.Add(a.ToString());
-					}
+                    foreach (var a in v["args"])
+                    {
+                        fluent.attributes.Add(a.ToString());
+                    }
 
-					goalState.Add(fluent);
-				}
-			}
+                    goalState.Add(fluent);
+                }
+            }
 
-			//Objects
-			var objs = parsedPddl["objects"];
-			objects = objs.Children<JProperty>().Select(k => new PdObject { name = k.Name, type = k.Value.ToString() }).ToList();
-		}
-	}
+            //Objects
+            var objs = parsedPddl["objects"];
+            objects = objs.Children<JProperty>().Select(k => new PdObject(k.Name, k.Value.ToString())).ToList();
+        }
+    }
 }
