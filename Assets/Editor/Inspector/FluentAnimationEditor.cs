@@ -2,6 +2,7 @@ using PDSim.Simulation;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using Editor.UI;
 
 namespace Editor.Inspector
 {
@@ -35,13 +36,15 @@ namespace Editor.Inspector
 
             list.onAddCallback = (ReorderableList List) =>
             {
-                var index = List.serializedProperty.arraySize;
-                List.serializedProperty.arraySize++;
-                List.index = index;
-                var element = List.serializedProperty.GetArrayElementAtIndex(index);
-                element.FindPropertyRelative("name").stringValue = "New Animation";
-                element.FindPropertyRelative("machine").objectReferenceValue = null;
-                element.FindPropertyRelative("order").intValue = 0;
+                CreateAnimationWindow.ShowAsModal();
+
+                // var index = List.serializedProperty.arraySize;
+                // List.serializedProperty.arraySize++;
+                // List.index = index;
+                // var element = List.serializedProperty.GetArrayElementAtIndex(index);
+                // element.FindPropertyRelative("name").stringValue = "New Animation";
+                // element.FindPropertyRelative("machine").objectReferenceValue = null;
+                // element.FindPropertyRelative("order").intValue = 0;
             };
 
             list.onRemoveCallback = (ReorderableList List) =>
@@ -56,8 +59,8 @@ namespace Editor.Inspector
         public override void OnInspectorGUI()
         {
             var flentName = serializedObject.FindProperty("fluentName");
-            EditorGUILayout.LabelField(flentName.stringValue, EditorStyles.whiteLargeLabel);
-
+            EditorGUILayout.LabelField(flentName.stringValue, EditorStyles.whiteLargeLabel, GUILayout.Height(20));
+            EditorGUILayout.Space();
             serializedObject.Update();
             list.DoLayoutList();
             serializedObject.ApplyModifiedProperties();
