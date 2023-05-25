@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SceneTemplate;
-using UnityEngine.SceneManagement;
 using PDSim.Simulation;
-using PDSim.Utils;
 using PDSim.Simulation.Data;
+using PDSim.Utils;
 using UnityEditor;
+using UnityEditor.SceneTemplate;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SimulationScenePipeline : SceneTemplatePipelineAdapter
 {
@@ -20,8 +19,8 @@ public class SimulationScenePipeline : SceneTemplatePipelineAdapter
     {
         // Connect data assets to simulation manager
         var simulationManager = PdSimManager.Instance;
-        var simulationDataRoot = AssetUtils.GetSimulationDataPath(sceneName);
-
+        var simulationDataRoot = AssetUtils.GetSimulationDataPath(scene.name);
+        Debug.Log("Simulation data root: " + simulationDataRoot);
         simulationManager.types = AssetUtils.GetAsset<CustomTypes>(simulationDataRoot + "CustomTypes.asset");
         simulationManager.fluents = AssetUtils.GetAsset<Fluents>(simulationDataRoot + "Fluents.asset");
         simulationManager.actions = AssetUtils.GetAsset<Actions>(simulationDataRoot + "Actions.asset");

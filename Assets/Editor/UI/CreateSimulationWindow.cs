@@ -1,16 +1,15 @@
+using Newtonsoft.Json.Linq;
+using PDSim.Connection;
+using PDSim.Simulation.Data;
+using PDSim.Utils;
 using System.Collections;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using PDSim.Utils;
-using PDSim.Connection;
-using PDSim.Simulation;
-using PDSim.Simulation.Data;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEditor.SceneTemplate;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.SceneTemplate;
-using UnityEditor.SceneManagement;
 
 namespace Editor.UI
 {
@@ -168,11 +167,11 @@ namespace Editor.UI
             if (_parsedJson != null && (_parsedJson != null || !_parsedJson.ContainsKey("error")))
             {
                 AssetUtils.CreateFolders(_simulationNameField.value);
-                //CreatePDSimData();
+                CreatePDSimData();
             }
 
             // Create scene from template
-            //CreateSimulationScene();
+            CreateSimulationScene();
 
 
             // Close window

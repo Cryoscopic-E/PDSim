@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.SceneTemplate;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
@@ -19,7 +18,6 @@ namespace PDSim.Utils
             if (!DirectoryExist(path))
             {
                 Directory.CreateDirectory(path);
-                Debug.Log("Created folder: " + path);
             }
         }
 
@@ -63,6 +61,7 @@ namespace PDSim.Utils
             CreateFolderIfDontExist(SimulationsRootFolder);
             // Create the folder for the current simulation
             var simulationPath = SimulationsRootFolder + sceneName + "/";
+            CreateFolderIfDontExist(simulationPath);
             // Folder for the objects
             CreateFolderIfDontExist(simulationPath + SimObjectsFolder);
             // Folder for data
@@ -84,11 +83,14 @@ namespace PDSim.Utils
         public static string GetSimulationDataPath(string sceneName)
         {
             var simulationPath = SimulationsRootFolder + sceneName + "/" + SimData;
+            UnityEngine.Debug.Log("Simulation path: " + simulationPath);
             return simulationPath;
         }
 
         public static T GetAsset<T>(string path) where T : UnityEngine.Object
         {
+            UnityEngine.Debug.Log(path);
+
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
