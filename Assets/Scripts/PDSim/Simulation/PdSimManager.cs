@@ -9,16 +9,25 @@ namespace PDSim.Simulation
 {
     public class PdSimManager : MonoBehaviour
     {
+        // Singleton
+        private static PdSimManager _instance;
+        public static PdSimManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = FindObjectOfType<PdSimManager>();
+                return _instance;
+            }
+        }
+
+
+
         public CustomTypes types;
         public Fluents fluents;
         public Actions actions;
         public Plan plan;
         public Problem problem;
-
-        private void Start()
-        {
-
-        }
 
         private void TriggerAnimation()
         {

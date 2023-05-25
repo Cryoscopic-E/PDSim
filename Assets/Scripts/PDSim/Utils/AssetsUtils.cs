@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.SceneTemplate;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
@@ -8,9 +9,9 @@ namespace PDSim.Utils
 {
     public static class AssetUtils
     {
-        private const string SimulationsRootFolder = "Assets/_PDSim_Simulations/";
+        private const string SimulationsRootFolder = "Assets/_Simulations/";
+        private const string SimData = "Data/";
         private const string SimObjectsFolder = "Objects/";
-        private const string SimProblemFolder = "Problems/";
         private const string SceneTemplatePath = "Assets/Scenes/Templates/PDSimSceneTemplate.scenetemplate";
 
         private static void CreateFolderIfDontExist(string path)
@@ -18,9 +19,10 @@ namespace PDSim.Utils
             if (!DirectoryExist(path))
             {
                 Directory.CreateDirectory(path);
+                Debug.Log("Created folder: " + path);
             }
         }
-        
+
         /// <summary>
         ///  Check if a file exists in the project
         /// </summary>
@@ -30,11 +32,11 @@ namespace PDSim.Utils
         /// <returns>
         /// True if the file exists, false otherwise
         /// </returns>
-        public  static  bool FileExists(string path)
+        public static bool FileExists(string path)
         {
             return File.Exists(path);
         }
-        
+
         /// <summary>
         ///  Check if a folder exists in the project
         /// </summary>
@@ -44,11 +46,11 @@ namespace PDSim.Utils
         /// <returns>
         /// True if the folder exists, false otherwise
         /// </returns>
-        public  static  bool DirectoryExist(string path)
+        public static bool DirectoryExist(string path)
         {
             return Directory.Exists(path);
         }
-        
+
         /// <summary>
         ///  Create all the folders needed to store a simulation in the project
         /// </summary>
@@ -63,8 +65,8 @@ namespace PDSim.Utils
             var simulationPath = SimulationsRootFolder + sceneName + "/";
             // Folder for the objects
             CreateFolderIfDontExist(simulationPath + SimObjectsFolder);
-            // Folder for different problems
-            CreateFolderIfDontExist(simulationPath + SimProblemFolder);
+            // Folder for data
+            CreateFolderIfDontExist(simulationPath + SimData);
         }
 
         public static string GetCurrentObjectsFolder()
@@ -73,22 +75,22 @@ namespace PDSim.Utils
             return assetPath;
         }
 
-        public static string GenerateProblemAssetPath(string problemName)
-        {
-            var assetPath = SimulationsRootFolder + SceneManager.GetActiveScene().name + "/" + SimProblemFolder + problemName + ".asset";
-            return assetPath;
-        }
-        public static string GetProblemResource(string problemName)
-        {
-            return SimulationsRootFolder + SceneManager.GetActiveScene().name + "/" + SimProblemFolder + problemName + ".asset";
-        }
-        
-        public static string GetCurrentSimulationDirectoryRoot(string sceneName)
+        public static string GetSimulationDirectoryRoot(string sceneName)
         {
             var simulationPath = SimulationsRootFolder + sceneName + "/";
             return simulationPath;
         }
 
+        public static string GetSimulationDataPath(string sceneName)
+        {
+            var simulationPath = SimulationsRootFolder + sceneName + "/" + SimData;
+            return simulationPath;
+        }
+
+        public static T GetAsset<T>(string path) where T : UnityEngine.Object
+        {
+            return AssetDatabase.LoadAssetAtPath<T>(path);
+        }
 
 
         public static string GetCurrentSimulationScenePath(string sceneName)
@@ -107,16 +109,16 @@ namespace PDSim.Utils
             return DirectoryExist(simulationPath);
         }
 
-        public  static  void  CreateSimulationScene(string simulationName)
+        public static void CreateSimulationScene(string simulationName)
         {
             var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(SceneTemplatePath);
 
-            var newScenePath =  GetCurrentSimulationScenePath(simulationName);
-            
+            var newScenePath = GetCurrentSimulationScenePath(simulationName);
+
             CreateFolders(simulationName);
-            
+
             var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
-            
+
             EditorSceneManager.SaveScene(result.scene, newScenePath);
         }
     }

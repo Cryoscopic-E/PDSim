@@ -9,6 +9,8 @@ using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEditor.SceneTemplate;
+using UnityEditor.SceneManagement;
 
 namespace Editor.UI
 {
@@ -20,7 +22,7 @@ namespace Editor.UI
             var wnd = GetWindow<CreateSimulationWindow>();
             wnd.titleContent = new GUIContent("CreateSimulationWindow");
         }
-        private  bool _connectionStatus = false;
+        private bool _connectionStatus = false;
         private Label _connectionStatusLabel;
         private TextField _simulationNameField;
         private TextField _domainPathText;
@@ -28,32 +30,32 @@ namespace Editor.UI
         private Button _createSimulationButton;
         private Button _cancelButton;
         private JObject _parsedJson;
-        private  ServerStatus _serverStatus;
+        private ServerStatus _serverStatus;
         public void CreateGUI()
         {
             // Set Window not resizable
             this.minSize = new Vector2(365, 325);
             this.maxSize = this.minSize;
-            
+
             // Each editor window contains a root VisualElement object
             var root = rootVisualElement;
-            
+
             // Import UXML
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/EditorUI/CreateSimulationWindow.uxml");
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
-            
+
             _connectionStatusLabel = root.Q<Label>("Status");
             _simulationNameField = root.Q<TextField>("SimulationName");
             _domainPathText = root.Q<TextField>("DomainPath");
             _problemPathText = root.Q<TextField>("ProblemPath");
             _createSimulationButton = rootVisualElement.Q<Button>("CreateSimulationButton");
             _cancelButton = rootVisualElement.Q<Button>("CancelButton");
-            
+
             SetButtonListeners();
             EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
         }
-        
+
 
         /// <summary>
         ///  Test connection to PDSim Backend Server
@@ -64,10 +66,10 @@ namespace Editor.UI
         private IEnumerator TestConnection()
         {
             ToggleButtons(false);
-            
+
             _connectionStatusLabel.style.color = Color.yellow;
             _connectionStatusLabel.text = "Testing connection to backend...";
-            
+
             var request = new BackendTestConnectionRequest();
             var response = request.Connect();
             _connectionStatusLabel.style.color = response["status"]?.ToString() switch
@@ -75,20 +77,20 @@ namespace Editor.UI
                 "OK" => Color.green,
                 "TO" => Color.red,
                 _ => Color.black
-            };  
+            };
             _connectionStatusLabel.text = response["status"]?.ToString() switch
             {
                 "OK" => "Connected!",
                 "TO" => "Disconnected!",
                 _ => "Connection Error"
             };
-            
+
             _connectionStatus = response["status"]?.ToString() == "OK";
-            
+
             // Display error message if connection failed
-            if(!_connectionStatus)
+            if (!_connectionStatus)
                 EditorUtility.DisplayDialog("Connection Error", "Check server is running!", "OK");
-            
+
             ToggleButtons(true);
             yield return null;
         }
@@ -101,7 +103,7 @@ namespace Editor.UI
         private IEnumerator ParseFiles()
         {
             var request = new BackendParseRequest(_domainPathText.value, _problemPathText.value);
-            
+
             // Check  for errors (parse_error, syntax_error, assertion_error,error)
             var response = request.Connect();
             if (response["status"]?.ToString() == "OK")
@@ -130,7 +132,7 @@ namespace Editor.UI
                     EditorUtility.DisplayDialog("Error", response["error"].ToString(), "OK");
                     yield break;
                 }
-                
+
             }
             _parsedJson = response;
             yield return null;
@@ -140,10 +142,10 @@ namespace Editor.UI
         {
             // Disable buttons
             ToggleButtons(false);
-            
+
             // Check  connection
-            yield return  EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
-                
+            yield return EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
+
             // Check if connection is successful
             if (!_connectionStatus)
             {
@@ -152,44 +154,65 @@ namespace Editor.UI
                 EditorUtility.DisplayDialog("Error", "Connection to backend failed!", "OK");
                 yield break;
             }
-            
+
             // Display loading bar 
             EditorUtility.DisplayProgressBar("Parsing Files", "Creating Simulation", 0.5f);
-            
+
             // Launch Parsing
-            yield return  EditorCoroutineUtility.StartCoroutine(ParseFiles(), this);
-            
+            yield return EditorCoroutineUtility.StartCoroutine(ParseFiles(), this);
+
             EditorUtility.ClearProgressBar();
-            
-            // Create scene from template
-            
+
+
             // Create PdSim Environment Scriptable Objects
-
-            if (_parsedJson != null && (_parsedJson!= null || !_parsedJson.ContainsKey("error")))
+            if (_parsedJson != null && (_parsedJson != null || !_parsedJson.ContainsKey("error")))
             {
-                var simData = new List<PdSimData>
-                {
-                    CreateInstance<CustomTypes>(),
-                    CreateInstance<Fluents>(),
-                    CreateInstance<Plan>(),
-                    CreateInstance<Actions>(),
-                    CreateInstance<Problem>()
-                };
-
-                foreach (var so in simData)
-                {
-                    so.CreateInstance(_parsedJson);
-                    AssetDatabase.CreateAsset(so, "Assets/"+  _simulationNameField.value  + "_"+ so.GetType().Name + ".asset");
-                }
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+                AssetUtils.CreateFolders(_simulationNameField.value);
+                //CreatePDSimData();
             }
-            
+
+            // Create scene from template
+            //CreateSimulationScene();
+
+
             // Close window
             Close();
-            
+
             yield return null;
         }
+
+        private void CreateSimulationScene()
+        {
+            var sceneTemplate =
+                AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(
+                    "Assets/Scenes/Templates/PdSimSimulationScene.scenetemplate");
+
+            var newScenePath = AssetUtils.GetCurrentSimulationScenePath(_simulationNameField.value);
+
+            var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
+            EditorSceneManager.SaveScene(result.scene, newScenePath);
+        }
+
+        private void CreatePDSimData()
+        {
+            var simData = new List<PdSimData>
+            {
+                CreateInstance<CustomTypes>(),
+                CreateInstance<Fluents>(),
+                CreateInstance<Plan>(),
+                CreateInstance<Actions>(),
+                CreateInstance<Problem>()
+            };
+            var dataPath = AssetUtils.GetSimulationDataPath(_simulationNameField.value);
+            foreach (var so in simData)
+            {
+                so.CreateInstance(_parsedJson);
+                AssetDatabase.CreateAsset(so, dataPath + so.GetType().Name + ".asset");
+            }
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         /// <summary>
         ///  Toggle buttons on/off
         /// </summary>
@@ -199,7 +222,7 @@ namespace Editor.UI
             _createSimulationButton.SetEnabled(enabled);
             _cancelButton.SetEnabled(enabled);
         }
-        
+
         /// <summary>
         ///   Validates the form. Returns true if the form is valid, false otherwise.
         ///  If the form is invalid, the validationMessage will contain the error message.
@@ -219,7 +242,7 @@ namespace Editor.UI
                 validationMessage = "Simulation name cannot be empty or whitespace.";
                 return false;
             }
-            
+
             // Check Simulation Exists
             if (AssetUtils.SimulationExists(_simulationNameField.value))
             {
@@ -233,55 +256,55 @@ namespace Editor.UI
                 validationMessage = "Domain path cannot be empty";
                 return false;
             }
-            
+
             // Check if problem path is empty
             if (string.IsNullOrEmpty(_problemPathText.text))
             {
                 validationMessage = "Problem path cannot be empty";
                 return false;
             }
-            
+
             // Domain Path is a directory
             if (AssetUtils.DirectoryExist(_domainPathText.text))
             {
                 validationMessage = "Domain path cannot be a directory";
                 return false;
             }
-            
+
             // Problem Path is a directory
             if (AssetUtils.DirectoryExist(_problemPathText.text))
             {
                 validationMessage = "Problem path cannot be a directory";
                 return false;
             }
-            
+
             // Check if domain file exists
             if (!AssetUtils.FileExists(_domainPathText.text))
             {
-                validationMessage= "Domain file does not exist";
+                validationMessage = "Domain file does not exist";
                 return false;
             }
-            
+
             // Check if problem file exists
             if (!AssetUtils.FileExists(_problemPathText.text))
             {
                 validationMessage = "Problem file does not exist";
                 return false;
             }
-            
+
             validationMessage = "";
-            return  true;
+            return true;
         }
 
         #region Buttons Clicked Callbacks
-        
+
         /// <summary>
         ///  Sets the button listeners.
         ///  This function is called when the window is created.
         /// </summary>
         private void SetButtonListeners()
         {
-            
+
             _createSimulationButton.clicked += CreateSimulationButtonClicked;
 
             _cancelButton.clicked += CancelButtonClicked;
@@ -295,7 +318,7 @@ namespace Editor.UI
             var refreshServerButton = rootVisualElement.Q<Button>("RefreshConnectionButton");
             refreshServerButton.clicked += RefreshConnectionButtonClicked;
         }
-        
+
         /// <summary>
         ///  Called when the create simulation button is clicked.
         ///  Validates the form and creates the simulation.
@@ -313,7 +336,7 @@ namespace Editor.UI
                 EditorUtility.DisplayDialog("Error", validationMessage, "OK");
             }
         }
-        
+
         /// <summary>
         ///  Cancel button clicked.
         /// </summary>
@@ -321,7 +344,7 @@ namespace Editor.UI
         {
             Close();
         }
-        
+
         /// <summary>
         ///  Domain file selection button clicked.
         ///  Opens a file selection dialog to select a domain file.
@@ -330,7 +353,7 @@ namespace Editor.UI
         {
             _domainPathText.value = EditorUtility.OpenFilePanel("Select Domain", "", "pddl");
         }
-        
+
         /// <summary>
         ///  Problem file selection button clicked.
         ///  Opens a file selection dialog to select a problem file.
@@ -339,7 +362,7 @@ namespace Editor.UI
         {
             _problemPathText.value = EditorUtility.OpenFilePanel("Select Problem", "", "pddl");
         }
-        
+
         /// <summary>
         ///  Refresh connection button clicked.
         ///  Tests the connection to the backend server.
@@ -353,7 +376,7 @@ namespace Editor.UI
 
     internal struct ServerStatus
     {
-        public  bool IsConnected { get; set; }
+        public bool IsConnected { get; set; }
         public bool ParseRequested { get; set; }
         public bool PlanRequested { get; set; }
         public bool ParseError { get; set; }
