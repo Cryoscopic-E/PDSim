@@ -311,6 +311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 519354776}
+  - component: {fileID: 519354777}
   m_Layer: 0
   m_Name: Problem Objects
   m_TagString: Untagged
@@ -333,6 +334,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519354777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519354775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b6fbdb05616768448dd58b9e987c557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabs:
+  - {fileID: 6881721251003801567, guid: 0f96870047cc5884fa01e749047b2b21, type: 3}
 --- !u!1 &689603932
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,8 +571,9 @@ GameObject:
   - component: {fileID: 1017859384}
   - component: {fileID: 1017859383}
   - component: {fileID: 1017859382}
+  - component: {fileID: 1017859385}
   m_Layer: 0
-  m_Name: SceneVariables
+  m_Name: SceneControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -605,6 +621,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1017859385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017859381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2fe5546f775c47d2820aa5e8a715f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"nest":{"source":"Embed","macro":null,"embed":{"variables":{"Kind":"Flow","collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[],"controlOutputDefinitions":[],"valueInputDefinitions":[],"valueOutputDefinitions":[],"title":"Scene
+      Script","summary":"Use it for every custom code that need to run on start/update","pan":{"x":0.0,"y":0.0},"zoom":1.0,"elements":[{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":-144.0},"guid":"84730446-4c67-4fa4-8a1a-81be3bdcad01","$version":"A","$type":"Unity.VisualScripting.Start"},{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":60.0},"guid":"18440e81-0016-4df1-9213-3cf52e261e2a","$version":"A","$type":"Unity.VisualScripting.Update"}],"$version":"A"}}}'
+    _objectReferences: []
 --- !u!1 &1160234425
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,6 +788,21 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1851035209}
+  - component: {fileID: 1851035224}
+  - component: {fileID: 1851035223}
+  - component: {fileID: 1851035222}
+  - component: {fileID: 1851035221}
+  - component: {fileID: 1851035220}
+  - component: {fileID: 1851035219}
+  - component: {fileID: 1851035218}
+  - component: {fileID: 1851035217}
+  - component: {fileID: 1851035216}
+  - component: {fileID: 1851035215}
+  - component: {fileID: 1851035214}
+  - component: {fileID: 1851035213}
+  - component: {fileID: 1851035212}
+  - component: {fileID: 1851035211}
+  - component: {fileID: 1851035210}
   m_Layer: 0
   m_Name: Animations
   m_TagString: Untagged
@@ -778,6 +825,322 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1851035210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: crate
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: pallet
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: surface
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: hoist
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: truck
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: distributor
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: depot
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: locatable
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: place
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: clear
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: available
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: lifting
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+    - name: y
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: in
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+    - name: y
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: on
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+    - name: y
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
+--- !u!114 &1851035224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1851035208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788177fa88a15c746a25b404b7ac6c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  metaData:
+    name: at
+    parameters:
+    - name: x
+      type: object
+      childrenTypes:
+      - object
+    - name: y
+      type: object
+      childrenTypes:
+      - object
+  animationData: []
 --- !u!1 &2017000297
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,8 +1185,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50da83f2eb464e25834412907a54a127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  types: {fileID: 0}
-  fluents: {fileID: 0}
-  actions: {fileID: 0}
-  plan: {fileID: 0}
-  problem: {fileID: 0}
+  types: {fileID: 11400000, guid: e851ec7ab994e97429a5f5861840a4c6, type: 2}
+  fluents: {fileID: 11400000, guid: 6e092f808690df841b2b22bd93b5a770, type: 2}
+  actions: {fileID: 11400000, guid: fb3d55e255076ae42982e98e1c5ff171, type: 2}
+  plan: {fileID: 11400000, guid: 3284083abc73deb4d85ee1b18edc6a79, type: 2}
+  problem: {fileID: 11400000, guid: f9bb3eb5b2677cb40a26ed36e1f2b573, type: 2}

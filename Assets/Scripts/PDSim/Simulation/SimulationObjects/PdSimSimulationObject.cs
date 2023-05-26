@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -21,6 +19,9 @@ namespace PDSim.Simulation
 
         public MovementSettings movementSettings;
 
+        public SimulationObjectPoints SimulationObjectPoints;
+        public SimulationObjectModels simulationObjectModels;
+
         //PRIVATE VARIABLES
         // Default values
         private const float Speed = 1f;
@@ -30,12 +31,8 @@ namespace PDSim.Simulation
 
         private NavMeshAgent _navMeshAgent;
 
-        [SerializeField]
-        private List<Transform> _points;
 
-        [SerializeField] 
-        private List<Renderer> _renderers;
-        
+
         private void Awake()
         {
             if (!useNavMeshAgent) return;
@@ -48,7 +45,7 @@ namespace PDSim.Simulation
             _navMeshAgent.enabled = useNavMeshAgent;
         }
 
-    #region HELPER FUNCTIONS
+        #region HELPER FUNCTIONS
 
         // Move the object to a new position
         public IEnumerator MoveTo(Vector3 position, bool faceTarget = true)
@@ -110,21 +107,8 @@ namespace PDSim.Simulation
             }
         }
 
-        public Transform GetPoint(string name)
-        {
-            foreach (var point in _points)
-            {
-                if (point.name == name)
-                {
-                    return point;
-                }
-            }
+        #endregion HELPER FUNCTIONS
 
-            return transform;
-        }
-
-    #endregion HELPER FUNCTIONS
-        
 
     }
 }

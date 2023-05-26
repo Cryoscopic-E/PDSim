@@ -1,7 +1,4 @@
 using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEditor.SceneTemplate;
-using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
 namespace PDSim.Utils
@@ -68,29 +65,32 @@ namespace PDSim.Utils
             CreateFolderIfDontExist(simulationPath + SimData);
         }
 
-        public static string GetCurrentObjectsFolder()
-        {
-            var assetPath = SimulationsRootFolder + SceneManager.GetActiveScene().name + "/" + SimObjectsFolder;
-            return assetPath;
-        }
+        //public static string GetCurrentObjectsFolder()
+        //{
+        //    var assetPath = SimulationsRootFolder + SceneManager.GetActiveScene().name + "/" + SimObjectsFolder;
+        //    return assetPath;
+        //}
 
-        public static string GetSimulationDirectoryRoot(string sceneName)
-        {
-            var simulationPath = SimulationsRootFolder + sceneName + "/";
-            return simulationPath;
-        }
+        //public static string GetSimulationDirectoryRoot(string sceneName)
+        //{
+        //    var simulationPath = SimulationsRootFolder + sceneName + "/";
+        //    return simulationPath;
+        //}
 
         public static string GetSimulationDataPath(string sceneName)
         {
             var simulationPath = SimulationsRootFolder + sceneName + "/" + SimData;
-            UnityEngine.Debug.Log("Simulation path: " + simulationPath);
+            return simulationPath;
+        }
+
+        public static string GetSimulationObjectsPath(string sceneName)
+        {
+            var simulationPath = SimulationsRootFolder + sceneName + "/" + SimObjectsFolder;
             return simulationPath;
         }
 
         public static T GetAsset<T>(string path) where T : UnityEngine.Object
         {
-            UnityEngine.Debug.Log(path);
-
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
@@ -111,17 +111,17 @@ namespace PDSim.Utils
             return DirectoryExist(simulationPath);
         }
 
-        public static void CreateSimulationScene(string simulationName)
-        {
-            var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(SceneTemplatePath);
+        //public static void CreateSimulationScene(string simulationName)
+        //{
+        //    var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(SceneTemplatePath);
 
-            var newScenePath = GetCurrentSimulationScenePath(simulationName);
+        //    var newScenePath = GetCurrentSimulationScenePath(simulationName);
 
-            CreateFolders(simulationName);
+        //    CreateFolders(simulationName);
 
-            var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
+        //    var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
 
-            EditorSceneManager.SaveScene(result.scene, newScenePath);
-        }
+        //    EditorSceneManager.SaveScene(result.scene, newScenePath);
+        //}
     }
 }

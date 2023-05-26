@@ -1,9 +1,9 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using PDSim.Simulation.Data;
-using PDSim.Animation;
-using Unity.VisualScripting;
+using PDSim.Utils;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PDSim.Simulation
 {
@@ -54,6 +54,44 @@ namespace PDSim.Simulation
                 var fluentAnimation = animationsRootObject.AddComponent<FluentAnimation>();
                 fluentAnimation.metaData = fluent;
                 fluentAnimation.animationData = new List<FluentAnimationData>();
+            }
+        }
+
+        public void SetUpObjects()
+        {
+            var problemObjectsRootObject = GameObject.Find("Problem Objects");
+            if (problemObjectsRootObject == null)
+            {
+                problemObjectsRootObject = new GameObject("Problem Objects");
+            }
+
+            var problemObjects = problemObjectsRootObject.GetComponent<ProblemObjects>();
+            if (problemObjects == null)
+            {
+                problemObjects = problemObjectsRootObject.AddComponent<ProblemObjects>();
+            }
+
+
+            var leafNodes = types.typeTree.GetLeafNodes();
+
+            foreach (var leafNode in leafNodes)
+            {
+                var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
+                // Get the generic object prefab
+                Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/PDSim/PdSimObject.prefab", typeof(GameObject));
+                // Create instance of generic object
+                var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
+                // Save new model
+                var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + leafNode + ".prefab");
+
+                if (problemObjects.prefabs == null)
+                {
+                    problemObjects.prefabs = new List<PdSimSimulationObject>();
+                }
+                problemObjects.prefabs.Add(newModel.GetComponent<PdSimSimulationObject>());
+
+                // Remove from scene
+                DestroyImmediate(prefabInstance);
             }
         }
     }

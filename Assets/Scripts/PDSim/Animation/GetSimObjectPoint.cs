@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using PDSim.Simulation;
+﻿using PDSim.Simulation;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,22 +10,22 @@ namespace PDSim.Animation
         [DoNotSerialize]
         [PortLabelHidden]
         public ValueInput @simObject;
-        
+
         [DoNotSerialize]
         public ValueInput pointName;
-        
+
         [DoNotSerialize]
         [PortLabelHidden]
         public ValueOutput point;
-       
+
         protected override void Definition()
         {
             @simObject = ValueInput<GameObject>(nameof(@simObject), null);
 
             pointName = ValueInput(nameof(pointName), string.Empty);
-            
+
             point = ValueOutput<Transform>(nameof(point), Get).Predictable();
-            
+
             Requirement(pointName, point);
             Requirement(@simObject, point);
         }
@@ -39,7 +37,9 @@ namespace PDSim.Animation
 
             simulationObject = flow.GetValue<GameObject>(@simObject);
 
-            return simulationObject.GetComponent<PdSimSimulationObject>().GetPoint(name);
+            var pdsimObject = simulationObject.GetComponent<PdSimSimulationObject>();
+
+            return pdsimObject.SimulationObjectPoints.GetPoint(name);
         }
 
         // Event handler to set the PointStorage input

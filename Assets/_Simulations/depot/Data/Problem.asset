@@ -1,0 +1,222 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eca903834d78344e964f5dad0c3d751, type: 3}
+  m_Name: Problem
+  m_EditorClassIdentifier: 
+  objects:
+  - name: depot0
+    type: object
+    childrenTypes: []
+  - name: distributor0
+    type: object
+    childrenTypes: []
+  - name: distributor1
+    type: object
+    childrenTypes: []
+  - name: truck0
+    type: object
+    childrenTypes: []
+  - name: truck1
+    type: object
+    childrenTypes: []
+  - name: pallet0
+    type: object
+    childrenTypes: []
+  - name: pallet1
+    type: object
+    childrenTypes: []
+  - name: pallet2
+    type: object
+    childrenTypes: []
+  - name: crate0
+    type: object
+    childrenTypes: []
+  - name: crate1
+    type: object
+    childrenTypes: []
+  - name: hoist0
+    type: object
+    childrenTypes: []
+  - name: hoist1
+    type: object
+    childrenTypes: []
+  - name: hoist2
+    type: object
+    childrenTypes: []
+  initialState:
+  - name: pallet
+    attributes:
+    - pallet0
+    value: 1
+  - name: pallet
+    attributes:
+    - pallet1
+    value: 1
+  - name: pallet
+    attributes:
+    - pallet2
+    value: 1
+  - name: surface
+    attributes:
+    - pallet0
+    value: 1
+  - name: surface
+    attributes:
+    - pallet1
+    value: 1
+  - name: surface
+    attributes:
+    - pallet2
+    value: 1
+  - name: surface
+    attributes:
+    - crate0
+    value: 1
+  - name: surface
+    attributes:
+    - crate1
+    value: 1
+  - name: at
+    attributes:
+    - pallet0
+    - depot0
+    value: 1
+  - name: at
+    attributes:
+    - pallet1
+    - distributor0
+    value: 1
+  - name: at
+    attributes:
+    - pallet2
+    - distributor1
+    value: 1
+  - name: at
+    attributes:
+    - truck0
+    - distributor1
+    value: 1
+  - name: at
+    attributes:
+    - truck1
+    - depot0
+    value: 1
+  - name: at
+    attributes:
+    - hoist0
+    - depot0
+    value: 1
+  - name: at
+    attributes:
+    - hoist1
+    - distributor0
+    value: 1
+  - name: at
+    attributes:
+    - hoist2
+    - distributor1
+    value: 1
+  - name: at
+    attributes:
+    - crate0
+    - distributor0
+    value: 1
+  - name: at
+    attributes:
+    - crate1
+    - depot0
+    value: 1
+  - name: clear
+    attributes:
+    - crate1
+    value: 1
+  - name: clear
+    attributes:
+    - crate0
+    value: 1
+  - name: clear
+    attributes:
+    - pallet2
+    value: 1
+  - name: truck
+    attributes:
+    - truck0
+    value: 1
+  - name: truck
+    attributes:
+    - truck1
+    value: 1
+  - name: hoist
+    attributes:
+    - hoist0
+    value: 1
+  - name: hoist
+    attributes:
+    - hoist1
+    value: 1
+  - name: hoist
+    attributes:
+    - hoist2
+    value: 1
+  - name: available
+    attributes:
+    - hoist0
+    value: 1
+  - name: available
+    attributes:
+    - hoist1
+    value: 1
+  - name: available
+    attributes:
+    - hoist2
+    value: 1
+  - name: crate
+    attributes:
+    - crate0
+    value: 1
+  - name: crate
+    attributes:
+    - crate1
+    value: 1
+  - name: on
+    attributes:
+    - crate0
+    - pallet1
+    value: 1
+  - name: on
+    attributes:
+    - crate1
+    - pallet0
+    value: 1
+  - name: place
+    attributes:
+    - depot0
+    value: 1
+  - name: place
+    attributes:
+    - distributor0
+    value: 1
+  - name: place
+    attributes:
+    - distributor1
+    value: 1
+  goalState:
+  - name: on
+    attributes:
+    - crate0
+    - pallet2
+    value: 1
+  - name: on
+    attributes:
+    - crate1
+    - pallet1
+    value: 1
