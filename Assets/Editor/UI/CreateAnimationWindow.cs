@@ -211,10 +211,12 @@ namespace Editor.UI
             graph.controlConnections.Add(conn);
             graph.controlConnections.Add(conn2);
 
-            var conn3 = new ValueConnection(effectEvent.valueOutputs[0], superUnit.valueInputs[0]);
-            var conn4 = new ValueConnection(effectEvent.valueOutputs[1], superUnit.valueInputs[1]);
-            graph.valueConnections.Add(conn3);
-            graph.valueConnections.Add(conn4);
+
+            for (var i = 0; i < attributes.Count; i++)
+            {
+                var valConn = new ValueConnection(effectEvent.valueOutputs[i], superUnit.valueInputs[i]);
+                graph.valueConnections.Add(valConn);
+            }
 
 
 

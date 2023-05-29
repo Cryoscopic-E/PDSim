@@ -93,6 +93,18 @@ namespace PDSim.Simulation
                 // Remove from scene
                 DestroyImmediate(prefabInstance);
             }
+
+
+            // Spawn objects
+            foreach (var obj in problem.objects)
+            {
+                var type = obj.type;
+                var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
+                var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
+                var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
+                instance.name = obj.name;
+                prefab.objectType = type;
+            }
         }
     }
 }

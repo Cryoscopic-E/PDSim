@@ -8,9 +8,6 @@ namespace PDSim.Simulation
     {
         //PUBLIC VARIABLES
 
-        [Tooltip("The name of the object in the PDDL domain.")]
-        public string objectName;
-
         [Tooltip("The type of the object in the PDDL domain.")]
         public string objectType;
 
