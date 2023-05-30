@@ -27,7 +27,6 @@ public class SimulationScenePipeline : SceneTemplatePipelineAdapter
 
         EditorUtility.SetDirty(simulationManager);
 
-        // setup animations
         simulationManager.SetUpAnimations();
 
         simulationManager.SetUpObjects();

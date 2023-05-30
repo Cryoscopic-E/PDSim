@@ -1,9 +1,11 @@
 using PDSim.Simulation.Data;
 using PDSim.Utils;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 
 namespace PDSim.Simulation
 {
@@ -74,7 +76,7 @@ namespace PDSim.Simulation
 
             var leafNodes = types.typeTree.GetLeafNodes();
 
-            foreach (var leafNode in leafNodes)
+            foreach (var type in leafNodes)
             {
                 var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
                 // Get the generic object prefab
@@ -82,7 +84,7 @@ namespace PDSim.Simulation
                 // Create instance of generic object
                 var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
                 // Save new model
-                var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + leafNode + ".prefab");
+                var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + type + ".prefab");
 
                 if (problemObjects.prefabs == null)
                 {
@@ -90,10 +92,29 @@ namespace PDSim.Simulation
                 }
                 problemObjects.prefabs.Add(newModel.GetComponent<PdSimSimulationObject>());
 
+
+                //// Create script
+                var macro = (IMacro)ScriptableObject.CreateInstance(typeof(ScriptGraphAsset));
+                var macroObject = (Object)macro;
+                macro.graph = FlowGraph.WithStartUpdate();
+
+                ScriptMachine flowMachine = newModel.AddComponent<ScriptMachine>();
+
+                flowMachine.nest.macro = (ScriptGraphAsset)macro;
+
+                flowMachine.graph.title = "PDSim Object Script";
+                flowMachine.graph.summary = "Start/Update Custom Routines";
+
+
+                var path = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + type + ".asset";
+                AssetDatabase.CreateAsset(macroObject, path);
+
                 // Remove from scene
                 DestroyImmediate(prefabInstance);
             }
 
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
             // Spawn objects
             foreach (var obj in problem.objects)
@@ -101,9 +122,10 @@ namespace PDSim.Simulation
                 var type = obj.type;
                 var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
                 var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
-                var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
-                instance.name = obj.name;
                 prefab.objectType = type;
+
+                var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
+                instance.gameObject.name = obj.name;
             }
         }
     }

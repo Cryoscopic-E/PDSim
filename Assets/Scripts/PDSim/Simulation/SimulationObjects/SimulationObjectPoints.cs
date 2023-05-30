@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -14,42 +14,33 @@ namespace PDSim.Simulation
             Color.magenta, Color.red, Color.white, Color.yellow,
         };
 
-        public List<Transform> points;
 
+        private Variables _variables;
 
-        public Transform GetPoint(string controlPoint)
-        {
-            var index = points.FindIndex(p => p.ToString() == controlPoint);
-            if (index < 0)
-            {
-                return null;
-            }
-
-            return points[index];
-        }
 
         private void OnEnable()
         {
-            PrefabStage.prefabSaved += SaveControlPoints;
+            _variables = GetComponentInParent<Variables>();
+            //PrefabStage.prefabSaved += SaveControlPoints;
+            PrefabStage.prefabStageDirtied += SaveControlPoints;
         }
 
         private void OnDisable()
         {
-            PrefabStage.prefabSaved -= SaveControlPoints;
+            //PrefabStage.prefabSaved -= SaveControlPoints;
+            PrefabStage.prefabStageDirtied -= SaveControlPoints;
         }
 
-        private void SaveControlPoints(GameObject obj)
+        //private void SaveControlPoints(GameObject obj)
+        private void SaveControlPoints(PrefabStage prefabStage)
         {
             if (!transform.hasChanged) return;
-            if (PrefabStageUtility.GetCurrentPrefabStage() is null) return;
             if (transform.childCount >= 0)
             {
-                if (points == null)
-                    points = new List<Transform>();
-                points.Clear();
+                _variables.declarations.Clear();
                 foreach (Transform child in transform)
                 {
-                    points.Add(child);
+                    _variables.declarations.Set(child.name + "-Point", child);
                 }
             }
         }

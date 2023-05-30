@@ -16,8 +16,6 @@ namespace PDSim.Simulation
 
         public MovementSettings movementSettings;
 
-        public SimulationObjectPoints SimulationObjectPoints;
-        public SimulationObjectModels simulationObjectModels;
 
         //PRIVATE VARIABLES
         // Default values

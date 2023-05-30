@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
@@ -8,13 +8,15 @@ namespace PDSim.Simulation
     [ExecuteInEditMode]
     public class SimulationObjectModels : MonoBehaviour
     {
-        public List<Renderer> renderers;
+        private Variables _variables;
+
         private BoxCollider _bound;
 
         private void OnEnable()
         {
+            _variables = GetComponentInParent<Variables>();
             _bound = GetComponentInParent<BoxCollider>();
-            UnityEditor.SceneManagement.PrefabStage.prefabSaved += SaveModels;
+            PrefabStage.prefabSaved += SaveModels;
         }
 
         private void OnDisable()
@@ -28,15 +30,14 @@ namespace PDSim.Simulation
             if (PrefabStageUtility.GetCurrentPrefabStage() is null) return;
             if (transform.childCount >= 0)
             {
-                if (renderers == null)
-                    renderers = new List<Renderer>();
-                renderers.Clear();
+                var modelDictionary = _variables.declarations.Get<AotDictionary>("Models");
+                modelDictionary.Clear();
                 foreach (Transform child in transform)
                 {
                     var renderer = child.GetComponent<Renderer>();
                     if (renderer != null)
                     {
-                        renderers.Add(renderer);
+                        modelDictionary.Add(child.name + "-Model", renderer);
                     }
                 }
                 CalculateBounds();
