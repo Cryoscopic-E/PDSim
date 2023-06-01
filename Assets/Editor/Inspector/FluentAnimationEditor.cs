@@ -1,8 +1,8 @@
+using Editor.UI;
 using PDSim.Simulation;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Editor.UI;
 
 namespace Editor.Inspector
 {
@@ -12,16 +12,19 @@ namespace Editor.Inspector
         private FluentAnimation fluentAnimation;
         private ReorderableList list;
 
+
+
         private void OnEnable()
         {
             fluentAnimation = (FluentAnimation)target;
 
             list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
 
+
             list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
                 var element = list.serializedProperty.GetArrayElementAtIndex(index);
-                rect.y += 2;
+                //rect.y += 2;
                 var nameProperty = element.FindPropertyRelative("name");
                 var machineProperty = element.FindPropertyRelative("machine");
                 var orderProperty = element.FindPropertyRelative("order");
@@ -39,7 +42,8 @@ namespace Editor.Inspector
 
             list.onAddCallback = (ReorderableList List) =>
             {
-                CreateAnimationWindow.ShowAsModal(fluentAnimation.metaData, fluentAnimation);
+                EditorApplication.delayCall += CreateAnimation;
+                //CreateAnimationWindow.ShowAsModal(fluentAnimation.metaData, fluentAnimation);
             };
 
             list.onRemoveCallback = (ReorderableList List) =>
@@ -61,6 +65,16 @@ namespace Editor.Inspector
                     }
                 }
             };
+        }
+
+        private void OnDestroy()
+        {
+            EditorApplication.delayCall -= CreateAnimation;
+        }
+
+        public void CreateAnimation()
+        {
+            CreateAnimationWindow.ShowAsModal(fluentAnimation.metaData, fluentAnimation);
         }
 
         public override void OnInspectorGUI()

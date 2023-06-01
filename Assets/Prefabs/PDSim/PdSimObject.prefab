@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7187694206958169705}
-  - component: {fileID: 981308319944012041}
   m_Layer: 0
   m_Name: Points
   m_TagString: Untagged
@@ -32,18 +31,6 @@ Transform:
   m_Father: {fileID: 4435292698034127583}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &981308319944012041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4390580348749166268}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0abe36bf29ab074d96903913fbb7ad6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4549754318790907316
 GameObject:
   m_ObjectHideFlags: 0
@@ -53,7 +40,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3538999915281003872}
-  - component: {fileID: 1534861180412939585}
   m_Layer: 0
   m_Name: Models
   m_TagString: Untagged
@@ -76,18 +62,6 @@ Transform:
   m_Father: {fileID: 4435292698034127583}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1534861180412939585
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4549754318790907316}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a55bfc5421b0495429b83bb2967c6f3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4564599111297541847
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,6 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4435292698034127583}
   - component: {fileID: 1350464632857284060}
+  - component: {fileID: 3949982499745000526}
   - component: {fileID: 7449021867803973887}
   m_Layer: 0
   m_Name: PdSimObject
@@ -138,6 +113,18 @@ MonoBehaviour:
   objectType: block
   useNavMeshAgent: 0
   movementSettings: {fileID: 0}
+--- !u!114 &3949982499745000526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4564599111297541847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05356dd34456e1f438b320517c535d2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &7449021867803973887
 BoxCollider:
   m_ObjectHideFlags: 0

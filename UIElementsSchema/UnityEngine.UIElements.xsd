@@ -190,6 +190,7 @@
         <xs:attribute default="Auto" name="vertical-scroller-visibility" type="engine:ScrollView_vertical-scroller-visibility_Type" use="optional" />
         <xs:attribute default="-1" name="horizontal-page-size" type="xs:float" use="optional" />
         <xs:attribute default="-1" name="vertical-page-size" type="xs:float" use="optional" />
+        <xs:attribute default="18" name="mouse-wheel-scroll-size" type="xs:float" use="optional" />
         <xs:attribute default="Clamped" name="touch-scroll-type" type="engine:ScrollView_touch-scroll-type_Type" use="optional" />
         <xs:attribute default="0.135" name="scroll-deceleration-rate" type="xs:float" use="optional" />
         <xs:attribute default="0.1" name="elasticity" type="xs:float" use="optional" />

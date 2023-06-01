@@ -31,6 +31,24 @@ namespace PDSim.Simulation
         public Plan plan;
         public Problem problem;
 
+
+        private Dictionary<string, GameObject> _objects;
+
+        private void Start()
+        {
+            _objects = new Dictionary<string, GameObject>();
+            var problemObjectsRootObject = GameObject.Find("Problem Objects");
+            for (var i = 0; i < problemObjectsRootObject.transform.childCount; i++)
+            {
+                var child = problemObjectsRootObject.transform.GetChild(i);
+                _objects.Add(child.name, child.gameObject);
+            }
+
+
+        }
+
+
+
         private void TriggerAnimation()
         {
             // TODO: Works! Implement this for simulate plan!

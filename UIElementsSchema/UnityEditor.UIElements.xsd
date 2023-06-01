@@ -35,28 +35,6 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="PropertyControl" substitutionGroup="engine:VisualElement" type="editor:PropertyControlType" />
-  <xs:complexType name="TwoPaneSplitViewType">
-    <xs:complexContent mixed="false">
-      <xs:restriction base="engine:VisualElementType">
-        <xs:attribute default="" name="name" type="xs:string" use="optional" />
-        <xs:attribute default="" name="view-data-key" type="xs:string" use="optional" />
-        <xs:attribute default="Position" name="picking-mode" type="engine:VisualElement_picking-mode_Type" use="optional" />
-        <xs:attribute default="" name="tooltip" type="xs:string" use="optional" />
-        <xs:attribute default="None" name="usage-hints" type="engine:VisualElement_usage-hints_Type" use="optional" />
-        <xs:attribute default="0" name="tabindex" type="xs:int" use="optional" />
-        <xs:attribute default="false" name="focusable" type="xs:boolean" use="optional" />
-        <xs:attribute default="" name="class" type="xs:string" use="optional" />
-        <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
-        <xs:attribute default="" name="style" type="xs:string" use="optional" />
-        <xs:attribute default="0" name="fixed-pane-index" type="xs:int" use="optional" />
-        <xs:attribute default="100" name="fixed-pane-initial-size" type="xs:int" use="optional" />
-        <xs:attribute default="horizontal" name="orientation" type="xs:string" use="optional" />
-        <xs:attribute default="100" name="buffer" type="xs:int" use="optional" />
-        <xs:anyAttribute processContents="lax" />
-      </xs:restriction>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="TwoPaneSplitView" substitutionGroup="engine:VisualElement" type="editor:TwoPaneSplitViewType" />
   <xs:complexType name="BoundsFieldType">
     <xs:complexContent mixed="false">
       <xs:restriction base="engine:VisualElementType">
