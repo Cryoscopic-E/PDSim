@@ -1,3 +1,4 @@
+using PDSim.Components;
 using PDSim.Simulation.Data;
 using PDSim.Utils;
 using System.Collections.Generic;
@@ -34,8 +35,14 @@ namespace PDSim.Simulation
 
         private Dictionary<string, GameObject> _objects;
 
+
+        private Dictionary<string, PdTypedPredicate> _predicates;
+        private Dictionary<string, List<PdBooleanPredicate>> _actionToEffects;
+        private Dictionary<string, FluentAnimation> _effectToAnimations;
+
         private void Start()
         {
+            // Gameobjects References
             _objects = new Dictionary<string, GameObject>();
             var problemObjectsRootObject = GameObject.Find("Problem Objects");
             for (var i = 0; i < problemObjectsRootObject.transform.childCount; i++)
@@ -44,9 +51,49 @@ namespace PDSim.Simulation
                 _objects.Add(child.name, child.gameObject);
             }
 
+            // Predicate References
+            _predicates = new Dictionary<string, PdTypedPredicate>();
+            foreach (var predicate in fluents.fluents)
+            {
+                _predicates.Add(predicate.name, predicate);
+            }
 
+            // Action to Effects References
+            _actionToEffects = new Dictionary<string, List<PdBooleanPredicate>>();
+            foreach (var action in actions.actions)
+            {
+                _actionToEffects.Add(action.name, action.effects);
+            }
+
+
+            // Effect Animation References
+            var animationsRootObject = GameObject.Find("Animations");
+            var fluentAnimations = animationsRootObject.GetComponents<FluentAnimation>();
+
+            _effectToAnimations = new Dictionary<string, FluentAnimation>();
+            foreach (var fluentAnimation in fluentAnimations)
+            {
+                // Effect needs to match the name of the predicate
+                _effectToAnimations.Add(fluentAnimation.metaData.name, fluentAnimation);
+            }
+
+
+
+            // Start simulation
+            foreach (var action in plan.actions)
+            {
+                // Get the effects of the action
+                var effects = _actionToEffects[action.name];
+
+                foreach (var effect in effects)
+                {
+                    // Animation
+                    var animation = _effectToAnimations[effect.name];
+                    if (animation.animationData.Count > 0)
+                        Debug.Log("Animation Defined: " + animation.metaData.name);
+                }
+            }
         }
-
 
 
         private void TriggerAnimation()
