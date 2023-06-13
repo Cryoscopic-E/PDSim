@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.UIElements;
-using PDSim.Components;
-using Unity.VisualScripting;
 using PDSim.Animation;
+using PDSim.Components;
 using PDSim.Simulation;
+using PDSim.Utils;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Editor.UI
 {
@@ -90,23 +90,12 @@ namespace Editor.UI
             cancelButton.clickable.clicked += () =>
             {
                 Close();
+
             };
 
         }
 
-        private string UniqueAnimationName(bool negated, string predicateName, List<string> attributeTypes)
-        {
-            var animationName = predicateName;
-            if (negated)
-                animationName = "NOT_" + animationName;
 
-            foreach (var item in attributeTypes)
-            {
-                animationName += "_" + item;
-            }
-
-            return animationName;
-        }
 
         private void CreateAnimation()
         {
@@ -123,7 +112,7 @@ namespace Editor.UI
                 attributesString += controller.label + " - " + controller.value + "\n";
             }
 
-            var animationName = UniqueAnimationName(negated, predicateName, attributeTypes);
+            var animationName = AnimationNames.UniqueAnimationName(negated, predicateName, attributeTypes);
 
 
 
