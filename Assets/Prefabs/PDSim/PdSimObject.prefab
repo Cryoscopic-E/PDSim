@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae2edff54cd6a445901ae5835126f67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectType: block
+  objectType: 
   useNavMeshAgent: 0
   movementSettings: {fileID: 0}
 --- !u!114 &3949982499745000526

@@ -1,3 +1,4 @@
+using PDSim.Components;
 using System.Collections.Generic;
 
 namespace PDSim.Utils
@@ -16,6 +17,11 @@ namespace PDSim.Utils
             }
 
             return animationName;
+        }
+
+        public static string UniqueAnimationName(PdBooleanPredicate predicate)
+        {
+            return UniqueAnimationName(predicate.value, predicate.name, predicate.attributes);
         }
     }
 }

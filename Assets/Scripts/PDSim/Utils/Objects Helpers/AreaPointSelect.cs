@@ -8,12 +8,16 @@ public class AreaPointSelect : MonoBehaviour
 
     public Vector3 GetRandomPoint()
     {
-        Vector3 point = new Vector3(
-                       Random.Range(transform.position.x - size.x / 2, transform.position.x + size.x / 2),
-                       Random.Range(transform.position.y - size.y / 2, transform.position.y + size.y / 2),
-                       Random.Range(transform.position.z - size.z / 2, transform.position.z + size.z / 2)
-                       );
-        return point;
+        // Random point in the area with offset
+        var point = new Vector3(
+                       Random.Range(0, size.x),
+                       offset.y,
+                       Random.Range(0, size.z));
+
+
+
+        return transform.position + point;
+
     }
 }
 

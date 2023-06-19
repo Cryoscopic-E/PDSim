@@ -1,6 +1,8 @@
+using PDSim.Animation;
 using PDSim.Components;
 using PDSim.Simulation.Data;
 using PDSim.Utils;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -40,6 +42,8 @@ namespace PDSim.Simulation
         private Dictionary<string, List<PdBooleanPredicate>> _actionToEffects;
         private Dictionary<string, FluentAnimation> _effectToAnimations;
 
+        private List<GameObject> currentAnimationObjects = new List<GameObject>();
+
         private void Start()
         {
             // Gameobjects References
@@ -78,34 +82,89 @@ namespace PDSim.Simulation
             }
 
 
+            PDSimInit();
+            //// Start simulation
+            //foreach (var action in plan.actions)
+            //{
+            //    // Get the effects of the action
+            //    var effects = _actionToEffects[action.name];
 
-            // Start simulation
-            foreach (var action in plan.actions)
+            //    foreach (var effect in effects)
+            //    {
+            //        // Animation
+            //        var animation = _effectToAnimations[effect.name];
+            //        if (animation.animationData.Count > 0)
+            //            Debug.Log("Animation Defined: " + animation.metaData.name);
+            //    }
+            //}
+        }
+
+
+        // state machine for the animation of a fluent (start, end)
+        public enum AnimationState
+        {
+            None,
+            Ready,
+            End,
+            Finished
+        }
+
+        private AnimationState _animationState = AnimationState.None;
+
+        private IEnumerator PDSimInitBlock()
+        {
+            // Handle animation state
+            switch (_animationState)
             {
-                // Get the effects of the action
-                var effects = _actionToEffects[action.name];
+                case AnimationState.None:
+                    // animation queue empty check if it can be populated
+                    break;
+                case AnimationState.Ready:
+                    // animation queue has elements ready to start top element
+                    break;
+                case AnimationState.End:
+                    // animation has ended, if queue is empty, set state to none, else set state to ready
+                    break;
+                case AnimationState.Finished:
+                default:
+                    // animation has finished end coroutine
+                    break;
+            }
+            yield return null;
+        }
 
-                foreach (var effect in effects)
+
+        private void PDSimInit()
+        {
+            foreach (var fluent in problem.initialState)
+            {
+                if (_effectToAnimations[fluent.name].animationData.Count > 0)
                 {
-                    // Animation
-                    var animation = _effectToAnimations[effect.name];
-                    if (animation.animationData.Count > 0)
-                        Debug.Log("Animation Defined: " + animation.metaData.name);
+                    Debug.Log("Animation Defined: " + _effectToAnimations[fluent.name].metaData.name);
+
+                    foreach (var obj in fluent.attributes)
+                    {
+                        currentAnimationObjects.Add(_objects[obj]);
+                    }
+
+                    foreach (var animationData in _effectToAnimations[fluent.name].animationData)
+                    {
+                        TriggerAnimation(animationData.name);
+                    }
+
+                    currentAnimationObjects.Clear();
                 }
             }
         }
 
 
-        private void TriggerAnimation()
+        private void TriggerAnimation(string animationName)
         {
-            // TODO: Works! Implement this for simulate plan!
-            //Debug.Log("ActionEffectEvent: At(robot, cell)");
-            //EventBus.Register<string>(EventNames.actionEffectEnd, i =>
-            //{
-            //    Debug.Log("RECEIVED " + i);
-            //});
-            //EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs("At(robot, cell)", objs.ToArray()));
-            throw new System.NotImplementedException();
+            EventBus.Register<string>(EventNames.actionEffectEnd, i =>
+            {
+                Debug.Log("RECEIVED " + i);
+            });
+            EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs(animationName, currentAnimationObjects.ToArray()));
         }
 
         public void SetUpAnimations()
