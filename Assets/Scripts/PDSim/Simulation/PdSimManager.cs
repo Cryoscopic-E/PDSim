@@ -4,6 +4,7 @@ using PDSim.Simulation.Data;
 using PDSim.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -83,7 +84,7 @@ namespace PDSim.Simulation
 
 
             PDSimInit();
-            //// Start simulation
+            // Start simulation
             //foreach (var action in plan.actions)
             //{
             //    // Get the effects of the action
@@ -105,32 +106,63 @@ namespace PDSim.Simulation
         {
             None,
             Ready,
+            Running,
             End,
             Finished
         }
 
         private AnimationState _animationState = AnimationState.None;
 
-        private IEnumerator PDSimInitBlock()
+        private class AnimationQueueElement
         {
-            // Handle animation state
-            switch (_animationState)
+            public string animationName;
+            public GameObject[] objects;
+        }
+
+        private Queue<AnimationQueueElement> animationQueue = new Queue<AnimationQueueElement>();
+
+        private void UpdateQueue(PdBooleanPredicate fluent)
+        {
+            foreach (var animationData in _effectToAnimations[fluent.name].animationData)
+                {
+                    animationQueue.Enqueue(new AnimationQueueElement()
+                    {
+                        animationName = animationData.name,
+                        objects = fluent.attributes.Select(attribute => _objects[attribute]).ToArray()
+                    });
+                }
+        }
+
+        private IEnumerator AnimationMachineLoop(List<PdBooleanPredicate> fluents)
+        {
+            _animationState = AnimationState.None;
+            while (_animationState != AnimationState.Finished)
             {
-                case AnimationState.None:
-                    // animation queue empty check if it can be populated
-                    break;
-                case AnimationState.Ready:
-                    // animation queue has elements ready to start top element
-                    break;
-                case AnimationState.End:
-                    // animation has ended, if queue is empty, set state to none, else set state to ready
-                    break;
-                case AnimationState.Finished:
-                default:
-                    // animation has finished end coroutine
-                    break;
+                for (var fluent in fluents)
+                {
+                    switch (_animationState)
+                    {
+                        case AnimationState.None:
+                            // animation queue empty check if it can be populated
+                            break;
+                        case AnimationState.Ready:
+                            TriggerAnimation(animationQueue.Dequeue().animationName, animationQueue.Dequeue().objects);
+                            break;
+                        case AnimationState.Running:
+                            yield return null;
+                            break;
+                        case AnimationState.End:
+                            // animation has ended, if queue is empty, set state to none, else set state to ready
+                            break;
+                        case AnimationState.Finished:
+                        default:
+                            // animation has finished end coroutine
+                            break;
+                    }
+                }
             }
-            yield return null;
+
+           
         }
 
 
@@ -157,14 +189,17 @@ namespace PDSim.Simulation
             }
         }
 
-
-        private void TriggerAnimation(string animationName)
+        private void AnimationEndHandler(string animationName)
         {
-            EventBus.Register<string>(EventNames.actionEffectEnd, i =>
-            {
-                Debug.Log("RECEIVED " + i);
-            });
-            EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs(animationName, currentAnimationObjects.ToArray()));
+            _animationState = AnimationState.End;
+        }
+
+
+        private void TriggerAnimation(string animationName, GameObject[] objects)
+        {
+            _animationState = AnimationState.Running;
+            EventBus.Register<string>(EventNames.actionEffectEnd, AnimationEndHandler);
+            EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs(animationName, objects));
         }
 
         public void SetUpAnimations()
