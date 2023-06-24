@@ -1,3 +1,4 @@
+using PDSim.Simulation;
 using PDSim.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,15 +21,23 @@ public class MainUI : MonoBehaviour
     Button objectInfoButton;
     Button cameraControlsButton;
 
+    public PdSimManager simManager;
+
     private void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
 
         backButton = root.Q<Button>("BackButton");
         playButton = root.Q<Button>("PlayButton");
+
         pauseButton = root.Q<Button>("PauseButton");
+        pauseButton.SetEnabled(false);
+
         prevButton = root.Q<Button>("PrevButton");
+        prevButton.SetEnabled(false);
+
         nextButton = root.Q<Button>("NextButton");
+        nextButton.SetEnabled(false);
 
         planPanelButton = root.Q<Button>("PlanPanelButton");
         actionTabButton = root.Q<Button>("ActionTabButton");
@@ -38,8 +47,11 @@ public class MainUI : MonoBehaviour
 
 
         backButton.clicked += BackButtonClicked;
+
         playButton.clicked += PlayButtonClicked;
+
         pauseButton.clicked += PauseButtonClicked;
+
         prevButton.clicked += PrevButtonClicked;
         nextButton.clicked += NextButtonClicked;
 
@@ -74,12 +86,28 @@ public class MainUI : MonoBehaviour
 
     private void PlayButtonClicked()
     {
-        Debug.Log("Play Button clicked");
+        if (simManager.SimulationRunning)
+        {
+            // Resume the simulation
+            Time.timeScale = 1;
+
+        }
+        else
+        {
+            simManager.StartSimulation();
+        }
+
+
+        playButton.SetEnabled(false);
+        pauseButton.SetEnabled(true);
     }
 
     private void PauseButtonClicked()
     {
-        Debug.Log("Pause Button clicked");
+        simManager.PauseSimulation();
+        //set the pause button to be disabled
+        playButton.SetEnabled(true);
+        pauseButton.SetEnabled(false);
     }
 
     private void PrevButtonClicked()

@@ -12,7 +12,7 @@ namespace PDSim.Components
         [Inspectable]
         public List<PdObject> parameters;
         [Inspectable]
-        public List<PdBooleanPredicate> effects;
+        public List<PdEffectPredicate> effects;
 
         public override string ToString()
         {
@@ -33,9 +33,22 @@ namespace PDSim.Components
     {
         [Inspectable]
         public string name;
-        
+
         [Inspectable]
         public List<string> parameters;
-        
+
+        public override string ToString()
+        {
+            // action in PDDL plan style
+            var action = name + " (";
+            foreach (var attribute in parameters)
+            {
+                action += attribute + ", ";
+            }
+            action = action.Substring(0, action.Length - 2);
+            action += ")";
+            return action;
+        }
+
     }
 }

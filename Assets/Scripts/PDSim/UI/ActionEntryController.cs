@@ -12,7 +12,7 @@ public class ActionEntryController
     }
 
 
-    public void SetActionData(PdAction data)
+    public void SetActionData(PdPlanAction data)
     {
         label.text = data.ToString();
     }

@@ -1,6 +1,7 @@
 using PDSim.Animation;
 using PDSim.Components;
 using PDSim.Simulation.Data;
+using PDSim.UI;
 using PDSim.Utils;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,24 +37,33 @@ namespace PDSim.Simulation
         public Problem problem;
 
 
-        private Dictionary<string, GameObject> _objects;
+        private Dictionary<string, PdSimSimulationObject> _objects;
+
+        private Dictionary<string, PdAction> _actions;
 
 
         private Dictionary<string, PdTypedPredicate> _predicates;
-        private Dictionary<string, List<PdBooleanPredicate>> _actionToEffects;
         private Dictionary<string, FluentAnimation> _effectToAnimations;
 
         private List<GameObject> currentAnimationObjects = new List<GameObject>();
 
+        public PlanListUI _planListUI;
+
+        private bool _simulationRunning = false;
+        public bool SimulationRunning
+        {
+            get { return _simulationRunning; }
+        }
+
         private void Start()
         {
             // Gameobjects References
-            _objects = new Dictionary<string, GameObject>();
+            _objects = new Dictionary<string, PdSimSimulationObject>();
             var problemObjectsRootObject = GameObject.Find("Problem Objects");
             for (var i = 0; i < problemObjectsRootObject.transform.childCount; i++)
             {
                 var child = problemObjectsRootObject.transform.GetChild(i);
-                _objects.Add(child.name, child.gameObject);
+                _objects.Add(child.name, child.gameObject.GetComponent<PdSimSimulationObject>());
             }
 
             // Predicate References
@@ -63,11 +73,11 @@ namespace PDSim.Simulation
                 _predicates.Add(predicate.name, predicate);
             }
 
-            // Action to Effects References
-            _actionToEffects = new Dictionary<string, List<PdBooleanPredicate>>();
+            // Action References
+            _actions = new Dictionary<string, PdAction>();
             foreach (var action in actions.actions)
             {
-                _actionToEffects.Add(action.name, action.effects);
+                _actions.Add(action.name, action);
             }
 
 
@@ -82,22 +92,69 @@ namespace PDSim.Simulation
                 _effectToAnimations.Add(fluentAnimation.metaData.name, fluentAnimation);
             }
 
+            // Plan List UI
+            _planListUI.InitializePlanList(plan.actions);
+        }
 
-            PDSimInit();
-            // Start simulation
-            //foreach (var action in plan.actions)
-            //{
-            //    // Get the effects of the action
-            //    var effects = _actionToEffects[action.name];
+        private IEnumerator<PdBooleanPredicate> EnumerateFluents(List<PdBooleanPredicate> fluents)
+        {
+            foreach (var fluent in fluents)
+            {
+                yield return fluent;
+            }
+        }
 
-            //    foreach (var effect in effects)
-            //    {
-            //        // Animation
-            //        var animation = _effectToAnimations[effect.name];
-            //        if (animation.animationData.Count > 0)
-            //            Debug.Log("Animation Defined: " + animation.metaData.name);
-            //    }
-            //}
+        private IEnumerator<PdBooleanPredicate> EnumerateFluents(PdPlanAction action)
+        {
+            var actionDefinition = _actions[action.name];
+
+            foreach (var fluent in actionDefinition.effects)
+            {
+                // Map fluents attributes to action attributes
+                var attributeMap = fluent.parameterMapping;
+                var yieldFluent = new PdBooleanPredicate()
+                {
+                    name = fluent.name,
+                    attributes = new List<string>()
+                };
+                foreach (var index in attributeMap)
+                {
+                    yieldFluent.attributes.Add(action.parameters[index]);
+                }
+
+
+                yield return yieldFluent;
+            }
+        }
+
+        public void StartSimulation()
+        {
+            StartCoroutine(SimulationRoutine());
+        }
+
+        public void PauseSimulation()
+        {
+            Time.timeScale = 0;
+        }
+
+        private IEnumerator SimulationRoutine()
+        {
+            _simulationRunning = true;
+            var fluentEnumerator = EnumerateFluents(problem.initialState);
+            yield return AnimationMachineLoop(fluentEnumerator);
+
+            // Animate Plan
+            for (var i = 0; i < plan.actions.Count; i++)
+            {
+                _planListUI.HighlightCurrentAction(i);
+
+
+                var action = plan.actions[i];
+                fluentEnumerator = EnumerateFluents(action);
+
+                yield return AnimationMachineLoop(fluentEnumerator);
+            }
+
         }
 
 
@@ -123,70 +180,72 @@ namespace PDSim.Simulation
 
         private void UpdateQueue(PdBooleanPredicate fluent)
         {
+            //Debug.Log("Animation Data count: " + _effectToAnimations[fluent.name].animationData.Count);
             foreach (var animationData in _effectToAnimations[fluent.name].animationData)
+            {
+                var inputObjects = fluent.attributes.Select(attribute => _objects[attribute]).ToArray();
+
+                animationQueue.Enqueue(new AnimationQueueElement()
                 {
-                    animationQueue.Enqueue(new AnimationQueueElement()
-                    {
-                        animationName = animationData.name,
-                        objects = fluent.attributes.Select(attribute => _objects[attribute]).ToArray()
-                    });
-                }
+
+                    animationName = animationData.name,
+                    objects = fluent.attributes.Select(attribute => _objects[attribute].gameObject).ToArray()
+                });
+            }
+            //Debug.Log("Queue Count: " + animationQueue.Count);
         }
 
-        private IEnumerator AnimationMachineLoop(List<PdBooleanPredicate> fluents)
+
+
+        private IEnumerator AnimationMachineLoop(IEnumerator<PdBooleanPredicate> fluentEnumerator)
         {
             _animationState = AnimationState.None;
             while (_animationState != AnimationState.Finished)
             {
-                for (var fluent in fluents)
+                switch (_animationState)
                 {
-                    switch (_animationState)
-                    {
-                        case AnimationState.None:
-                            // animation queue empty check if it can be populated
-                            break;
-                        case AnimationState.Ready:
-                            TriggerAnimation(animationQueue.Dequeue().animationName, animationQueue.Dequeue().objects);
-                            break;
-                        case AnimationState.Running:
-                            yield return null;
-                            break;
-                        case AnimationState.End:
-                            // animation has ended, if queue is empty, set state to none, else set state to ready
-                            break;
-                        case AnimationState.Finished:
-                        default:
-                            // animation has finished end coroutine
-                            break;
-                    }
+                    case AnimationState.None:
+                        var next = fluentEnumerator.MoveNext();
+                        var fluent = fluentEnumerator.Current;
+                        // Get the next fluent
+                        if (next)
+                        {
+                            //Debug.Log("Checking Animation for Fluent: " + _effectToAnimations[fluent.name].metaData.name);
+                            // Update the queue
+                            UpdateQueue(fluent);
+                            if (animationQueue.Count > 0)
+                                _animationState = AnimationState.Ready;
+                        }
+                        else
+                        {
+                            //Debug.Log("No more fluents to animate");
+                            _animationState = AnimationState.Finished;
+                        }
+                        break;
+                    case AnimationState.Ready:
+                        var animation = animationQueue.Dequeue();
+                        TriggerAnimation(animation.animationName, animation.objects);
+                        break;
+                    case AnimationState.Running:
+                        yield return null;
+                        break;
+                    case AnimationState.End:
+                        // animation has ended, if queue is empty, set state to none, else set state to ready
+                        if (animationQueue.Count == 0)
+                            _animationState = AnimationState.None;
+                        else
+                            _animationState = AnimationState.Ready;
+                        break;
+                    case AnimationState.Finished:
+                    default:
+                        yield return null;
+                        break;
                 }
+                yield return null;
+
             }
 
-           
-        }
 
-
-        private void PDSimInit()
-        {
-            foreach (var fluent in problem.initialState)
-            {
-                if (_effectToAnimations[fluent.name].animationData.Count > 0)
-                {
-                    Debug.Log("Animation Defined: " + _effectToAnimations[fluent.name].metaData.name);
-
-                    foreach (var obj in fluent.attributes)
-                    {
-                        currentAnimationObjects.Add(_objects[obj]);
-                    }
-
-                    foreach (var animationData in _effectToAnimations[fluent.name].animationData)
-                    {
-                        TriggerAnimation(animationData.name);
-                    }
-
-                    currentAnimationObjects.Clear();
-                }
-            }
         }
 
         private void AnimationEndHandler(string animationName)

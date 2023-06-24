@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PDSim.Connection
 {
-    public  class NetMqClient
+    public class NetMqClient
     {
         private const string Address = "tcp://127.0.0.1:5556";
         protected readonly JObject request;
@@ -16,8 +16,8 @@ namespace PDSim.Connection
         {
             request = new JObject();
         }
-        
-        public  JObject Connect()
+
+        public JObject Connect()
         {
             AsyncIO.ForceDotNet.Force();
 
@@ -38,13 +38,13 @@ namespace PDSim.Connection
                 {
                     if (socket.TryReceiveFrameString(TimeSpan.FromMilliseconds(2000), out var response))
                     {
-                        Debug.Log("Received response: " + response);
+                        //Debug.Log("Received response: " + response);
                         jsonResponse = JObject.Parse(response);
                         received = true;
                     }
                     else
                     {
-                        Debug.Log("No response received");
+                        Debug.LogWarning("No response received");
                         break;
                     }
                 }

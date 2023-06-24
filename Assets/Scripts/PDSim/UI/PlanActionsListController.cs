@@ -15,16 +15,15 @@ public class PlanActionsListController
         actionItemTemplate = labelTemplate;
 
         actionsList = root.Q<ListView>("PlanList");
-
         FillActionsList();
 
         // Register to get a callback when an item is selected
-        actionsList.onSelectionChange += OnActionSelected;
+        //actionsList.onSelectionChange += OnActionSelected;
     }
 
-    List<PdAction> planActions;
+    private List<PdPlanAction> planActions;
 
-    public void SetPlanActions(List<PdAction> actions)
+    public void SetPlanActions(List<PdPlanAction> actions)
     {
         planActions = actions;
     }

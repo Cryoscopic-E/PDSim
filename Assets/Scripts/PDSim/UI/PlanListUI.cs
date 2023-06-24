@@ -13,28 +13,28 @@ namespace PDSim.UI
         private ListView _planList;
         private PlanActionsListController _actionListController;
         private MovablePanel _movablePanel;
+        private VisualElement _root;
 
         private void OnEnable()
         {
-            var root = GetComponent<UIDocument>().rootVisualElement;
-            _movablePanel = new(root);
+            _root = GetComponent<UIDocument>().rootVisualElement;
 
-            _planList = root.Q<ListView>("PlanList");
-        
-            var list = new List<PdAction>() {};
-        
-            // Initialize the character list controller
+            _movablePanel = new(_root);
+
+            _planList = _root.Q<ListView>("PlanList");
+        }
+
+        public PlanActionsListController InitializePlanList(List<PdPlanAction> list)
+        {
             _actionListController = new PlanActionsListController();
             _actionListController.SetPlanActions(list);
-            _actionListController.InitializeActionList(root, actionItemTemplate);
-
-            // USE TO HIGHLIGHT ACTION
-            //HighlightCurrentAction(0);
+            _actionListController.InitializeActionList(_root, actionItemTemplate);
+            return _actionListController;
         }
 
         public void ToggleVisibility()
         {
-            gameObject.SetActive(!gameObject.activeSelf);
+            _root.style.display = _root.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
             _movablePanel.ResetPosition();
         }
 

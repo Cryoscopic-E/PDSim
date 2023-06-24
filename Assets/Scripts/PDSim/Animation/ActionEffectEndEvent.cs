@@ -29,7 +29,7 @@ namespace PDSim.Animation
         }
 
 
-        
+
 
         protected override void Definition()
         {
@@ -41,7 +41,6 @@ namespace PDSim.Animation
 
         private ControlOutput Trigger(Flow flow)
         {
-            Debug.Log("ActionEffectEndEvent Triggered");
             EventBus.Trigger(EventNames.actionEffectEnd, EffectName);
             return outputTrigger;
         }

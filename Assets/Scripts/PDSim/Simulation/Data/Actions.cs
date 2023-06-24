@@ -20,7 +20,7 @@ namespace PDSim.Simulation.Data
                 {
                     name = k.Name,
                     parameters = new List<PdObject>(),
-                    effects = new List<PdBooleanPredicate>()
+                    effects = new List<PdEffectPredicate>()
                 };
                 foreach (var v in k.Value["params"].Children<JProperty>())
                 {
@@ -29,15 +29,18 @@ namespace PDSim.Simulation.Data
                 }
                 foreach (var v in k.Value["effects"].Children<JObject>())
                 {
-                    var fluent = new PdBooleanPredicate
+                    var fluent = new PdEffectPredicate
                     {
                         name = v["fluent"].ToString(),
                         value = !v["negated"].ToObject<bool>(),
-                        attributes = new List<string>()
+                        attributes = new List<string>(),
+                        parameterMapping = new List<int>()
                     };
                     foreach (var a in v["args"])
                     {
                         fluent.attributes.Add(a.ToString());
+                        int index = action.parameters.FindIndex(x => x.name == a.ToString());
+                        fluent.parameterMapping.Add(index);
                     }
                     action.effects.Add(fluent);
                 }
