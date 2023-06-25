@@ -115,7 +115,8 @@ namespace PDSim.Simulation
                 var yieldFluent = new PdBooleanPredicate()
                 {
                     name = fluent.name,
-                    attributes = new List<string>()
+                    attributes = new List<string>(),
+                    value = fluent.value
                 };
                 foreach (var index in attributeMap)
                 {
@@ -185,9 +186,11 @@ namespace PDSim.Simulation
             {
                 var inputObjects = fluent.attributes.Select(attribute => _objects[attribute]).ToArray();
 
+                if (!fluent.value && !animationData.name.StartsWith("NOT_"))
+                    continue;
+
                 animationQueue.Enqueue(new AnimationQueueElement()
                 {
-
                     animationName = animationData.name,
                     objects = fluent.attributes.Select(attribute => _objects[attribute].gameObject).ToArray()
                 });
@@ -258,6 +261,7 @@ namespace PDSim.Simulation
         {
             _animationState = AnimationState.Running;
             EventBus.Register<string>(EventNames.actionEffectEnd, AnimationEndHandler);
+
             EventBus.Trigger(EventNames.actionEffectStart, new EffectEventArgs(animationName, objects));
         }
 

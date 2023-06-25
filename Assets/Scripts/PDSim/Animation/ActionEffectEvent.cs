@@ -1,5 +1,5 @@
-﻿using Unity.VisualScripting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PDSim.Animation
@@ -73,7 +73,7 @@ namespace PDSim.Animation
 
         protected override bool ShouldTrigger(Flow flow, EffectEventArgs args)
         {
-            return EffectName == args.name;
+            return string.Compare(EffectName, args.name) == 0;
         }
 
         protected override void AssignArguments(Flow flow, EffectEventArgs args)
