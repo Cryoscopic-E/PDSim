@@ -15,22 +15,36 @@ MonoBehaviour:
   actions:
   - name: pick-up
     parameters:
-    - B
+    - d
   - name: stack
     parameters:
-    - B
-    - A
+    - d
+    - c
   - name: pick-up
     parameters:
-    - C
+    - b
   - name: stack
     parameters:
-    - C
-    - B
+    - b
+    - a
+  - name: unstack
+    parameters:
+    - d
+    - c
+  - name: put-down
+    parameters:
+    - d
   - name: pick-up
     parameters:
-    - D
+    - c
   - name: stack
     parameters:
-    - D
-    - C
+    - c
+    - b
+  - name: pick-up
+    parameters:
+    - d
+  - name: stack
+    parameters:
+    - d
+    - c

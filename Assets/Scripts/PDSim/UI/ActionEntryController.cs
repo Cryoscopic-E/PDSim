@@ -8,7 +8,7 @@ public class ActionEntryController
 
     public void SetVisualElement(VisualElement visualElement)
     {
-        label = visualElement.Q<Label>("ActionItem");
+        label = visualElement.Q<Label>("Item");
     }
 
 

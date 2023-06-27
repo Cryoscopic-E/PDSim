@@ -255,7 +255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &257953154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -395,6 +395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlanListUI: {fileID: 257953154}
+  simManager: {fileID: 2017000299}
 --- !u!114 &958859642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -827,3 +828,4 @@ MonoBehaviour:
   actions: {fileID: 0}
   plan: {fileID: 0}
   problem: {fileID: 0}
+  _planListUI: {fileID: 257953154}

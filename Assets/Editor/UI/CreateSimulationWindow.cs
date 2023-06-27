@@ -40,7 +40,7 @@ namespace Editor.UI
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/EditorUI/CreateSimulationWindow.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/EditorUI/CreateSimulationWindow.uxml");
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
 
@@ -107,7 +107,7 @@ namespace Editor.UI
             var response = request.Connect();
             if (response["status"]?.ToString() == "OK")
             {
-                Debug.Log("Parse Successful");
+                //Debug.Log("Parse Successful");
             }
             else
             {

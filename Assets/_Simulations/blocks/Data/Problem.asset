@@ -13,50 +13,50 @@ MonoBehaviour:
   m_Name: Problem
   m_EditorClassIdentifier: 
   objects:
-  - name: D
+  - name: d
     type: block
     childrenTypes: []
-  - name: B
+  - name: b
     type: block
     childrenTypes: []
-  - name: A
+  - name: a
     type: block
     childrenTypes: []
-  - name: C
+  - name: c
     type: block
     childrenTypes: []
   initialState:
   - name: clear
     attributes:
-    - C
+    - c
     value: 1
   - name: clear
     attributes:
-    - A
+    - a
     value: 1
   - name: clear
     attributes:
-    - B
+    - b
     value: 1
   - name: clear
     attributes:
-    - D
+    - d
     value: 1
   - name: ontable
     attributes:
-    - C
+    - c
     value: 1
   - name: ontable
     attributes:
-    - A
+    - a
     value: 1
   - name: ontable
     attributes:
-    - B
+    - b
     value: 1
   - name: ontable
     attributes:
-    - D
+    - d
     value: 1
   - name: handempty
     attributes: []
@@ -64,16 +64,16 @@ MonoBehaviour:
   goalState:
   - name: on
     attributes:
-    - D
-    - C
+    - d
+    - c
     value: 1
   - name: on
     attributes:
-    - C
-    - B
+    - c
+    - b
     value: 1
   - name: on
     attributes:
-    - B
-    - A
+    - b
+    - a
     value: 1

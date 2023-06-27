@@ -40,6 +40,16 @@ namespace PDSim.Simulation
             _navMeshAgent.enabled = useNavMeshAgent;
         }
 
+        private void OnMouseEnter()
+        {
+            PdSimManager.Instance.HoverObject(name);
+        }
+
+        private void OnMouseExit()
+        {
+            PdSimManager.Instance.ClearHover();
+        }
+
         #region HELPER FUNCTIONS
 
         // Move the object to a new position

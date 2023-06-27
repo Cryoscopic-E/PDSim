@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using PDSim.Components;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -34,7 +34,7 @@ namespace PDSim.UI
 
         public void ToggleVisibility()
         {
-            _root.style.display = _root.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
+            _root.visible = !_root.visible;
             _movablePanel.ResetPosition();
         }
 

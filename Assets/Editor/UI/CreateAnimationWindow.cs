@@ -1,4 +1,4 @@
-using PDSim.Animation;
+using PDSim.VisualScripting;
 using PDSim.Components;
 using PDSim.Simulation;
 using PDSim.Utils;
@@ -42,7 +42,7 @@ namespace Editor.UI
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/EditorUI/CreateAnimationDialog.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/EditorUI/CreateAnimationDialog.uxml");
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
         }

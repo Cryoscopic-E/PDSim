@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/SceneUI/MainUI.uss?fileID=7433441132597879392&amp;guid=2ea056ba5e1f8e44ba3c892c13f48432&amp;type=3#MainUI" />
+    <ui:Label text="Action_Example (Obj1, Obj2, Obj3, Obj4)" display-tooltip-when-elided="true" name="Item" style="-unity-font-definition: url(&apos;project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&amp;guid=2c4fcf671ad72124392a8074fb1f75a0&amp;type=2#Text-Font&apos;); -unity-text-align: middle-left; font-size: 18px; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+</ui:UXML>
