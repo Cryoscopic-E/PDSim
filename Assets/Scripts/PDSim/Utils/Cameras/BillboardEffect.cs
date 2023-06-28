@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class FaceCamera : MonoBehaviour
+public class BillboardEffect : MonoBehaviour
 {
     public Canvas canvas;
     private void Start()

@@ -36,5 +36,8 @@
                 <ui:Label text="Label" display-tooltip-when-elided="true" name="Predicate" style="-unity-font-definition: url(&apos;project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&amp;guid=2c4fcf671ad72124392a8074fb1f75a0&amp;type=2#Text-Font&apos;); font-size: 20px;" />
             </ui:VisualElement>
         </ui:GroupBox>
+        <ui:VisualElement name="CameraHints" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); position: absolute; top: 268px; left: 115px; height: 551px; width: 1715px; justify-content: center; align-items: center; display: none;">
+            <ui:Label tabindex="-1" text="Press C to Control the Camera&#10;&#10;Use W,A,S,D to Move&#10;Use the Mouse to Rotate" display-tooltip-when-elided="true" style="-unity-font-definition: url(&apos;project://database/Assets/UI/Fonts/Header-Font.asset?fileID=11400000&amp;guid=95aef50e924647a4e9223bf631198676&amp;type=2#Header-Font&apos;); font-size: 89px; color: rgba(27, 27, 27, 0.52); justify-content: center; align-items: center; -unity-text-align: middle-center;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

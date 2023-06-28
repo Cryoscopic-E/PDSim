@@ -32,6 +32,8 @@ public class MainUI : MonoBehaviour
 
     VisualElement actionInfo;
 
+    VisualElement cameraHints;
+
     private PdSimManager simManager;
 
     private void Awake()
@@ -58,6 +60,9 @@ public class MainUI : MonoBehaviour
         cameraControlsButton = root.Q<Button>("CameraControlsButton");
 
         actionInfo = root.Q<VisualElement>("ActionInfo");
+
+        cameraHints = root.Q<VisualElement>("CameraHints");
+        cameraHints.style.display = DisplayStyle.None;
 
 
         backButton.clicked += BackButtonClicked;
@@ -211,8 +216,7 @@ public class MainUI : MonoBehaviour
 
     private void CameraControlsButtonClicked()
     {
-        Debug.Log("Camera Controls Button clicked");
+        cameraHints.style.display = cameraHints.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
+        cameraHints.schedule.Execute(() => cameraHints.style.display = DisplayStyle.None).StartingIn(3000);
     }
-
-
 }

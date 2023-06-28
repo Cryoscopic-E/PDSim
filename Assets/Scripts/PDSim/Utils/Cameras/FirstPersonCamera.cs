@@ -4,10 +4,9 @@ public class FirstPersonCamera : MonoBehaviour
 {
     public float moveSpeed = 20.0f;
     public float lookSpeed = 55.0f;
- 
-    public float rotX = 0.0f;
-    public float rotY = 0.0f;
-    private Vector3 _direction;
+
+    private Vector2 _rotation = Vector2.zero;
+
     private float _delta;
     private float _previousTime;
 
@@ -30,19 +29,19 @@ public class FirstPersonCamera : MonoBehaviour
         }
         
         if(Input.GetKeyDown(KeyCode.C))
+        {
             controlEnabled = !controlEnabled;
+        }
 
         if (!controlEnabled) return;
-        rotX += Input.GetAxis("Mouse X")*lookSpeed;
-        rotY += Input.GetAxis("Mouse Y")*lookSpeed;
-        rotY = Mathf.Clamp (rotY, -90, 90);
+        _rotation.x += Input.GetAxis("Mouse X")*lookSpeed;
+        _rotation.y += Input.GetAxis("Mouse Y")*lookSpeed;
+        _rotation.y = Mathf.Clamp (_rotation.y, -90, 90);
  
-        transform.localRotation = Quaternion.AngleAxis(rotX, Vector3.up);
-        transform.localRotation *= Quaternion.AngleAxis(rotY, Vector3.left);
+        transform.localRotation = Quaternion.AngleAxis( _rotation.x, Vector3.up);
+        transform.localRotation *= Quaternion.AngleAxis( _rotation.y, Vector3.left);
  
         transform.position += transform.forward*moveSpeed*Input.GetAxisRaw("Vertical")*_delta;
         transform.position += transform.right*moveSpeed*Input.GetAxisRaw("Horizontal")*_delta;
-
-
     }
 }
