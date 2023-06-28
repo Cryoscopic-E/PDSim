@@ -206,7 +206,7 @@ public class MainUI : MonoBehaviour
 
     private void ObjectInfoButtonClicked()
     {
-        Debug.Log("Object Info Button clicked");
+        StateListUI.ToggleVisibility();
     }
 
     private void CameraControlsButtonClicked()

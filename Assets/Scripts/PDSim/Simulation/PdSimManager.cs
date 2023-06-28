@@ -170,7 +170,6 @@ namespace PDSim.Simulation
         public void StartSimulation()
         {
             StartCoroutine(SimulationRoutine());
-            OnSimulationFinished();
         }
 
         private IEnumerator SimulationRoutine()
@@ -191,7 +190,7 @@ namespace PDSim.Simulation
 
                 yield return AnimationMachineLoop(fluentEnumerator);
             }
-
+            OnSimulationFinished();
         }
 
 
@@ -238,7 +237,7 @@ namespace PDSim.Simulation
                     {
                         var fluentDefinitionType = fluentParam[i].type;
                         var objectType = attributeTypes[i];
-                        Debug.Log("Type: " + fluentDefinitionType + " " + objectType);
+                        //Debug.Log("Type: " + fluentDefinitionType + " " + objectType);
                         if (fluentDefinitionType != objectType && !types.typeTree.IsChildOf(objectType, fluentDefinitionType))
                         {
                             match = false;
@@ -271,6 +270,7 @@ namespace PDSim.Simulation
             _animationState = AnimationState.None;
             while (_animationState != AnimationState.Finished)
             {
+                
                 switch (_animationState)
                 {
                     case AnimationState.None:
@@ -294,7 +294,7 @@ namespace PDSim.Simulation
                     case AnimationState.Ready:
                         var animation = animationQueue.Dequeue();
                         // Log objects one line
-                        var objectNames = animation.objects.Select(obj => obj.name).Aggregate((a, b) => a + ", " + b);
+                        var objectNames = fluentEnumerator.Current.attributes.Aggregate((a, b) => a + ", " + b);
                         var fluentString = fluentEnumerator.Current.name + "(" + objectNames + ")";
                         OnSimulationStep(fluentString);
                         TriggerAnimation(animation.animationName, animation.objects);
@@ -317,8 +317,6 @@ namespace PDSim.Simulation
                 yield return null;
 
             }
-
-
         }
 
         public void HoverObject(string name)
