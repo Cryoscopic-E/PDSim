@@ -252,8 +252,6 @@ namespace PDSim.Simulation
                     continue;
                 }
 
-
-
                 animationQueue.Enqueue(new AnimationQueueElement()
                 {
                     animationName = animationData.name,
