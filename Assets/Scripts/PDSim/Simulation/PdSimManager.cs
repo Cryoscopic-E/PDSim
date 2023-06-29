@@ -268,7 +268,7 @@ namespace PDSim.Simulation
             _animationState = AnimationState.None;
             while (_animationState != AnimationState.Finished)
             {
-                
+
                 switch (_animationState)
                 {
                     case AnimationState.None:
@@ -382,6 +382,7 @@ namespace PDSim.Simulation
                 Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/PDSim/PdSimObject.prefab", typeof(GameObject));
                 // Create instance of generic object
                 var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
+                prefabInstance.GetComponent<PdSimSimulationObject>().objectType = type;
                 // Save new model
                 var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + type + ".prefab");
 
@@ -425,7 +426,6 @@ namespace PDSim.Simulation
 
                 var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
                 instance.gameObject.name = obj.name;
-                instance.objectType = type;
             }
         }
     }

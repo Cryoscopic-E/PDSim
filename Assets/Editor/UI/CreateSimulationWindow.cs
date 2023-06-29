@@ -164,18 +164,23 @@ namespace Editor.UI
 
 
             // Create PdSim Environment Scriptable Objects
-            if (_parsedJson != null && (_parsedJson != null || !_parsedJson.ContainsKey("error")))
+            if (_parsedJson != null && !_parsedJson.ContainsKey("error"))
             {
                 AssetUtils.CreateFolders(_simulationNameField.value);
                 CreatePDSimData();
+                // Create scene from template
+                CreateSimulationScene();
+
+                // Close window
+                Close();
             }
 
-            // Create scene from template
-            CreateSimulationScene();
+            if (_parsedJson != null && _parsedJson.ContainsKey("error"))
+            {
+                EditorUtility.DisplayDialog("Error", _parsedJson["error"].ToString(), "OK");
+                yield break;
+            }
 
-
-            // Close window
-            Close();
 
             yield return null;
         }
