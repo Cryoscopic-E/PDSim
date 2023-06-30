@@ -10,6 +10,9 @@ using UnityEngine.UIElements;
 
 namespace Editor.UI
 {
+    /// <summary>
+    /// Custom editor window for creating new animations.
+    /// </summary>
     public class CreateAnimationWindow : EditorWindow
     {
         public VisualTreeAsset predicateAnimationAttributeTemplate;
@@ -96,7 +99,9 @@ namespace Editor.UI
         }
 
 
-
+        /// <summary>
+        /// Creates a new animation object and sets its components.
+        /// </summary>
         private void CreateAnimation()
         {
             var predicateName = _metadata.name;
@@ -104,6 +109,7 @@ namespace Editor.UI
             var attributeTypes = new List<string>();
             var attributes = new List<string>();
             var attributesString = string.Empty;
+
             foreach (var item in _predicateAnimationAttributeList.Children())
             {
                 var controller = item.Q<DropdownField>("Attribute");
@@ -111,17 +117,14 @@ namespace Editor.UI
                 attributes.Add(controller.label + " " + controller.value);
                 attributesString += controller.label + " - " + controller.value + "\n";
             }
-
+            // Create a unique name for the animation, in format: "Negated_PredicateName_AttributeType1_AttributeType2_..."
             var animationName = AnimationNames.UniqueAnimationName(negated, predicateName, attributeTypes);
-
-
 
             // Load the prefab
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/PDSim/Fluent Animation.prefab");
 
             // Instantiate the prefab as variant
             var instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-
             PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
 
             // Set the name of the instance
@@ -131,11 +134,12 @@ namespace Editor.UI
             instance.transform.position = Vector3.zero;
             instance.transform.parent = GameObject.Find("Animations").transform;
 
+            // Set the animation script
             var graph = instance.GetComponent<ScriptMachine>().graph;
             graph.title = "Animation Script for predicate: " + predicateName;
             graph.summary = attributesString;
 
-
+            // Add the units
             var effectEvent = new ActionEffectEvent()
             {
                 position = new Vector2(-300, -180),
@@ -143,8 +147,6 @@ namespace Editor.UI
                 EffectName = animationName,
                 EffectArguments = attributes
             };
-
-
 
             var contIn = new ControlInputDefinition();
             contIn.key = "Entry";

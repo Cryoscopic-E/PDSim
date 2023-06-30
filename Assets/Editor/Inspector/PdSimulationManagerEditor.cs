@@ -9,6 +9,7 @@ namespace Editor.Inspector
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            // TODO: custom inspector for the simulation manager
         }
     }
 }

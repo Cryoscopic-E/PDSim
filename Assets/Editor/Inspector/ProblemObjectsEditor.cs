@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Editor.Inspector
 {
+    /// <summary>
+    /// Custom inspector for the ProblemObjects class.
+    /// </summary>
     [CustomEditor(typeof(ProblemObjects))]
     public class ProblemObjectsEditor : UnityEditor.Editor
     {
@@ -22,6 +25,9 @@ namespace Editor.Inspector
             }
         }
 
+        /// <summary>
+        /// Draws the model and button to open the prefab attached.
+        /// </summary>
         private void DrawModel(int index)
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
