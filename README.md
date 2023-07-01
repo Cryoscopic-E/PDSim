@@ -25,4 +25,17 @@ Example with Blocks World:
 Check the wiki here:
 
 ## Acknowledgement
+PDSim is being developed for the AIPlan4EU H2020 project (https://aiplan4eu-project.eu)
+
 [@aiplan4eu](https://github.com/aiplan4eu) for the [Unified Planning Library](https://github.com/aiplan4eu/unified-planning)
+
+## Publication
+If you are using PDSim in your work please cite it:
+```
+@inproceedings{de2022plan,
+  title={What Plan? Virtual Plan Visualization with PDSim},
+  author={De Pellegrin, Emanuele and Petrick, Ronald PA},
+  booktitle={32nd International Conference on Automated Planning and Scheduling 2022},
+  year={2022}
+}
+```
