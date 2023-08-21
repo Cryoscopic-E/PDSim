@@ -4,6 +4,8 @@ using PDSim.Utils;
 using UnityEditor;
 using UnityEditor.SceneTemplate;
 using UnityEngine.SceneManagement;
+using Plan = PDSim.Simulation.Data.Plan;
+using Problem = PDSim.Simulation.Data.Problem;
 
 public class SimulationScenePipeline : SceneTemplatePipelineAdapter
 {

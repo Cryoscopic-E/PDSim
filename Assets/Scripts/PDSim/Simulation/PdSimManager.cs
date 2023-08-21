@@ -10,7 +10,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 namespace PDSim.Simulation
 {
     public class PdSimManager : MonoBehaviour
