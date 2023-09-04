@@ -10,8 +10,10 @@ namespace PDSimSharp
         public PdSimTypesDeclaration TypesDeclaration { get; private set; }
         public List<PdSimObject> Objects { get; private set; }
 
-        public static PdSimProblem Create(Problem problem)
+        public static PdSimProblem Create(byte[] problemData)
         {
+            var problem = Problem.Parser.ParseFrom(problemData);
+
             var instance = CreateInstance<PdSimProblem>();
 
             instance.DomainName = problem.DomainName;

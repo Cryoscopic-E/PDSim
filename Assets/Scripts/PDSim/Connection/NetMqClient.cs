@@ -1,7 +1,6 @@
 ﻿using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json.Linq;
-using PDSim.Utils;
 using System;
 using UnityEngine;
 
@@ -58,6 +57,57 @@ namespace PDSim.Connection
 
             NetMQConfig.Cleanup();
             return jsonResponse;
+        }
+    }
+
+
+    public class NetMqClientBytes
+    {
+        private const string Address = "tcp://127.0.0.1:5556";
+        protected readonly JObject request;
+
+        protected NetMqClientBytes()
+        {
+            request = new JObject();
+        }
+
+        public byte[] Connect()
+        {
+            AsyncIO.ForceDotNet.Force();
+
+            byte[] byteResponse = null;
+
+            // Send request to PDSim Backend Server
+            using (var socket = new RequestSocket())
+            {
+                // Create socket connection
+                socket.Connect(Address);
+                // Send request
+                socket.SendFrame(request.ToString());
+                // Receive response
+                var received = false;
+
+                // Wait for response
+                while (!received)
+                {
+                    if (socket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(2000), out var response))
+                    {
+                        //Debug.Log("Received response: " + response);
+                        byteResponse = response;
+                        received = true;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No response received");
+                        break;
+                    }
+                }
+
+
+            }
+
+            NetMQConfig.Cleanup();
+            return byteResponse;
         }
     }
 }

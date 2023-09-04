@@ -31,8 +31,8 @@ namespace PDSim.Simulation
         public CustomTypes types;
         public Fluents fluents;
         public Actions actions;
-        public Plan plan;
-        public Problem problem;
+        //public Plan plan;
+        //public Problem problem;
 
 
         private Dictionary<string, PdSimSimulationObject> _objects;
@@ -121,7 +121,7 @@ namespace PDSim.Simulation
                 objectStates.Add(obj.Key, new Dictionary<string, PdBooleanPredicate>());
             }
 
-            OnSimulationReady(plan.actions);
+            //OnSimulationReady(plan.actions);
         }
 
         private IEnumerator<PdBooleanPredicate> EnumerateFluents(List<PdBooleanPredicate> fluents)
@@ -175,21 +175,22 @@ namespace PDSim.Simulation
         {
             _simulationRunning = true;
             OnSimulationInitBlock();
-            var fluentEnumerator = EnumerateFluents(problem.initialState);
-            yield return AnimationMachineLoop(fluentEnumerator);
+            //var fluentEnumerator = EnumerateFluents(problem.initialState);
+            //yield return AnimationMachineLoop(fluentEnumerator);
 
-            // Animate Plan
-            for (var i = 0; i < plan.actions.Count; i++)
-            {
-                var action = plan.actions[i];
+            //// Animate Plan
+            //for (var i = 0; i < plan.actions.Count; i++)
+            //{
+            //    var action = plan.actions[i];
 
-                OnSimulationActionBlock(action.name, i);
+            //    OnSimulationActionBlock(action.name, i);
 
-                fluentEnumerator = EnumerateFluents(action);
+            //    fluentEnumerator = EnumerateFluents(action);
 
-                yield return AnimationMachineLoop(fluentEnumerator);
-            }
+            //    yield return AnimationMachineLoop(fluentEnumerator);
+            //}
             OnSimulationFinished();
+            yield return null;
         }
 
 
@@ -416,16 +417,16 @@ namespace PDSim.Simulation
             AssetDatabase.Refresh();
 
             // Spawn objects
-            foreach (var obj in problem.objects)
-            {
-                var type = obj.type;
-                var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
-                var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
+            //foreach (var obj in problem.objects)
+            //{
+            //    var type = obj.type;
+            //    var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
+            //    var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
 
 
-                var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
-                instance.gameObject.name = obj.name;
-            }
+            //    var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
+            //    instance.gameObject.name = obj.name;
+            //}
         }
     }
 }

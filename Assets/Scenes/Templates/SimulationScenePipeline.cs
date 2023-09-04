@@ -4,8 +4,6 @@ using PDSim.Utils;
 using UnityEditor;
 using UnityEditor.SceneTemplate;
 using UnityEngine.SceneManagement;
-using Plan = PDSim.Simulation.Data.Plan;
-using Problem = PDSim.Simulation.Data.Problem;
 
 public class SimulationScenePipeline : SceneTemplatePipelineAdapter
 {
@@ -24,8 +22,8 @@ public class SimulationScenePipeline : SceneTemplatePipelineAdapter
         simulationManager.types = AssetUtils.GetAsset<CustomTypes>(simulationDataRoot + "CustomTypes.asset");
         simulationManager.fluents = AssetUtils.GetAsset<Fluents>(simulationDataRoot + "Fluents.asset");
         simulationManager.actions = AssetUtils.GetAsset<Actions>(simulationDataRoot + "Actions.asset");
-        simulationManager.plan = AssetUtils.GetAsset<Plan>(simulationDataRoot + "Plan.asset");
-        simulationManager.problem = AssetUtils.GetAsset<Problem>(simulationDataRoot + "Problem.asset");
+        //simulationManager.plan = AssetUtils.GetAsset<Plan>(simulationDataRoot + "Plan.asset");
+        //simulationManager.problem = AssetUtils.GetAsset<Problem>(simulationDataRoot + "Problem.asset");
 
         EditorUtility.SetDirty(simulationManager);
 

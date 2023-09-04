@@ -5,6 +5,8 @@ namespace PDSimSharp
     [Serializable]
     public class PdSimAction
     {
+        private Action _action;
+
         public string Name { get; private set; }
 
         // duration
@@ -18,6 +20,9 @@ namespace PDSimSharp
         public PdSimAction(Action action)
         {
             Name = action.Name;
+
+            var duration = action.Duration;
+
         }
     }
 }

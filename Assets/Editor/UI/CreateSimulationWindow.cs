@@ -203,9 +203,9 @@ namespace Editor.UI
             {
                 CreateInstance<CustomTypes>(),
                 CreateInstance<Fluents>(),
-                CreateInstance<Plan>(),
+                //CreateInstance<Plan>(),
                 CreateInstance<Actions>(),
-                CreateInstance<Problem>()
+                //CreateInstance<Problem>()
             };
             var dataPath = AssetUtils.GetSimulationDataPath(_simulationNameField.value);
             foreach (var so in simData)
