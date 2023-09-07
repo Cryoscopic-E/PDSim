@@ -35,6 +35,11 @@ public class TestProtobuf : EditorWindow
         var response = request.Connect();
 
         var problem = Problem.Parser.ParseFrom(response);
+
+        var eff = problem.Actions[0].Effects[0];
+
+        Debug.Log(eff.Effect_.Fluent);
+
         yield return null;
 
     }
