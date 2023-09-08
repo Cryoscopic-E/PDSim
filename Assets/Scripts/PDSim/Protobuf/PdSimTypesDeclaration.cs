@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using pbc = global::Google.Protobuf.Collections;
 
-namespace PDSimSharp
+namespace PDSim.Protobuf
 {
     [Serializable]
     public class PdSimTypesDeclaration
     {
-        TypeTree _typeTree;
+        public TypeTree TypeTree { get; private set; }
 
-        public PdSimTypesDeclaration(pbc.RepeatedField<TypeDeclaration> types)
+        public PdSimTypesDeclaration()
         {
-            _typeTree = new TypeTree();
-            _typeTree.Populate(types);
+            TypeTree = new TypeTree();
         }
-
     }
 
 
@@ -57,11 +55,18 @@ namespace PDSimSharp
             {
                 var parentType = typeDeclaration.ParentType;
                 var currentType = typeDeclaration.TypeName;
-                if (parentType == null)
+
+                // if (parentType == null)
+                // {
+                //     // root node
+                //     node = new TypeNode(currentType);
+                //     _root = node;
+                // }
+                if (parentType == null || parentType == string.Empty)
                 {
-                    // root node
-                    node = new TypeNode(currentType);
-                    _root = node;
+                    // if parent is null or empty, add as child of 'object'
+                    var root = GetRoot();
+                    root.children.Add(new TypeNode(currentType));
                 }
                 else
                 {

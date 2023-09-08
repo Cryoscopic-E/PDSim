@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PDSimSharp
+namespace PDSim.Protobuf
 {
     /// <summary>
     /// Base class that represents an action in the domain.
@@ -168,11 +168,5 @@ namespace PDSimSharp
 
     }
 
-    public static class PdSimUtils
-    {
-        public static float RealToFloat(Real real)
-        {
-            return real.Numerator / real.Denominator;
-        }
-    }
+
 }

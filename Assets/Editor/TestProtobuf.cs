@@ -1,4 +1,5 @@
 ﻿using PDSim.Connection;
+using PDSim.Protobuf;
 using System.Collections;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
@@ -34,11 +35,15 @@ public class TestProtobuf : EditorWindow
         var request = new ProtobufRequest();
         var response = request.Connect();
 
-        var problem = Problem.Parser.ParseFrom(response);
+        var reader = new ProtobufReader();
+        var problem = reader.Read(response);
 
-        var eff = problem.Actions[0].Effects[0];
+        //Save asset
+        var path = "Assets/Testprotobuf/ProtobufProblem.asset";
+        AssetDatabase.CreateAsset(problem, path);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
 
-        Debug.Log(eff.Effect_.Fluent);
 
         yield return null;
 

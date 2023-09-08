@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace PDSimSharp
+namespace PDSim.Protobuf
 {
     /// <summary>
     /// Class representing an atom.
@@ -106,7 +107,7 @@ namespace PDSimSharp
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Type, Name);
+            return string.Format("{0} - {1}", Name, Type);
         }
     }
 
@@ -119,13 +120,13 @@ namespace PDSimSharp
     public class PdSimFluent
     {
         public string Name { get; private set; }
-        public string Type { get; private set; }
+        public ValueType Type { get; private set; }
         public List<PdSimParameter> Parameters { get; private set; }
 
         public PdSimFluent(Fluent fluent)
         {
             Name = fluent.Name;
-            Type = fluent.ValueType;
+            Type = PdSimUtils.ConvertValueType(fluent.ValueType);
             Parameters = new List<PdSimParameter>();
             foreach (var parameter in fluent.Parameters)
             {
@@ -136,14 +137,50 @@ namespace PDSimSharp
         public override string ToString()
         {
             // Fluent in format: Type::Name (Parameter1 - Type, Parameter2 - Type, ...)
-            string fluent = string.Format("{0}::{1} (", Type, Name);
-            foreach (var parameter in Parameters)
+            string fluent = string.Format("{0}::{1}", Type, Name);
+
+            if (Parameters.Count > 0)
             {
-                fluent += string.Format("{0}, ", parameter.ToString());
+                fluent += " (";
+                foreach (var parameter in Parameters)
+                {
+                    fluent += string.Format("{0}, ", parameter.ToString());
+                }
+                fluent = fluent.Remove(fluent.Length - 2);
+                fluent += ")";
             }
-            fluent = fluent.Remove(fluent.Length - 2);
-            fluent += ")";
             return fluent;
         }
     }
+
+    public enum ValueType
+    {
+        Symbol,
+        Int,
+        Real,
+        Boolean
+    }
+
+
+    public static class PdSimUtils
+    {
+        public static float RealToFloat(Real real)
+        {
+            return real.Numerator / real.Denominator;
+        }
+
+        public static ValueType ConvertValueType(string type)
+        {
+            if (type == "up:integer")
+                return ValueType.Int;
+            else if (type == "up:real")
+                return ValueType.Real;
+            else if (type == "up:bool")
+                return ValueType.Boolean;
+            else
+                return ValueType.Symbol;
+        }
+    }
+
+
 }
