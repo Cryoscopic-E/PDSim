@@ -12,3 +12,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82bf94bd81663e5ea88fffcb1554d4c, type: 3}
   m_Name: ProtobufProblem
   m_EditorClassIdentifier: 
+  domainName: blocks-4-1_domain
+  problemName: blocks-4-1
+  typesDeclaration:
+    serializableTypeNodes:
+    - name: object
+      childrenCount: 1
+      indexFirstChild: 1
+    - name: block
+      childrenCount: 0
+      indexFirstChild: 2
+  fluents:
+  - name: on
+    type: 3
+    parameters:
+    - name: x
+      type: block
+    - name: y
+      type: block
+  - name: ontable
+    type: 3
+    parameters:
+    - name: x
+      type: block
+  - name: clear
+    type: 3
+    parameters:
+    - name: x
+      type: block
+  - name: handempty
+    type: 3
+    parameters: []
+  - name: holding
+    type: 3
+    parameters:
+    - name: x
+      type: block
+  objects:
+  - name: a
+    type: block
+  - name: c
+    type: block
+  - name: d
+    type: block
+  - name: b
+    type: block

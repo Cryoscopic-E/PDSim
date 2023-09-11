@@ -6,20 +6,7 @@ using pbc = global::Google.Protobuf.Collections;
 namespace PDSim.Protobuf
 {
     [Serializable]
-    public class PdSimTypesDeclaration
-    {
-        public TypeTree TypeTree { get; private set; }
-
-        public PdSimTypesDeclaration()
-        {
-            TypeTree = new TypeTree();
-        }
-    }
-
-
-
-    [Serializable]
-    public class TypeTree : ISerializationCallbackReceiver
+    public class PdSimTypesDeclaration : ISerializationCallbackReceiver
     {
         public class TypeNode
         {

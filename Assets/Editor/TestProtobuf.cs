@@ -36,15 +36,7 @@ public class TestProtobuf : EditorWindow
         var response = request.Connect();
 
         var reader = new ProtobufReader();
-        var problem = reader.Read(response);
-
-        //Save asset
-        var path = "Assets/Testprotobuf/ProtobufProblem.asset";
-        AssetDatabase.CreateAsset(problem, path);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-
+        reader.Read(response);
         yield return null;
 
     }

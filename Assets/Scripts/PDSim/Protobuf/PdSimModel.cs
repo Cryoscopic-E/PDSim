@@ -96,18 +96,18 @@ namespace PDSim.Protobuf
     [Serializable]
     public class PdSimParameter
     {
-        public string Name { get; private set; }
-        public string Type { get; private set; }
+        public string name;
+        public string type;
 
         public PdSimParameter(Parameter parameter)
         {
-            Name = parameter.Name;
-            Type = parameter.Type;
+            name = parameter.Name;
+            type = parameter.Type;
         }
 
         public override string ToString()
         {
-            return string.Format("{0} - {1}", Name, Type);
+            return string.Format("{0} - {1}", name, type);
         }
     }
 
@@ -119,30 +119,30 @@ namespace PDSim.Protobuf
     [Serializable]
     public class PdSimFluent
     {
-        public string Name { get; private set; }
-        public ValueType Type { get; private set; }
-        public List<PdSimParameter> Parameters { get; private set; }
+        public string name;
+        public ValueType type;
+        public List<PdSimParameter> parameters;
 
         public PdSimFluent(Fluent fluent)
         {
-            Name = fluent.Name;
-            Type = PdSimUtils.ConvertValueType(fluent.ValueType);
-            Parameters = new List<PdSimParameter>();
+            name = fluent.Name;
+            type = PdSimUtils.ConvertValueType(fluent.ValueType);
+            parameters = new List<PdSimParameter>();
             foreach (var parameter in fluent.Parameters)
             {
-                Parameters.Add(new PdSimParameter(parameter));
+                parameters.Add(new PdSimParameter(parameter));
             }
         }
 
         public override string ToString()
         {
             // Fluent in format: Type::Name (Parameter1 - Type, Parameter2 - Type, ...)
-            string fluent = string.Format("{0}::{1}", Type, Name);
+            string fluent = string.Format("{0}::{1}", type, name);
 
-            if (Parameters.Count > 0)
+            if (parameters.Count > 0)
             {
                 fluent += " (";
-                foreach (var parameter in Parameters)
+                foreach (var parameter in parameters)
                 {
                     fluent += string.Format("{0}, ", parameter.ToString());
                 }
@@ -153,6 +153,26 @@ namespace PDSim.Protobuf
         }
     }
 
+    [Serializable]
+    public class PdSimObject
+    {
+        public string name;
+        public string type;
+
+        public PdSimObject(string name, string type)
+        {
+            this.name = name;
+            this.type = type;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", name, type);
+        }
+    }
+
+
+    [Serializable]
     public enum ValueType
     {
         Symbol,

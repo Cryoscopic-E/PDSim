@@ -1,88 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
 using Google.Protobuf.Collections;
+using UnityEditor;
 using UnityEngine;
 
 namespace PDSim.Protobuf
 {
     public class ProtobufReader
     {
-        private Problem problem;
-        private PdSimProblem instance;
 
-        public PdSimProblem Read(byte[] data)
+        public void Read(byte[] data)
         {
-            problem = Problem.Parser.ParseFrom(data);
+            var problem = Problem.Parser.ParseFrom(data);
 
-            instance = ScriptableObject.CreateInstance<PdSimProblem>();
+            var instance = ScriptableObject.CreateInstance<PdSimProblem>();
 
-            instance.DomainName = problem.DomainName;
+            instance.domainName = problem.DomainName;
 
-            instance.ProblemName = problem.ProblemName;
+            instance.problemName = problem.ProblemName;
 
-            instance.TypesDeclaration = new PdSimTypesDeclaration();
-            instance.TypesDeclaration.TypeTree.Populate(problem.Types_);
+            // TYPES DECLARATION
 
-            ParseFluents();
-
-            ParseObjects();
-
-            ParseActions();
+            instance.typesDeclaration = new PdSimTypesDeclaration();
+            instance.typesDeclaration.Populate(problem.Types_);
 
 
-
-            return instance;
-        }
-
-        private void ParseFluents()
-        {
-            instance.Fluents = new List<PdSimFluent>();
+            // FLUENTS
+            instance.fluents = new List<PdSimFluent>();
             foreach (var fluent in problem.Fluents)
             {
-                var newFluent = ParseFluent(fluent);
-                instance.Fluents.Add(newFluent);
+                var newFluent = new PdSimFluent(fluent);
+                instance.fluents.Add(newFluent);
             }
-        }
 
-        private PdSimFluent ParseFluent(Fluent fluent)
-        {
-            return new PdSimFluent(fluent);
-        }
-
-
-        private void ParseActions()
-        {
-            instance.Actions = new List<PdSimAction>();
-            foreach (var action in problem.Actions)
-            {
-                var newAction = ParseAction(action);
-            }
-        }
-
-        private PdSimAction ParseAction(Action action)
-        {
-            return null;
-        }
-
-        private PdSimParameter ParseParameter(Parameter parameter)
-        {
-            return null;
-        }
-
-        private void ParseObjects()
-        {
-            instance.Objects = new List<PdSimObject>();
+            instance.objects = new List<PdSimObject>();
             foreach (var obj in problem.Objects)
             {
-                var newObject = ParseObject(obj);
-                instance.Objects.Add(newObject);
+                var newObject = new PdSimObject(obj.Name, obj.Type);
+                instance.objects.Add(newObject);
             }
+
+            //ParseActions();
+
+            //Save asset
+            var path = "Assets/Testprotobuf/ProtobufProblem.asset";
+
+            AssetDatabase.CreateAsset(instance, path);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
         }
 
-        private PdSimObject ParseObject(ObjectDeclaration obj)
-        {
-            return new PdSimObject(obj.Name, obj.Type);
-        }
+
+
+        // private void ParseActions()
+        // {
+        //     instance.Actions = new List<PdSimAction>();
+        //     foreach (var action in problem.Actions)
+        //     {
+        //         var newAction = ParseAction(action);
+        //     }
+        // }
+
+        // private PdSimAction ParseAction(Action action)
+        // {
+        //     return null;
+        // }
+
     }
 }
 

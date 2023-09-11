@@ -24,7 +24,7 @@ namespace Editor.Inspector
             // DOMAIN NAME
             EditorGUILayout.LabelField("DOMAIN NAME", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.LabelField(_problem.DomainName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+            EditorGUILayout.LabelField(_problem.domainName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
 
@@ -32,25 +32,25 @@ namespace Editor.Inspector
             // PROBLEM NAME
             EditorGUILayout.LabelField("PROBLEM NAME", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.LabelField(_problem.ProblemName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+            EditorGUILayout.LabelField(_problem.problemName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             // TYPES DECLARATION
-            var typesDeclaration = _problem.TypesDeclaration;
+            var typesDeclaration = _problem.typesDeclaration;
 
             EditorGUILayout.LabelField("TYPES DECLARATION", EditorStyles.boldLabel);
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
-            DrawNodes(typesDeclaration.TypeTree.GetRoot());
+            DrawNodes(typesDeclaration.GetRoot());
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             // FLUENTS
-            var fluents = _problem.Fluents;
+            var fluents = _problem.fluents;
 
             EditorGUILayout.LabelField("FLUENTS", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
@@ -65,8 +65,8 @@ namespace Editor.Inspector
             EditorGUILayout.Space();
 
 
-            // OBJECTS
-            var objects = _problem.Objects;
+            // // OBJECTS
+            var objects = _problem.objects;
 
             EditorGUILayout.LabelField("OBJECTS", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
@@ -81,7 +81,7 @@ namespace Editor.Inspector
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawNodes(TypeTree.TypeNode node, int depth = 0)
+        private void DrawNodes(PdSimTypesDeclaration.TypeNode node, int depth = 0)
         {
             if (node == null)
                 return;

@@ -4,16 +4,13 @@ using UnityEngine;
 
 namespace PDSim.Protobuf
 {
-    [Serializable]
     public class PdSimProblem : ScriptableObject
     {
-
-        public string DomainName { get; set; }
-        public string ProblemName { get; set; }
-        public PdSimTypesDeclaration TypesDeclaration { get; set; }
-
-        public List<PdSimFluent> Fluents { get; set; }
-        public List<PdSimAction> Actions { get; set; }
-        public List<PdSimObject> Objects { get; set; }
+        public string domainName;
+        public string problemName;
+        public PdSimTypesDeclaration typesDeclaration;
+        public List<PdSimFluent> fluents;
+        // //public List<PdSimAction> Actions { get; set; }
+        public List<PdSimObject> objects;
     }
 }
