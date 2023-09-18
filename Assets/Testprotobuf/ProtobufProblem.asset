@@ -12,48 +12,874 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82bf94bd81663e5ea88fffcb1554d4c, type: 3}
   m_Name: ProtobufProblem
   m_EditorClassIdentifier: 
-  domainName: blocks-4-1_domain
-  problemName: blocks-4-1
+  domainName: citycar-3-3-2_domain
+  problemName: citycar-3-3-2
   typesDeclaration:
     serializableTypeNodes:
     - name: object
-      childrenCount: 1
+      childrenCount: 4
       indexFirstChild: 1
-    - name: block
+    - name: car
       childrenCount: 0
       indexFirstChild: 2
+    - name: junction
+      childrenCount: 0
+      indexFirstChild: 3
+    - name: garage
+      childrenCount: 0
+      indexFirstChild: 4
+    - name: road
+      childrenCount: 0
+      indexFirstChild: 5
   fluents:
-  - name: on
+  - name: same_line
+    type: 3
+    parameters:
+    - name: xy
+      type: junction
+    - name: xy2
+      type: junction
+  - name: diagonal
     type: 3
     parameters:
     - name: x
-      type: block
+      type: junction
     - name: y
-      type: block
-  - name: ontable
+      type: junction
+  - name: at_car_jun
     type: 3
     parameters:
+    - name: c
+      type: car
     - name: x
-      type: block
+      type: junction
+  - name: at_car_road
+    type: 3
+    parameters:
+    - name: c
+      type: car
+    - name: x
+      type: road
+  - name: starting
+    type: 3
+    parameters:
+    - name: c
+      type: car
+    - name: x
+      type: garage
+  - name: arrived
+    type: 3
+    parameters:
+    - name: c
+      type: car
+    - name: x
+      type: junction
+  - name: road_connect
+    type: 3
+    parameters:
+    - name: r1
+      type: road
+    - name: xy
+      type: junction
+    - name: xy2
+      type: junction
   - name: clear
     type: 3
     parameters:
-    - name: x
-      type: block
-  - name: handempty
-    type: 3
-    parameters: []
-  - name: holding
+    - name: xy
+      type: junction
+  - name: in_place
     type: 3
     parameters:
     - name: x
-      type: block
+      type: road
+  - name: at_garage
+    type: 3
+    parameters:
+    - name: g
+      type: garage
+    - name: xy
+      type: junction
+  actions:
+  - name: move_car_in_road
+    parameters:
+    - name: xy_initial
+      type: junction
+    - name: xy_final
+      type: junction
+    - name: machine
+      type: car
+    - name: r1
+      type: road
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: clear
+        parameters:
+        - xy_initial
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: at_car_road
+        parameters:
+        - machine
+        - r1
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: at_car_jun
+        parameters:
+        - machine
+        - xy_initial
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: move_car_out_road
+    parameters:
+    - name: xy_initial
+      type: junction
+    - name: xy_final
+      type: junction
+    - name: machine
+      type: car
+    - name: r1
+      type: road
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: at_car_jun
+        parameters:
+        - machine
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: clear
+        parameters:
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: at_car_road
+        parameters:
+        - machine
+        - r1
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: car_arrived
+    parameters:
+    - name: xy_final
+      type: junction
+    - name: machine
+      type: car
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: clear
+        parameters:
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: arrived
+        parameters:
+        - machine
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: at_car_jun
+        parameters:
+        - machine
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: car_start
+    parameters:
+    - name: xy_final
+      type: junction
+    - name: machine
+      type: car
+    - name: g
+      type: garage
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: clear
+        parameters:
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: at_car_jun
+        parameters:
+        - machine
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: starting
+        parameters:
+        - machine
+        - g
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: build_diagonal_oneway
+    parameters:
+    - name: xy_initial
+      type: junction
+    - name: xy_final
+      type: junction
+    - name: r1
+      type: road
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: road_connect
+        parameters:
+        - r1
+        - xy_initial
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: in_place
+        parameters:
+        - r1
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: build_straight_oneway
+    parameters:
+    - name: xy_initial
+      type: junction
+    - name: xy_final
+      type: junction
+    - name: r1
+      type: road
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: road_connect
+        parameters:
+        - r1
+        - xy_initial
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: in_place
+        parameters:
+        - r1
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+  - name: destroy_road
+    parameters:
+    - name: xy_initial
+      type: junction
+    - name: xy_final
+      type: junction
+    - name: r1
+      type: road
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: in_place
+        parameters:
+        - r1
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: road_connect
+        parameters:
+        - r1
+        - xy_initial
+        - xy_final
+      forAllVariables: []
+      stateVariableCondition:
+        fluentName: 
+        parameters: []
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: False
+        fluentName: at_car_road
+        parameters:
+        - c1
+        - r1
+      forAllVariables:
+      - name: c1
+        type: car
+      stateVariableCondition:
+        fluentName: at_car_road
+        parameters:
+        - name: c1
+          type: car
+        - name: r1
+          type: road
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          _valueSymbol: True
+        fluentName: at_car_jun
+        parameters:
+        - c1
+        - xy_initial
+      forAllVariables:
+      - name: c1
+        type: car
+      stateVariableCondition:
+        fluentName: at_car_road
+        parameters:
+        - name: c1
+          type: car
+        - name: r1
+          type: road
+      functionApplicationCondition:
+        functorSymbol: 
+        fluents: []
   objects:
-  - name: a
-    type: block
-  - name: c
-    type: block
-  - name: d
-    type: block
-  - name: b
-    type: block
+  - name: junction0-0
+    type: junction
+  - name: junction0-1
+    type: junction
+  - name: junction0-2
+    type: junction
+  - name: junction1-0
+    type: junction
+  - name: junction1-1
+    type: junction
+  - name: junction1-2
+    type: junction
+  - name: junction2-0
+    type: junction
+  - name: junction2-1
+    type: junction
+  - name: junction2-2
+    type: junction
+  - name: car0
+    type: car
+  - name: car1
+    type: car
+  - name: garage0
+    type: garage
+  - name: garage1
+    type: garage
+  - name: garage2
+    type: garage
+  - name: road0
+    type: road
+  - name: road1
+    type: road
+  - name: road2
+    type: road
+  - name: road3
+    type: road
+  - name: road4
+    type: road
+  init:
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-0
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-1
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-1
+    - junction0-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-2
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-0
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-1
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-1
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-2
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-0
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-1
+    - junction2-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-1
+    - junction2-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-2
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-0
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-0
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-0
+    - junction2-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-0
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-1
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-1
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-1
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-1
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction0-2
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-2
+    - junction0-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction1-2
+    - junction2-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: same_line
+    parameters:
+    - junction2-2
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction0-0
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-1
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction0-1
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-0
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction0-1
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-2
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction0-2
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-1
+    - junction0-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-0
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction2-1
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-1
+    - junction2-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction2-0
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-1
+    - junction2-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction2-2
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction1-2
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: diagonal
+    parameters:
+    - junction2-1
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction0-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction1-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction1-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction1-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction2-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction2-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: clear
+    parameters:
+    - junction2-2
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: at_garage
+    parameters:
+    - garage0
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: at_garage
+    parameters:
+    - garage1
+    - junction0-1
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: at_garage
+    parameters:
+    - garage2
+    - junction0-0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: starting
+    parameters:
+    - car0
+    - garage0
+  - value:
+      contentCase: 4
+      _valueSymbol: True
+    fluentName: starting
+    parameters:
+    - car1
+    - garage1

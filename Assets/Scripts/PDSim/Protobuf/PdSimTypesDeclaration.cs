@@ -42,7 +42,6 @@ namespace PDSim.Protobuf
             {
                 var parentType = typeDeclaration.ParentType;
                 var currentType = typeDeclaration.TypeName;
-
                 // if (parentType == null)
                 // {
                 //     // root node
@@ -58,30 +57,38 @@ namespace PDSim.Protobuf
                 else
                 {
                     // find parent node
-                    var queue = new Queue<TypeNode>();
-                    queue.Enqueue(node);
-                    while (queue.Count > 0)
+                    var parent = FindNode(parentType);
+                    if (parent == null)
                     {
-                        var n = queue.Dequeue();
-                        if (n.Name == parentType)
-                        {
-                            // found parent node
-                            var childNode = new TypeNode(currentType);
-                            n.children.Add(childNode);
-                            node = childNode;
-                            break;
-                        }
-                        else
-                        {
-                            foreach (var c in n.children)
-                            {
-                                queue.Enqueue(c);
-                            }
-                        }
+                        Debug.LogError($"Parent {parentType} not found");
+                        continue;
                     }
+                    // add child
+                    parent.children.Add(new TypeNode(currentType));
                 }
             }
+
         }
+
+        private TypeNode FindNode(string typeName)
+        {
+            var root = GetRoot();
+            var queue = new Queue<TypeNode>();
+            queue.Enqueue(root);
+            while (queue.Count > 0)
+            {
+                var node = queue.Dequeue();
+                foreach (var n in node.children)
+                {
+                    queue.Enqueue(n);
+                }
+
+                if (node.Name == typeName)
+                    return node;
+            }
+            return null;
+        }
+
         public List<string> GetChildrenTypes(string typeName)
         {
             var root = GetRoot();

@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Google.Protobuf.Collections;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,7 +18,6 @@ namespace PDSim.Protobuf
             instance.problemName = problem.ProblemName;
 
             // TYPES DECLARATION
-
             instance.typesDeclaration = new PdSimTypesDeclaration();
             instance.typesDeclaration.Populate(problem.Types_);
 
@@ -40,7 +37,36 @@ namespace PDSim.Protobuf
                 instance.objects.Add(newObject);
             }
 
-            //ParseActions();
+            // ACTIONS
+            instance.actions = new List<PdSimAction>();
+            foreach (var action in problem.Actions)
+            {
+                if (action.Duration == null)
+                {
+                    var newAction = new PdSimInstantaneousAction(action);
+                    instance.actions.Add(newAction);
+                }
+                else
+                {
+                    var newAction = new PdSimDurativeAction(action);
+                    instance.actions.Add(newAction);
+                }
+            }
+
+
+            // INIT
+            instance.init = new List<PdSimFluentAssignment>();
+            foreach (var fluent in problem.InitialState)
+            {
+
+                var val = fluent.Value.Atom;
+
+                if (val.ContentCase == Atom.ContentOneofCase.Boolean && val.Boolean)
+                {
+                    var newFluent = new PdSimFluentAssignment(fluent);
+                    instance.init.Add(newFluent);
+                }
+            }
 
             //Save asset
             var path = "Assets/Testprotobuf/ProtobufProblem.asset";

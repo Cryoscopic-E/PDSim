@@ -1,5 +1,5 @@
-using UnityEditor;
 using PDSim.Protobuf;
+using UnityEditor;
 using UnityEngine;
 
 namespace Editor.Inspector
@@ -24,7 +24,7 @@ namespace Editor.Inspector
             // DOMAIN NAME
             EditorGUILayout.LabelField("DOMAIN NAME", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.LabelField(_problem.domainName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+            EditorGUILayout.LabelField(_problem.domainName, EditorStyles.largeLabel);
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
 
@@ -32,7 +32,7 @@ namespace Editor.Inspector
             // PROBLEM NAME
             EditorGUILayout.LabelField("PROBLEM NAME", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.LabelField(_problem.problemName, EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+            EditorGUILayout.LabelField(_problem.problemName, EditorStyles.largeLabel);
             EditorGUI.indentLevel--;
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -57,15 +57,49 @@ namespace Editor.Inspector
             EditorGUILayout.BeginVertical();
             foreach (var fluent in fluents)
             {
-                EditorGUILayout.LabelField(fluent.ToString(), EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+                EditorGUILayout.LabelField(fluent.ToString(), EditorStyles.largeLabel);
             }
             EditorGUILayout.EndVertical();
             EditorGUI.indentLevel--;
-
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space();
 
 
-            // // OBJECTS
+            // ACTIONS
+            var actions = _problem.actions;
+
+            EditorGUILayout.LabelField("ACTIONS", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.BeginVertical();
+            foreach (var action in actions)
+            {
+                EditorGUILayout.LabelField(action.ToString(), EditorStyles.whiteBoldLabel);
+
+                // effects
+                EditorGUI.indentLevel++;
+                EditorGUILayout.LabelField("EFFECTS", EditorStyles.boldLabel);
+                EditorGUI.indentLevel++;
+                EditorGUILayout.BeginVertical();
+                foreach (var effect in action.effects)
+                {
+                    EditorGUILayout.TextArea(effect.ToString(), EditorStyles.largeLabel);
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUI.indentLevel--;
+                EditorGUI.indentLevel--;
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUI.indentLevel--;
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+
+
+            // OBJECTS
             var objects = _problem.objects;
 
             EditorGUILayout.LabelField("OBJECTS", EditorStyles.boldLabel);
@@ -73,12 +107,31 @@ namespace Editor.Inspector
             EditorGUILayout.BeginVertical();
             foreach (var obj in objects)
             {
-                EditorGUILayout.LabelField(obj.ToString(), EditorStyles.largeLabel, GUILayout.ExpandWidth(false));
+                EditorGUILayout.LabelField(obj.ToString(), EditorStyles.largeLabel);
             }
             EditorGUILayout.EndVertical();
             EditorGUI.indentLevel--;
 
             EditorGUILayout.EndVertical();
+
+            // INIT
+            var init = _problem.init;
+            EditorGUI.indentLevel--;
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.LabelField("INITIAL STATE", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.BeginVertical();
+            foreach (var fluent in init)
+            {
+                EditorGUILayout.LabelField(fluent.ToString(), EditorStyles.largeLabel);
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUI.indentLevel--;
+            EditorGUI.indentLevel--;
+
+            EditorGUILayout.Space();
         }
 
         private void DrawNodes(PdSimTypesDeclaration.TypeNode node, int depth = 0)
