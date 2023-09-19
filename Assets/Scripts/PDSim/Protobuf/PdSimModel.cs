@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace PDSim.Protobuf
 {
@@ -33,6 +34,17 @@ namespace PDSim.Protobuf
                     _valueSymbol = atom.Boolean.ToString();
                     break;
             }
+        }
+
+        public PdSimAtom()
+        {
+            contentCase = Atom.ContentOneofCase.Symbol;
+            _valueSymbol = string.Empty;
+        }
+
+        public bool IsEmpty()
+        {
+            return _valueSymbol == string.Empty;
         }
 
         #region old
@@ -77,7 +89,12 @@ namespace PDSim.Protobuf
         #endregion
         public override string ToString()
         {
-            return contentCase + "::" + _valueSymbol;
+            return _valueSymbol;
+        }
+
+        public static PdSimAtom Empty()
+        {
+            return new PdSimAtom(new Atom());
         }
     }
 
@@ -321,9 +338,7 @@ namespace PDSim.Protobuf
 
         public PdSimFluentAssignment fluentAssignment;
         public List<PdSimParameter> forAllVariables;
-        public PdSimStateVariableCondition stateVariableCondition;
-        public PdSimFunctionApplicationCondition functionApplicationCondition;
-
+        public PdSimCondition effectCondition;
         public PdSimEffect(Effect effect)
         {
             var e = effect.Effect_;
@@ -346,26 +361,34 @@ namespace PDSim.Protobuf
                 forAllVariables.Add(new PdSimParameter(parameter.Atom.Symbol, parameter.Type));
             }
 
-            //condition
-            if (e.Condition != null)
-            {
-                var condition = e.Condition;
-                if (condition.Kind == ExpressionKind.StateVariable)
-                {
-                    stateVariableCondition = new PdSimStateVariableCondition(condition);
-                    functionApplicationCondition = null;
-                }
-                else if (condition.Kind == ExpressionKind.FunctionApplication)
-                {
-                    functionApplicationCondition = new PdSimFunctionApplicationCondition(condition);
-                    stateVariableCondition = null;
-                }
-                else
-                {
-                    stateVariableCondition = null;
-                    functionApplicationCondition = null;
-                }
-            }
+            // conditional effect
+            effectCondition = new PdSimCondition(e.Condition);
+
+            ////condition
+            //if (e.Condition != null)
+            //{
+            //    var condition = e.Condition;
+            //    if (condition.Kind == ExpressionKind.StateVariable)
+            //    {
+            //        stateVariableCondition = new PdSimStateVariableCondition(condition);
+            //        functionApplicationCondition = null;
+            //    }
+            //    else if (condition.Kind == ExpressionKind.FunctionApplication)
+            //    {
+            //        functionApplicationCondition = new PdSimFunctionApplicationCondition(condition);
+            //        stateVariableCondition = null;
+            //    }
+            //    else
+            //    {
+            //        stateVariableCondition = null;
+            //        functionApplicationCondition = null;
+            //    }
+            //}
+        }
+
+        public bool IsForAll()
+        {
+            return forAllVariables.Count > 0;
         }
 
         public override string ToString()
@@ -381,89 +404,132 @@ namespace PDSim.Protobuf
                 effect = effect.Remove(effect.Length - 2);
                 effect += "\n";
             }
-            if (stateVariableCondition != null)
-                effect += stateVariableCondition.ToString();
-            if (functionApplicationCondition != null)
-                effect += functionApplicationCondition.ToString();
+
+            effect += effectCondition.ToString();
 
             effect += fluentAssignment.ToString();
             return effect;
         }
     }
 
-
-    [Serializable]
-    public class PdSimStateVariableCondition
+    public enum EffectConditionType
     {
-        public string fluentName;
-        public List<PdSimParameter> parameters;
-
-        public PdSimStateVariableCondition(Expression expression)
-        {
-            var expressionList = expression.List;
-            parameters = new List<PdSimParameter>();
-            foreach (var exp in expressionList)
-            {
-                if (exp.Kind == ExpressionKind.FluentSymbol)
-                    fluentName = exp.Atom.Symbol;
-                else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
-                {
-                    parameters.Add(new PdSimParameter(exp.Atom.Symbol, exp.Type));
-                }
-
-            }
-        }
-
-        public override string ToString()
-        {
-            return $"IF " + fluentName + " (" + string.Join(", ", parameters) + ") THEN\n";
-
-        }
+        None,
+        Constant,
+        StateVariable,
+        FunctionApplication
     }
 
+    /// <summary>
+    /// Represents a condition in the action effect.
+    /// </summary>
     [Serializable]
-    public class PdSimFunctionApplicationCondition
+    public class PdSimCondition
     {
+        public EffectConditionType type;
+        public string symbol;
         public string functorSymbol;
         public List<PdSimFluentAssignment> fluents;
 
-        public PdSimFunctionApplicationCondition(Expression expression)
+        public PdSimCondition(Expression expression)
         {
-            // first element is the functor symbol
-            functorSymbol = expression.List[0].Atom.Symbol;
-
+            symbol = string.Empty;
+            functorSymbol = string.Empty;
             fluents = new List<PdSimFluentAssignment>();
 
-            foreach (var fluent in expression.List[1].List)
+            if (expression.Kind == ExpressionKind.StateVariable)
             {
-                var value = new PdSimAtom(fluent.Atom);
+                type = EffectConditionType.StateVariable;
 
-                var fluentList = fluent.List;
-                var fluentName = fluentList[0].Atom.Symbol;
+                var expressionList = expression.List;
                 var parameters = new List<string>();
-                for (int i = 1; i < fluentList.Count; i++)
+                var fluentName = string.Empty;
+                foreach (var exp in expressionList)
                 {
-                    parameters.Add(fluentList[i].Atom.Symbol);
+                    if (exp.Kind == ExpressionKind.FluentSymbol)
+                        fluentName = exp.Atom.Symbol;
+                    else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
+                    {
+                        parameters.Add(exp.Atom.Symbol);
+                    }
                 }
-                fluents.Add(new PdSimFluentAssignment(value, fluentName, parameters));
+
+                fluents.Add(new PdSimFluentAssignment(PdSimAtom.Empty(), fluentName, parameters));
+            }
+            else if (expression.Kind == ExpressionKind.FunctionApplication)
+            {
+                type = EffectConditionType.FunctionApplication;
+
+                // first element is the functor symbol
+                functorSymbol = expression.List[0].Atom.Symbol.Split(':')[1]; // form up:<functorSymbol>
+
+                var fluentName = string.Empty;
+                var parameters = new List<string>();
+                var newFluent = true;
+                for (var i = 1; i < expression.List.Count; i++)
+                {
+                    // parse list, every time a fluent symbol is found, create a new fluent
+                    var exp = expression.List[i];
+                    Debug.Log(exp);
+                    if (exp.Kind == ExpressionKind.FluentSymbol)
+                    {
+                        if (!newFluent)
+                        {
+                            fluents.Add(new PdSimFluentAssignment(PdSimAtom.Empty(), fluentName, parameters));
+                            parameters = new List<string>();
+                        }
+                        fluentName = exp.Atom.Symbol;
+                        newFluent = true;
+                    }
+                    else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
+                    {
+                        parameters.Add(exp.Atom.Symbol);
+                        newFluent = false;
+                    }
+                }
+
+            }
+            else if (expression.Kind == ExpressionKind.Constant)
+            {
+                type = EffectConditionType.Constant;
+            }
+            else
+            {
+                type = EffectConditionType.None;
             }
 
         }
-
 
         public override string ToString()
         {
-            string condition = string.Format($"IF {0} (", functorSymbol);
-            foreach (var fluent in fluents)
+            var condition = string.Empty;
+            if (type == EffectConditionType.StateVariable)
             {
-                condition += string.Format("{0}, ", fluent.ToString());
+                condition += $"IF {fluents[0]} THEN\n";
             }
-            condition = condition.Remove(condition.Length - 2);
-            condition += ")\nTHEN\n";
+            else if (type == EffectConditionType.FunctionApplication)
+            {
+                condition += $"IF {functorSymbol} (";
+                foreach (var fluent in fluents)
+                {
+                    condition += fluent.ToString();
+                }
+                condition = condition.Remove(condition.Length - 2);
+                condition += ")\nTHEN\n";
+
+            }
+            else if (type == EffectConditionType.Constant)
+            {
+                condition = string.Empty;
+            }
+            else
+            {
+                condition = string.Empty;
+            }
             return condition;
         }
-    }
 
+    }
 
     [Serializable]
     public class PdSimFluentAssignment
@@ -507,7 +573,10 @@ namespace PDSim.Protobuf
                 assignment = assignment.Remove(assignment.Length - 2);
                 assignment += ")";
             }
-            assignment += string.Format(" := {0}", value.ToString());
+
+            if (!value.IsEmpty())
+                assignment += string.Format(" := {0}", value.ToString());
+
             return assignment;
         }
     }

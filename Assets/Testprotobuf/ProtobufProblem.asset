@@ -120,10 +120,9 @@ MonoBehaviour:
         parameters:
         - xy_initial
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -135,10 +134,9 @@ MonoBehaviour:
         - machine
         - r1
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -150,10 +148,9 @@ MonoBehaviour:
         - machine
         - xy_initial
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: move_car_out_road
@@ -176,10 +173,9 @@ MonoBehaviour:
         - machine
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -190,10 +186,9 @@ MonoBehaviour:
         parameters:
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -205,10 +200,9 @@ MonoBehaviour:
         - machine
         - r1
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: car_arrived
@@ -226,10 +220,9 @@ MonoBehaviour:
         parameters:
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -241,10 +234,9 @@ MonoBehaviour:
         - machine
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -256,10 +248,9 @@ MonoBehaviour:
         - machine
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: car_start
@@ -279,10 +270,9 @@ MonoBehaviour:
         parameters:
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -294,10 +284,9 @@ MonoBehaviour:
         - machine
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -309,10 +298,9 @@ MonoBehaviour:
         - machine
         - g
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: build_diagonal_oneway
@@ -334,10 +322,9 @@ MonoBehaviour:
         - xy_initial
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -348,10 +335,9 @@ MonoBehaviour:
         parameters:
         - r1
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: build_straight_oneway
@@ -373,10 +359,9 @@ MonoBehaviour:
         - xy_initial
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -387,10 +372,9 @@ MonoBehaviour:
         parameters:
         - r1
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
   - name: destroy_road
@@ -410,10 +394,9 @@ MonoBehaviour:
         parameters:
         - r1
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -426,10 +409,9 @@ MonoBehaviour:
         - xy_initial
         - xy_final
       forAllVariables: []
-      stateVariableCondition:
-        fluentName: 
-        parameters: []
-      functionApplicationCondition:
+      effectCondition:
+        type: 1
+        symbol: 
         functorSymbol: 
         fluents: []
     - fluentAssignment:
@@ -443,15 +425,10 @@ MonoBehaviour:
       forAllVariables:
       - name: c1
         type: car
-      stateVariableCondition:
-        fluentName: at_car_road
-        parameters:
-        - name: c1
-          type: car
-        - name: r1
-          type: road
-      functionApplicationCondition:
-        functorSymbol: 
+      effectCondition:
+        type: 3
+        symbol: 
+        functorSymbol: not
         fluents: []
     - fluentAssignment:
         value:
@@ -464,15 +441,10 @@ MonoBehaviour:
       forAllVariables:
       - name: c1
         type: car
-      stateVariableCondition:
-        fluentName: at_car_road
-        parameters:
-        - name: c1
-          type: car
-        - name: r1
-          type: road
-      functionApplicationCondition:
-        functorSymbol: 
+      effectCondition:
+        type: 3
+        symbol: 
+        functorSymbol: not
         fluents: []
   objects:
   - name: junction0-0
