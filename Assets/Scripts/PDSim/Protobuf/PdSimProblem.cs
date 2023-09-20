@@ -13,5 +13,6 @@ namespace PDSim.Protobuf
         public List<PdSimDurativeAction> durativeActions;
         public List<PdSimObject> objects;
         public List<PdSimFluentAssignment> init;
+        public List<PdSimActionInstance> plan;
     }
 }

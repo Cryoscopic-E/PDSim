@@ -12,1081 +12,345 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82bf94bd81663e5ea88fffcb1554d4c, type: 3}
   m_Name: ProtobufProblem
   m_EditorClassIdentifier: 
-  domainName: crewplanning_1crew_2day_100utilization_domain
-  problemName: crewplanning_1crew_2day_100utilization
+  domainName: blocks-4-1_domain
+  problemName: blocks-4-1
   typesDeclaration:
     serializableTypeNodes:
     - name: object
       childrenCount: 1
       indexFirstChild: 1
-    - name: objects
-      childrenCount: 7
+    - name: block
+      childrenCount: 0
       indexFirstChild: 2
-    - name: medicalstate
-      childrenCount: 0
-      indexFirstChild: 3
-    - name: filterstate
-      childrenCount: 0
-      indexFirstChild: 4
-    - name: crewmember
-      childrenCount: 0
-      indexFirstChild: 5
-    - name: payloadact
-      childrenCount: 0
-      indexFirstChild: 6
-    - name: day
-      childrenCount: 0
-      indexFirstChild: 7
-    - name: exerequipment
-      childrenCount: 0
-      indexFirstChild: 8
-    - name: rpcm
-      childrenCount: 0
-      indexFirstChild: 9
   fluents:
-  - name: mcs_finished
+  - name: on
     type: 3
     parameters:
-    - name: ps
-      type: medicalstate
-    - name: d
-      type: day
-  - name: changed
+    - name: x
+      type: block
+    - name: y
+      type: block
+  - name: ontable
     type: 3
     parameters:
-    - name: fs
-      type: filterstate
-    - name: d
-      type: day
-  - name: available
+    - name: x
+      type: block
+  - name: clear
     type: 3
     parameters:
-    - name: c
-      type: crewmember
-  - name: done_sleep
+    - name: x
+      type: block
+  - name: handempty
+    type: 3
+    parameters: []
+  - name: holding
     type: 3
     parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_pre_sleep
-    type: 3
+    - name: x
+      type: block
+  instantActions:
+  - name: pick-up
     parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_post_sleep
-    type: 3
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_dpc
-    type: 3
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_meal
-    type: 3
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_exercise
-    type: 3
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: done_remove_sleep_station
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-  - name: done_first_reconfigure_thermal_loop
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-  - name: done_replace_rpcm
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-  - name: done_assemble_sleep_station
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-  - name: done_second_reconfigure_thermal_loop
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-  - name: done_rpcm
-    type: 3
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: d
-      type: day
-  - name: payload_act_done
-    type: 3
-    parameters:
-    - name: pa
-      type: payloadact
-  - name: payload_act_completed
-    type: 3
-    parameters:
-    - name: pa
-      type: payloadact
-    - name: d
-      type: day
-  - name: next
-    type: 3
-    parameters:
-    - name: d1
-      type: day
-    - name: d2
-      type: day
-  - name: currentday
-    type: 3
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-  - name: initiated
-    type: 3
-    parameters:
-    - name: d
-      type: day
-  - name: unused
-    type: 3
-    parameters:
-    - name: e
-      type: exerequipment
-  instantActions: []
-  durativeActions:
-  - name: initialize_day
-    parameters:
-    - name: d1
-      type: day
-    - name: d2
-      type: day
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: initiated
-        parameters:
-        - d2
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 1440
-      lowerBound: 1440
-  - name: post_sleep
-    parameters:
-    - name: c
-      type: crewmember
-    - name: d1
-      type: day
-    - name: d2
-      type: day
+    - name: x
+      type: block
     effects:
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: currentday
+        fluentName: ontable
         parameters:
-        - c
-        - d1
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: clear
+        parameters:
+        - x
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: handempty
+        parameters: []
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: currentday
+        fluentName: holding
         parameters:
-        - c
-        - d2
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_post_sleep
-        parameters:
-        - c
-        - d2
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 195
-      lowerBound: 195
-  - name: have_meal
+  - name: put-down
     parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
+    - name: x
+      type: block
     effects:
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: available
+        fluentName: holding
         parameters:
-        - c
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: available
+        fluentName: clear
         parameters:
-        - c
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: done_meal
-        parameters:
-        - c
-        - d
+        fluentName: handempty
+        parameters: []
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: exercise
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: ontable
+        parameters:
+        - x
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+  - name: stack
     parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-    - name: e
-      type: exerequipment
+    - name: x
+      type: block
+    - name: y
+      type: block
     effects:
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: available
+        fluentName: holding
         parameters:
-        - c
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: unused
+        fluentName: clear
         parameters:
-        - e
+        - y
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: available
+        fluentName: clear
         parameters:
-        - c
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: unused
-        parameters:
-        - e
+        fluentName: handempty
+        parameters: []
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: True
-        fluentName: done_exercise
+        fluentName: on
         parameters:
-        - c
-        - d
+        - x
+        - y
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: sleep
+  - name: unstack
     parameters:
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
+    - name: x
+      type: block
+    - name: y
+      type: block
     effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: holding
+        parameters:
+        - x
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: clear
+        parameters:
+        - y
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: available
+        fluentName: clear
         parameters:
-        - c
+        - x
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_sleep
-        parameters:
-        - c
-        - d
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 600
-      lowerBound: 600
-  - name: change_filter
-    parameters:
-    - name: fs
-      type: filterstate
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-    effects:
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
+        fluentName: handempty
+        parameters: []
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: changed
-        parameters:
-        - fs
-        - d
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: medical_conference
-    parameters:
-    - name: ps
-      type: medicalstate
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-    effects:
     - fluentAssignment:
         value:
           contentCase: 4
           valueSymbol: False
-        fluentName: available
+        fluentName: on
         parameters:
-        - c
+        - x
+        - y
       forAllVariables: []
       effectCondition:
         functor:
           contentCase: 0
           valueSymbol: 
         assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: mcs_finished
-        parameters:
-        - ps
-        - d
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: conduct_payload_activity
-    parameters:
-    - name: pa
-      type: payloadact
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: payload_act_done
-        parameters:
-        - pa
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: report_payload_activity_at_deadline
-    parameters:
-    - name: pa
-      type: payloadact
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: payload_act_completed
-        parameters:
-        - pa
-        - d
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 1
-      lowerBound: 1
-  - name: first_reconfigurate_thermal_loops
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_first_reconfigure_thermal_loop
-        parameters:
-        - ps
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: remove_sleep_station
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_remove_sleep_station
-        parameters:
-        - ps
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: replace_rpcm
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_replace_rpcm
-        parameters:
-        - ps
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 180
-      lowerBound: 180
-  - name: assemble_sleep_station
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_assemble_sleep_station
-        parameters:
-        - ps
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: second_reconfigurate_thermal_loops
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: False
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: Start
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: available
-        parameters:
-        - c
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_second_reconfigure_thermal_loop
-        parameters:
-        - ps
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 60
-      lowerBound: 60
-  - name: finish_rpcm
-    parameters:
-    - name: ps
-      type: rpcm
-    - name: c
-      type: crewmember
-    - name: d
-      type: day
-    effects:
-    - fluentAssignment:
-        value:
-          contentCase: 4
-          valueSymbol: True
-        fluentName: done_rpcm
-        parameters:
-        - ps
-        - d
-      forAllVariables: []
-      effectCondition:
-        functor:
-          contentCase: 0
-          valueSymbol: 
-        assignments: []
-      timing:
-        delay: 0
-        timepoint: End
-    duration:
-      upperBound: 1
-      lowerBound: 1
+  durativeActions: []
   objects:
-  - name: d0
-    type: day
-  - name: d1
-    type: day
-  - name: d2
-    type: day
-  - name: d3
-    type: day
-  - name: c1
-    type: crewmember
-  - name: mcs1
-    type: medicalstate
-  - name: spaceshipfilter
-    type: filterstate
-  - name: rpcm1
-    type: rpcm
-  - name: pa2_1
-    type: payloadact
-  - name: pa2_2
-    type: payloadact
-  - name: pa2_3
-    type: payloadact
-  - name: pa2_4
-    type: payloadact
-  - name: pa2_5
-    type: payloadact
-  - name: pa2_6
-    type: payloadact
-  - name: pa2_7
-    type: payloadact
-  - name: e1
-    type: exerequipment
+  - name: a
+    type: block
+  - name: c
+    type: block
+  - name: d
+    type: block
+  - name: b
+    type: block
   init:
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: currentday
+    fluentName: clear
     parameters:
-    - c1
-    - d0
+    - b
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: done_sleep
+    fluentName: ontable
     parameters:
-    - c1
-    - d0
+    - d
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: available
+    fluentName: on
     parameters:
-    - c1
+    - a
+    - d
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: initiated
+    fluentName: on
     parameters:
-    - d1
+    - c
+    - a
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: next
+    fluentName: on
     parameters:
-    - d0
-    - d1
+    - b
+    - c
   - value:
       contentCase: 4
       valueSymbol: True
-    fluentName: next
-    parameters:
-    - d1
-    - d2
-  - value:
-      contentCase: 4
-      valueSymbol: True
-    fluentName: next
-    parameters:
-    - d2
-    - d3
-  - value:
-      contentCase: 4
-      valueSymbol: True
-    fluentName: unused
-    parameters:
-    - e1
+    fluentName: handempty
+    parameters: []
