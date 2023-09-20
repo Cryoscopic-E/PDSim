@@ -115,44 +115,44 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: clear
         parameters:
         - xy_initial
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: at_car_road
         parameters:
         - machine
         - r1
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: at_car_jun
         parameters:
         - machine
         - xy_initial
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: move_car_out_road
     parameters:
     - name: xy_initial
@@ -167,44 +167,44 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: at_car_jun
         parameters:
         - machine
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: clear
         parameters:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: at_car_road
         parameters:
         - machine
         - r1
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: car_arrived
     parameters:
     - name: xy_final
@@ -215,44 +215,44 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: clear
         parameters:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: arrived
         parameters:
         - machine
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: at_car_jun
         parameters:
         - machine
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: car_start
     parameters:
     - name: xy_final
@@ -265,44 +265,44 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: clear
         parameters:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: at_car_jun
         parameters:
         - machine
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: starting
         parameters:
         - machine
         - g
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: build_diagonal_oneway
     parameters:
     - name: xy_initial
@@ -315,7 +315,7 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: road_connect
         parameters:
         - r1
@@ -323,23 +323,23 @@ MonoBehaviour:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: in_place
         parameters:
         - r1
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: build_straight_oneway
     parameters:
     - name: xy_initial
@@ -352,7 +352,7 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: road_connect
         parameters:
         - r1
@@ -360,23 +360,23 @@ MonoBehaviour:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: in_place
         parameters:
         - r1
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
   - name: destroy_road
     parameters:
     - name: xy_initial
@@ -389,20 +389,20 @@ MonoBehaviour:
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: in_place
         parameters:
         - r1
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: road_connect
         parameters:
         - r1
@@ -410,14 +410,14 @@ MonoBehaviour:
         - xy_final
       forAllVariables: []
       effectCondition:
-        type: 1
-        symbol: 
-        functorSymbol: 
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: False
+          valueSymbol: False
         fluentName: at_car_road
         parameters:
         - c1
@@ -426,14 +426,21 @@ MonoBehaviour:
       - name: c1
         type: car
       effectCondition:
-        type: 3
-        symbol: 
-        functorSymbol: not
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments:
+        - value:
+            contentCase: 4
+            valueSymbol: True
+          fluentName: at_car_road
+          parameters:
+          - c1
+          - r1
     - fluentAssignment:
         value:
           contentCase: 4
-          _valueSymbol: True
+          valueSymbol: True
         fluentName: at_car_jun
         parameters:
         - c1
@@ -442,10 +449,17 @@ MonoBehaviour:
       - name: c1
         type: car
       effectCondition:
-        type: 3
-        symbol: 
-        functorSymbol: not
-        fluents: []
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments:
+        - value:
+            contentCase: 4
+            valueSymbol: True
+          fluentName: at_car_road
+          parameters:
+          - c1
+          - r1
   objects:
   - name: junction0-0
     type: junction
@@ -488,369 +502,369 @@ MonoBehaviour:
   init:
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-0
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-1
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-1
     - junction0-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-2
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-0
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-1
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-1
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-2
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-0
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-1
     - junction2-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-1
     - junction2-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-2
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-0
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-0
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-0
     - junction2-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-0
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-1
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-1
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-1
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-1
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction0-2
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-2
     - junction0-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction1-2
     - junction2-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: same_line
     parameters:
     - junction2-2
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction0-0
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-1
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction0-1
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-0
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction0-1
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-2
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction0-2
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-1
     - junction0-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-0
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction2-1
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-1
     - junction2-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction2-0
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-1
     - junction2-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction2-2
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction1-2
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: diagonal
     parameters:
     - junction2-1
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction0-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction1-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction1-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction1-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction2-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction2-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: clear
     parameters:
     - junction2-2
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: at_garage
     parameters:
     - garage0
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: at_garage
     parameters:
     - garage1
     - junction0-1
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: at_garage
     parameters:
     - garage2
     - junction0-0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: starting
     parameters:
     - car0
     - garage0
   - value:
       contentCase: 4
-      _valueSymbol: True
+      valueSymbol: True
     fluentName: starting
     parameters:
     - car1

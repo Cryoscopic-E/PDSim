@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace PDSim.Protobuf
 {
@@ -13,7 +12,7 @@ namespace PDSim.Protobuf
     {
         public Atom.ContentOneofCase contentCase;
 
-        public string _valueSymbol;
+        public string valueSymbol;
 
         public PdSimAtom(Atom atom)
         {
@@ -22,79 +21,92 @@ namespace PDSim.Protobuf
             {
                 default:
                 case Atom.ContentOneofCase.Symbol:
-                    _valueSymbol = atom.Symbol;
+                    valueSymbol = atom.Symbol;
                     break;
                 case Atom.ContentOneofCase.Int:
-                    _valueSymbol = atom.Int.ToString();
+                    valueSymbol = atom.Int.ToString();
                     break;
                 case Atom.ContentOneofCase.Real:
-                    _valueSymbol = PdSimUtils.RealToFloat(atom.Real).ToString();
+                    valueSymbol = PdSimUtils.RealToFloat(atom.Real).ToString();
                     break;
                 case Atom.ContentOneofCase.Boolean:
-                    _valueSymbol = atom.Boolean.ToString();
+                    valueSymbol = atom.Boolean.ToString();
                     break;
             }
         }
 
-        public PdSimAtom()
+        private PdSimAtom()
         {
-            contentCase = Atom.ContentOneofCase.Symbol;
-            _valueSymbol = string.Empty;
+            contentCase = Atom.ContentOneofCase.None;
+            valueSymbol = string.Empty;
+        }
+
+        private PdSimAtom(string value)
+        {
+            if (value == "up:not") // then is a boolean
+            {
+                contentCase = Atom.ContentOneofCase.Boolean;
+                valueSymbol = bool.FalseString;
+            }
+            else if (value == "up:and")
+            {
+                contentCase = Atom.ContentOneofCase.Symbol;
+                valueSymbol = "AND";
+            }
+            else
+            {
+                // TODO: support other function symbols
+                contentCase = Atom.ContentOneofCase.Symbol;
+                valueSymbol = value;
+            }
+        }
+
+        private PdSimAtom(int value)
+        {
+            contentCase = Atom.ContentOneofCase.Int;
+            valueSymbol = value.ToString();
+        }
+
+        private PdSimAtom(float value)
+        {
+            contentCase = Atom.ContentOneofCase.Real;
+            valueSymbol = value.ToString();
+        }
+
+        private PdSimAtom(bool value)
+        {
+            contentCase = Atom.ContentOneofCase.Boolean;
+            valueSymbol = value.ToString();
         }
 
         public bool IsEmpty()
         {
-            return _valueSymbol == string.Empty;
+            return contentCase == Atom.ContentOneofCase.None;
         }
 
-        #region old
-        //public object Value
-        //{
-        //    get
-        //    {
-        //        if (_contentCase == Atom.ContentOneofCase.Symbol)
-        //            return (string)Value;
-        //        else if (_contentCase == Atom.ContentOneofCase.Int)
-        //            return (int)Value;
-        //        else if (_contentCase == Atom.ContentOneofCase.Real)
-        //            return (float)Value;
-        //        else if (_contentCase == Atom.ContentOneofCase.Boolean)
-        //            return (bool)Value;
-        //        else
-        //            return null;
-        //    }
-        //    private set { }
-        //}
-
-        //public PdSimAtom(Atom atom)
-        //{
-        //    _contentCase = atom.ContentCase;
-        //    switch (_contentCase)
-        //    {
-        //        default:
-        //        case Atom.ContentOneofCase.Symbol:
-        //            Value = atom.Symbol;
-        //            break;
-        //        case Atom.ContentOneofCase.Int:
-        //            Value = atom.Int;
-        //            break;
-        //        case Atom.ContentOneofCase.Real:
-        //            Value = PdSimUtils.RealToFloat(atom.Real);
-        //            break;
-        //        case Atom.ContentOneofCase.Boolean:
-        //            Value = atom.Boolean;
-        //            break;
-        //    }
-        //}
-        #endregion
         public override string ToString()
         {
-            return _valueSymbol;
+            return valueSymbol;
         }
 
         public static PdSimAtom Empty()
         {
             return new PdSimAtom(new Atom());
+        }
+
+        public static PdSimAtom Boolean(bool value)
+        {
+            return new PdSimAtom(value);
+        }
+
+        public static PdSimAtom Symbol(string value)
+        {
+            return new PdSimAtom(value);
+        }
+
+        public bool IsTrue()
+        {
+            return contentCase == Atom.ContentOneofCase.Boolean && bool.Parse(valueSymbol) == true;
         }
     }
 
@@ -363,27 +375,6 @@ namespace PDSim.Protobuf
 
             // conditional effect
             effectCondition = new PdSimCondition(e.Condition);
-
-            ////condition
-            //if (e.Condition != null)
-            //{
-            //    var condition = e.Condition;
-            //    if (condition.Kind == ExpressionKind.StateVariable)
-            //    {
-            //        stateVariableCondition = new PdSimStateVariableCondition(condition);
-            //        functionApplicationCondition = null;
-            //    }
-            //    else if (condition.Kind == ExpressionKind.FunctionApplication)
-            //    {
-            //        functionApplicationCondition = new PdSimFunctionApplicationCondition(condition);
-            //        stateVariableCondition = null;
-            //    }
-            //    else
-            //    {
-            //        stateVariableCondition = null;
-            //        functionApplicationCondition = null;
-            //    }
-            //}
         }
 
         public bool IsForAll()
@@ -394,7 +385,7 @@ namespace PDSim.Protobuf
         public override string ToString()
         {
             string effect = "";
-            if (forAllVariables.Count > 0)
+            if (IsForAll())
             {
                 effect += $"FORALL ";
                 foreach (var variable in forAllVariables)
@@ -408,17 +399,13 @@ namespace PDSim.Protobuf
             effect += effectCondition.ToString();
 
             effect += fluentAssignment.ToString();
+
+            effect += "\n";
+
             return effect;
         }
     }
 
-    public enum EffectConditionType
-    {
-        None,
-        Constant,
-        StateVariable,
-        FunctionApplication
-    }
 
     /// <summary>
     /// Represents a condition in the action effect.
@@ -426,21 +413,15 @@ namespace PDSim.Protobuf
     [Serializable]
     public class PdSimCondition
     {
-        public EffectConditionType type;
-        public string symbol;
-        public string functorSymbol;
-        public List<PdSimFluentAssignment> fluents;
+        public PdSimAtom functor;
+        public List<PdSimFluentAssignment> assignments;
 
         public PdSimCondition(Expression expression)
         {
-            symbol = string.Empty;
-            functorSymbol = string.Empty;
-            fluents = new List<PdSimFluentAssignment>();
-
+            functor = PdSimAtom.Empty();
+            assignments = new List<PdSimFluentAssignment>();
             if (expression.Kind == ExpressionKind.StateVariable)
             {
-                type = EffectConditionType.StateVariable;
-
                 var expressionList = expression.List;
                 var parameters = new List<string>();
                 var fluentName = string.Empty;
@@ -454,81 +435,86 @@ namespace PDSim.Protobuf
                     }
                 }
 
-                fluents.Add(new PdSimFluentAssignment(PdSimAtom.Empty(), fluentName, parameters));
+                assignments.Add(new PdSimFluentAssignment(PdSimAtom.Boolean(true), fluentName, parameters));
             }
             else if (expression.Kind == ExpressionKind.FunctionApplication)
             {
-                type = EffectConditionType.FunctionApplication;
-
-                // first element is the functor symbol
-                functorSymbol = expression.List[0].Atom.Symbol.Split(':')[1]; // form up:<functorSymbol>
-
-                var fluentName = string.Empty;
-                var parameters = new List<string>();
-                var newFluent = true;
-                for (var i = 1; i < expression.List.Count; i++)
+                var firstAtom = expression.List[0].Atom;
+                functor = PdSimAtom.Symbol(firstAtom.Symbol);
+                // Case first element is a symbol not, then is a state variable
+                if (firstAtom.Symbol == "up:not")
                 {
-                    // parse list, every time a fluent symbol is found, create a new fluent
-                    var exp = expression.List[i];
-                    Debug.Log(exp);
-                    if (exp.Kind == ExpressionKind.FluentSymbol)
+                    var expressionStart = expression.List[1];
+                    var parameters = new List<string>();
+                    var fluentName = string.Empty;
+                    foreach (var exp in expressionStart.List)
                     {
-                        if (!newFluent)
+                        if (exp.Kind == ExpressionKind.FluentSymbol)
+                            fluentName = exp.Atom.Symbol;
+                        else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
                         {
-                            fluents.Add(new PdSimFluentAssignment(PdSimAtom.Empty(), fluentName, parameters));
-                            parameters = new List<string>();
+                            parameters.Add(exp.Atom.Symbol);
                         }
-                        fluentName = exp.Atom.Symbol;
-                        newFluent = true;
                     }
-                    else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
+                    assignments.Add(new PdSimFluentAssignment(PdSimAtom.Boolean(false), fluentName, parameters));
+                }
+                else // case functor is and, or, ..
+                {
+                    for (var i = 1; i < expression.List.Count; i++)
                     {
-                        parameters.Add(exp.Atom.Symbol);
-                        newFluent = false;
+                        var expressionStart = expression.List[i];
+                        var parameters = new List<string>();
+                        var fluentName = string.Empty;
+                        var value = PdSimAtom.Boolean(true); // default value is true
+
+
+                        foreach (var exp in expressionStart.List)
+                        {
+                            if (exp.Kind == ExpressionKind.FluentSymbol)
+                                fluentName = exp.Atom.Symbol;
+                            else if (exp.Kind == ExpressionKind.FunctionSymbol)
+                            {
+                                value = PdSimAtom.Symbol(exp.Atom.Symbol);
+                            }
+                            else if (exp.Kind == ExpressionKind.StateVariable)
+                            {
+                                foreach (var exp2 in exp.List)
+                                {
+                                    if (exp2.Kind == ExpressionKind.FluentSymbol)
+                                        fluentName = exp2.Atom.Symbol;
+                                    else if (exp2.Kind == ExpressionKind.Variable || exp2.Kind == ExpressionKind.Parameter)
+                                    {
+                                        parameters.Add(exp2.Atom.Symbol);
+                                    }
+                                }
+                            }
+                            else // is a parameter or variable
+                            {
+                                parameters.Add(exp.Atom.Symbol);
+                            }
+                        }
+                        assignments.Add(new PdSimFluentAssignment(value, fluentName, parameters));
                     }
                 }
-
             }
-            else if (expression.Kind == ExpressionKind.Constant)
-            {
-                type = EffectConditionType.Constant;
-            }
-            else
-            {
-                type = EffectConditionType.None;
-            }
-
         }
 
         public override string ToString()
         {
-            var condition = string.Empty;
-            if (type == EffectConditionType.StateVariable)
-            {
-                condition += $"IF {fluents[0]} THEN\n";
-            }
-            else if (type == EffectConditionType.FunctionApplication)
-            {
-                condition += $"IF {functorSymbol} (";
-                foreach (var fluent in fluents)
-                {
-                    condition += fluent.ToString();
-                }
-                condition = condition.Remove(condition.Length - 2);
-                condition += ")\nTHEN\n";
+            string condition = string.Empty;
 
-            }
-            else if (type == EffectConditionType.Constant)
+            if (assignments.Count > 0)
             {
-                condition = string.Empty;
+                condition += $"IF\n";
+                foreach (var assignment in assignments)
+                {
+                    condition += string.Format("{0} \n", assignment.ToString());
+                }
+                condition += "THEN\n";
             }
-            else
-            {
-                condition = string.Empty;
-            }
+
             return condition;
         }
-
     }
 
     [Serializable]
