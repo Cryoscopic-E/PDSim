@@ -282,10 +282,7 @@ namespace PDSim.Protobuf
         /// </summary>
         public List<PdSimParameter> parameters;
 
-        /// <summary>
-        /// List of effects of the action.
-        /// </summary>
-        public List<PdSimEffect> effects;
+
         public PdSimAction(Action action)
         {
             name = action.Name;
@@ -294,13 +291,6 @@ namespace PDSim.Protobuf
             foreach (var parameter in action.Parameters)
             {
                 parameters.Add(new PdSimParameter(parameter));
-            }
-
-
-            effects = new List<PdSimEffect>();
-            foreach (var effect in action.Effects)
-            {
-                effects.Add(new PdSimEffect(effect));
             }
         }
 
@@ -319,6 +309,7 @@ namespace PDSim.Protobuf
         }
     }
 
+
     /// <summary>
     /// Instantaneous action.
     /// e.g. Classical planning actions.
@@ -326,22 +317,36 @@ namespace PDSim.Protobuf
     [Serializable]
     public class PdSimInstantaneousAction : PdSimAction
     {
+        /// <summary>
+        /// List of effects of the action.
+        /// </summary>
+        public List<PdSimEffect> effects;
         public PdSimInstantaneousAction(Action action) : base(action)
         {
+            effects = new List<PdSimEffect>();
+            foreach (var effect in action.Effects)
+            {
+                effects.Add(new PdSimEffect(effect));
+            }
         }
     }
+
 
     [Serializable]
     public class PdSimDurativeAction : PdSimAction
     {
+        public List<PdSimDurativeEffect> effects;
         public PdSimDuration duration;
         public PdSimDurativeAction(Action action) : base(action)
         {
+            effects = new List<PdSimDurativeEffect>();
+            foreach (var effect in action.Effects)
+            {
+                effects.Add(new PdSimDurativeEffect(effect));
+            }
             duration = new PdSimDuration(action.Duration);
         }
     }
-
-
 
 
     [Serializable]
@@ -360,6 +365,7 @@ namespace PDSim.Protobuf
             var fluent = e.Fluent.List;
             var fluentName = fluent[0].Atom.Symbol;
             var parameters = new List<string>();
+
             for (int i = 1; i < fluent.Count; i++)
             {
                 parameters.Add(fluent[i].Atom.Symbol);
@@ -403,6 +409,60 @@ namespace PDSim.Protobuf
             effect += "\n";
 
             return effect;
+        }
+    }
+
+
+    [Serializable]
+    public class PdSimDurativeEffect : PdSimEffect
+    {
+        public EffectTiming timing;
+        public PdSimDurativeEffect(Effect effect) : base(effect)
+        {
+            timing = new EffectTiming(effect.OccurrenceTime);
+        }
+
+        public override string ToString()
+        {
+            string effect = "";
+            if (IsForAll())
+            {
+                effect += $"FORALL ";
+                foreach (var variable in forAllVariables)
+                {
+                    effect += string.Format("{0}, ", variable.ToString());
+                }
+                effect = effect.Remove(effect.Length - 2);
+                effect += "\n";
+            }
+
+            effect += effectCondition.ToString();
+
+            effect += timing.ToString() + fluentAssignment.ToString();
+
+            effect += "\n";
+
+            return effect;
+        }
+    }
+
+    [Serializable]
+    public class EffectTiming
+    {
+        public float delay;
+        public string timepoint;
+        public EffectTiming(Timing effectDuration)
+        {
+            delay = PdSimUtils.RealToFloat(effectDuration.Delay);
+            timepoint = effectDuration.Timepoint.Kind.ToString();
+        }
+
+        public override string ToString()
+        {
+            if (delay > 0)
+                return $"|{timepoint} <> Delay: {delay}|";
+            else
+                return $"|{timepoint}| ";
         }
     }
 
@@ -516,6 +576,7 @@ namespace PDSim.Protobuf
             return condition;
         }
     }
+
 
     [Serializable]
     public class PdSimFluentAssignment
@@ -644,6 +705,14 @@ namespace PDSim.Protobuf
             {
                 lowerBound = PdSimUtils.RealToFloat(atomLowerBound.Real);
             }
+        }
+
+        public override string ToString()
+        {
+            if (lowerBound == upperBound)
+                return $"[{lowerBound}]";
+            else
+                return $"[{lowerBound}, {upperBound}]";
         }
 
     }

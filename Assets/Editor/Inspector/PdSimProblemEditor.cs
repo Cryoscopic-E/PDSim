@@ -64,39 +64,80 @@ namespace Editor.Inspector
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space();
 
-
-            // ACTIONS
-            var actions = _problem.actions;
-
-            EditorGUILayout.LabelField("ACTIONS", EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            EditorGUILayout.BeginVertical();
-            foreach (var action in actions)
+            // INSTANT ACTIONS
+            if (_problem.instantActions.Count > 0)
             {
-                EditorGUILayout.LabelField(action.ToString(), EditorStyles.whiteBoldLabel);
-
-                // effects
-                EditorGUI.indentLevel++;
-                EditorGUILayout.LabelField("EFFECTS", EditorStyles.boldLabel);
+                var instantActions = _problem.instantActions;
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField("INSTANT ACTIONS", EditorStyles.boldLabel);
                 EditorGUI.indentLevel++;
                 EditorGUILayout.BeginVertical();
-                foreach (var effect in action.effects)
+                for (var i = 0; i < instantActions.Count; i++)
                 {
-                    EditorGUILayout.TextArea(effect.ToString(), EditorStyles.largeLabel);
+                    var action = instantActions[i];
+                    EditorGUILayout.LabelField(action.ToString(), EditorStyles.whiteBoldLabel);
+
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.LabelField("INSTANT EFFECTS", EditorStyles.boldLabel);
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.BeginVertical();
+                    foreach (var effect in action.effects)
+                    {
+                        EditorGUILayout.TextArea(effect.ToString(), EditorStyles.largeLabel);
+                    }
+                    EditorGUILayout.EndVertical();
+                    EditorGUI.indentLevel--;
+                    EditorGUI.indentLevel--;
+                    EditorGUILayout.Space();
                 }
                 EditorGUILayout.EndVertical();
                 EditorGUI.indentLevel--;
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+                EditorGUILayout.Space();
+                EditorGUILayout.EndVertical();
+            }
+
+            // DURATIVE ACTIONS
+            if (_problem.durativeActions.Count > 0)
+            {
+                var durativeActions = _problem.durativeActions;
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField("DURATIVE ACTIONS", EditorStyles.boldLabel);
+
+                EditorGUI.indentLevel++;
+                EditorGUILayout.BeginVertical();
+                for (var i = 0; i < durativeActions.Count; i++)
+                {
+                    var action = durativeActions[i];
+                    EditorGUILayout.LabelField(action.ToString(), EditorStyles.whiteBoldLabel);
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("Duration: " + action.duration.ToString(), EditorStyles.boldLabel);
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUI.indentLevel--;
+
+
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.LabelField("DURATIVE EFFECTS", EditorStyles.boldLabel);
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.BeginVertical();
+                    foreach (var effect in action.effects)
+                    {
+                        EditorGUILayout.TextArea(effect.ToString(), EditorStyles.largeLabel);
+                    }
+                    EditorGUILayout.EndVertical();
+                    EditorGUI.indentLevel--;
+                    EditorGUI.indentLevel--;
+                    EditorGUILayout.Space();
+                }
+                EditorGUILayout.EndVertical();
                 EditorGUI.indentLevel--;
                 EditorGUILayout.Space();
+                EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
                 EditorGUILayout.Space();
-                EditorGUILayout.Space();
-
+                EditorGUILayout.EndVertical();
             }
-            EditorGUILayout.EndVertical();
-            EditorGUI.indentLevel--;
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-
 
 
             // OBJECTS

@@ -38,18 +38,19 @@ namespace PDSim.Protobuf
             }
 
             // ACTIONS
-            instance.actions = new List<PdSimAction>();
+            instance.durativeActions = new List<PdSimDurativeAction>();
+            instance.instantActions = new List<PdSimInstantaneousAction>();
             foreach (var action in problem.Actions)
             {
                 if (action.Duration == null)
                 {
                     var newAction = new PdSimInstantaneousAction(action);
-                    instance.actions.Add(newAction);
+                    instance.instantActions.Add(newAction);
                 }
                 else
                 {
                     var newAction = new PdSimDurativeAction(action);
-                    instance.actions.Add(newAction);
+                    instance.durativeActions.Add(newAction);
                 }
             }
 
