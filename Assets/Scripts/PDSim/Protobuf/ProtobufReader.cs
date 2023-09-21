@@ -9,55 +9,58 @@ namespace PDSim.Protobuf
 
         public void Read(byte[] data)
         {
-            var problem = Problem.Parser.ParseFrom(data);
+            var parsed = Problem.Parser.ParseFrom(data);
 
-            var instance = ScriptableObject.CreateInstance<PdSimProblem>();
+            var problem = ScriptableObject.CreateInstance<PdSimProblem>();
+            var instance = ScriptableObject.CreateInstance<PdSimInstance>();
 
-            instance.domainName = problem.DomainName;
+            problem.domainName = parsed.DomainName;
 
-            instance.problemName = problem.ProblemName;
+            problem.problemName = parsed.ProblemName;
 
             // TYPES DECLARATION
-            instance.typesDeclaration = new PdSimTypesDeclaration();
-            instance.typesDeclaration.Populate(problem.Types_);
+            problem.typesDeclaration = new PdSimTypesDeclaration();
+            problem.typesDeclaration.Populate(parsed.Types_);
 
 
             // FLUENTS
-            instance.fluents = new List<PdSimFluent>();
-            foreach (var fluent in problem.Fluents)
+            problem.fluents = new List<PdSimFluent>();
+            foreach (var fluent in parsed.Fluents)
             {
                 var newFluent = new PdSimFluent(fluent);
-                instance.fluents.Add(newFluent);
+                problem.fluents.Add(newFluent);
             }
 
+
+
+            // ACTIONS
+            problem.durativeActions = new List<PdSimDurativeAction>();
+            problem.instantActions = new List<PdSimInstantaneousAction>();
+            foreach (var action in parsed.Actions)
+            {
+                if (action.Duration == null)
+                {
+                    var newAction = new PdSimInstantaneousAction(action);
+                    problem.instantActions.Add(newAction);
+                }
+                else
+                {
+                    var newAction = new PdSimDurativeAction(action);
+                    problem.durativeActions.Add(newAction);
+                }
+            }
+
+            // OBJECTS
             instance.objects = new List<PdSimObject>();
-            foreach (var obj in problem.Objects)
+            foreach (var obj in parsed.Objects)
             {
                 var newObject = new PdSimObject(obj.Name, obj.Type);
                 instance.objects.Add(newObject);
             }
 
-            // ACTIONS
-            instance.durativeActions = new List<PdSimDurativeAction>();
-            instance.instantActions = new List<PdSimInstantaneousAction>();
-            foreach (var action in problem.Actions)
-            {
-                if (action.Duration == null)
-                {
-                    var newAction = new PdSimInstantaneousAction(action);
-                    instance.instantActions.Add(newAction);
-                }
-                else
-                {
-                    var newAction = new PdSimDurativeAction(action);
-                    instance.durativeActions.Add(newAction);
-                }
-            }
-
-
             // INIT
             instance.init = new List<PdSimFluentAssignment>();
-            foreach (var fluent in problem.InitialState)
+            foreach (var fluent in parsed.InitialState)
             {
 
                 var val = fluent.Value.Atom;
@@ -73,30 +76,15 @@ namespace PDSim.Protobuf
 
 
             //Save asset
-            var path = "Assets/Testprotobuf/ProtobufProblem.asset";
+            var problemPath = "Assets/Testprotobuf/ProtobufProblem.asset";
+            var instancePath = "Assets/Testprotobuf/ProtobufInstance.asset";
 
-            AssetDatabase.CreateAsset(instance, path);
+            AssetDatabase.CreateAsset(problem, problemPath);
+            AssetDatabase.CreateAsset(instance, instancePath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
         }
-
-
-
-        // private void ParseActions()
-        // {
-        //     instance.Actions = new List<PdSimAction>();
-        //     foreach (var action in problem.Actions)
-        //     {
-        //         var newAction = ParseAction(action);
-        //     }
-        // }
-
-        // private PdSimAction ParseAction(Action action)
-        // {
-        //     return null;
-        // }
-
     }
 }
 

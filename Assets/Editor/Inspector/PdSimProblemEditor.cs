@@ -138,41 +138,7 @@ namespace Editor.Inspector
                 EditorGUILayout.Space();
                 EditorGUILayout.EndVertical();
             }
-
-
-            // OBJECTS
-            var objects = _problem.objects;
-
-            EditorGUILayout.LabelField("OBJECTS", EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            EditorGUILayout.BeginVertical();
-            foreach (var obj in objects)
-            {
-                EditorGUILayout.LabelField(obj.ToString(), EditorStyles.largeLabel);
-            }
             EditorGUILayout.EndVertical();
-            EditorGUI.indentLevel--;
-
-            EditorGUILayout.EndVertical();
-
-            // INIT
-            var init = _problem.init;
-            EditorGUI.indentLevel--;
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            EditorGUI.indentLevel++;
-            EditorGUILayout.LabelField("INITIAL STATE", EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            EditorGUILayout.BeginVertical();
-            foreach (var fluent in init)
-            {
-                EditorGUILayout.LabelField(fluent.ToString(), EditorStyles.largeLabel);
-            }
-            EditorGUILayout.EndVertical();
-            EditorGUI.indentLevel--;
-            EditorGUI.indentLevel--;
-
-            EditorGUILayout.Space();
         }
 
         private void DrawNodes(PdSimTypesDeclaration.TypeNode node, int depth = 0)
