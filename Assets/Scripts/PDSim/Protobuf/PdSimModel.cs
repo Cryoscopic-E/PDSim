@@ -110,43 +110,9 @@ namespace PDSim.Protobuf
         }
     }
 
-    public class PdSimExpression
-    {
-        PdSimAtom atom;
-
-        ExpressionKind kind;
-
-        List<PdSimExpression> expressions;
-
-        public PdSimExpression(Expression expression)
-        {
-            atom = expression.Atom != null ? new PdSimAtom(expression.Atom) : null;
-            kind = expression.Kind;
-        }
-
-        public override string ToString()
-        {
-            if (atom != null)
-                return atom.ToString();
-            else if (expressions != null)
-            {
-                string expression = "";
-                foreach (var exp in expressions)
-                {
-                    expression += exp.ToString();
-                }
-                return expression;
-            }
-            else
-                return "";
-        }
-
-    }
-
-
 
     /// <summary>
-    /// Class representing a parameter for a fluent, action or function
+    /// Class representing a parameter for a fluent, action or function.
     /// e.g. ?x - object
     /// </summary>
     [Serializable]
@@ -174,7 +140,7 @@ namespace PDSim.Protobuf
     }
 
     /// <summary>
-    /// Class representing a planning domain fluent
+    /// Class representing a planning domain fluent.
     /// e.g. (at ?x ?y)
     /// </summary>
 
@@ -215,6 +181,10 @@ namespace PDSim.Protobuf
         }
     }
 
+    /// <summary>
+    /// Class representing an object in the domain problem.
+    /// </summary>
+
     [Serializable]
     public class PdSimObject
     {
@@ -233,7 +203,9 @@ namespace PDSim.Protobuf
         }
     }
 
-
+    /// <summary>
+    /// Type of value of an Atom
+    /// </summary>
     [Serializable]
     public enum ValueType
     {
@@ -241,27 +213,6 @@ namespace PDSim.Protobuf
         Int,
         Real,
         Boolean
-    }
-
-
-    public static class PdSimUtils
-    {
-        public static float RealToFloat(Real real)
-        {
-            return real.Numerator / real.Denominator;
-        }
-
-        public static ValueType ConvertValueType(string type)
-        {
-            if (type == "up:integer")
-                return ValueType.Int;
-            else if (type == "up:real")
-                return ValueType.Real;
-            else if (type == "up:bool")
-                return ValueType.Boolean;
-            else
-                return ValueType.Symbol;
-        }
     }
 
 
@@ -326,12 +277,15 @@ namespace PDSim.Protobuf
             effects = new List<PdSimEffect>();
             foreach (var effect in action.Effects)
             {
-                effects.Add(new PdSimEffect(effect));
+                effects.Add(new PdSimEffect(effect, parameters));
             }
         }
     }
 
-
+    /// <summary>
+    /// Durative action.
+    /// e.g. Temporal planning actions.
+    /// </summary>
     [Serializable]
     public class PdSimDurativeAction : PdSimAction
     {
@@ -342,13 +296,15 @@ namespace PDSim.Protobuf
             effects = new List<PdSimDurativeEffect>();
             foreach (var effect in action.Effects)
             {
-                effects.Add(new PdSimDurativeEffect(effect));
+                effects.Add(new PdSimDurativeEffect(effect, parameters));
             }
             duration = new PdSimDuration(action.Duration);
         }
     }
 
-
+    /// <summary>
+    /// Base class that represents an effect in the action.
+    /// </summary>
     [Serializable]
     public class PdSimEffect
     {
@@ -356,7 +312,8 @@ namespace PDSim.Protobuf
         public PdSimFluentAssignment fluentAssignment;
         public List<PdSimParameter> forAllVariables;
         public PdSimCondition effectCondition;
-        public PdSimEffect(Effect effect)
+        public List<int> actionParametersMap;
+        public PdSimEffect(Effect effect, List<PdSimParameter> actionParameters)
         {
             var e = effect.Effect_;
 
@@ -365,10 +322,22 @@ namespace PDSim.Protobuf
             var fluent = e.Fluent.List;
             var fluentName = fluent[0].Atom.Symbol;
             var parameters = new List<string>();
+            actionParametersMap = new List<int>();
 
             for (int i = 1; i < fluent.Count; i++)
             {
-                parameters.Add(fluent[i].Atom.Symbol);
+                var parameter = fluent[i].Atom.Symbol;
+                parameters.Add(parameter);
+
+                // map parameter to action parameter
+                for (int j = 0; j < actionParameters.Count; j++)
+                {
+                    if (parameter == actionParameters[j].name)
+                    {
+                        actionParametersMap.Add(j);
+                        break;
+                    }
+                }
             }
             fluentAssignment = new PdSimFluentAssignment(value, fluentName, parameters);
 
@@ -412,12 +381,14 @@ namespace PDSim.Protobuf
         }
     }
 
-
+    /// <summary>
+    /// Durative effect. 
+    /// </summary>
     [Serializable]
     public class PdSimDurativeEffect : PdSimEffect
     {
         public EffectTiming timing;
-        public PdSimDurativeEffect(Effect effect) : base(effect)
+        public PdSimDurativeEffect(Effect effect, List<PdSimParameter> parameters) : base(effect, parameters)
         {
             timing = new EffectTiming(effect.OccurrenceTime);
         }
@@ -446,6 +417,10 @@ namespace PDSim.Protobuf
         }
     }
 
+    /// <summary>
+    /// Class that represents the timing of a durative effect.
+    /// e.g. AtStart, AtEnd, OverAll, AtTime
+    /// </summary>
     [Serializable]
     public class EffectTiming
     {
@@ -577,7 +552,10 @@ namespace PDSim.Protobuf
         }
     }
 
-
+    /// <summary>
+    /// Class that represents an assignment of a fluent.
+    /// e.g. (at robot kitchen) := true
+    /// </summary>
     [Serializable]
     public class PdSimFluentAssignment
     {
@@ -691,6 +669,11 @@ namespace PDSim.Protobuf
         }
     }
 
+
+    /// <summary>
+    /// Class that represents a duration of a durative action with upper and lower bounds.
+    /// e.g. [0, 10]
+    /// </summary>
     [Serializable]
     public class PdSimDuration
     {
@@ -734,4 +717,28 @@ namespace PDSim.Protobuf
 
     }
 
+    /// <summary>
+    /// Utility class for PdSim.
+    /// </summary>
+    public static class PdSimUtils
+    {
+        // Convert Real class to float
+        public static float RealToFloat(Real real)
+        {
+            return real.Numerator / real.Denominator;
+        }
+
+        // Convert unified planning domain value type to PdSim ValueType
+        public static ValueType ConvertValueType(string type)
+        {
+            if (type == "up:integer")
+                return ValueType.Int;
+            else if (type == "up:real")
+                return ValueType.Real;
+            else if (type == "up:bool")
+                return ValueType.Boolean;
+            else
+                return ValueType.Symbol;
+        }
+    }
 }

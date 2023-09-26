@@ -7,9 +7,10 @@ namespace PDSim.Protobuf
     {
         public string domainName;
         public string problemName;
+        public List<string> features;
         public PdSimTypesDeclaration typesDeclaration;
         public List<PdSimFluent> fluents;
-        public List<PdSimInstantaneousAction> instantActions;
+        public List<PdSimInstantaneousAction> instantaneousActions;
         public List<PdSimDurativeAction> durativeActions;
     }
 }

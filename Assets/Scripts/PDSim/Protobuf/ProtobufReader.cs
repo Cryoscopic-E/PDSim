@@ -19,6 +19,14 @@ namespace PDSim.Protobuf
 
             pdSimProblem.problemName = parsedProblem.ProblemName;
 
+            // FEATURES
+            pdSimProblem.features = new List<string>();
+            foreach (var feature in parsedProblem.Features)
+            {
+                pdSimProblem.features.Add(feature.ToString());
+            }
+
+
             // TYPES DECLARATION
             pdSimProblem.typesDeclaration = new PdSimTypesDeclaration();
             pdSimProblem.typesDeclaration.Populate(parsedProblem.Types_);
@@ -36,13 +44,13 @@ namespace PDSim.Protobuf
 
             // ACTIONS
             pdSimProblem.durativeActions = new List<PdSimDurativeAction>();
-            pdSimProblem.instantActions = new List<PdSimInstantaneousAction>();
+            pdSimProblem.instantaneousActions = new List<PdSimInstantaneousAction>();
             foreach (var action in parsedProblem.Actions)
             {
                 if (action.Duration == null)
                 {
                     var newAction = new PdSimInstantaneousAction(action);
-                    pdSimProblem.instantActions.Add(newAction);
+                    pdSimProblem.instantaneousActions.Add(newAction);
                 }
                 else
                 {

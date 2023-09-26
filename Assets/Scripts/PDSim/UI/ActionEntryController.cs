@@ -1,4 +1,4 @@
-﻿using PDSim.Components;
+﻿using PDSim.Protobuf;
 using UnityEngine.UIElements;
 
 public class ActionEntryController
@@ -12,7 +12,7 @@ public class ActionEntryController
     }
 
 
-    public void SetActionData(PdPlanAction data)
+    public void SetActionData(PdSimActionInstance data)
     {
         label.text = data.ToString();
     }

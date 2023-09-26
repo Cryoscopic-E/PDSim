@@ -1,4 +1,4 @@
-﻿using PDSim.Components;
+﻿using PDSim.Protobuf;
 using UnityEngine.UIElements;
 
 public class StateEntryController
@@ -12,7 +12,7 @@ public class StateEntryController
     }
 
 
-    public void SetData(PdBooleanPredicate data)
+    public void SetData(PdSimFluentAssignment data)
     {
         label.text = data.ToString();
     }

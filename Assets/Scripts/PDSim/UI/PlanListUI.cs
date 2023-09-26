@@ -1,4 +1,4 @@
-using PDSim.Components;
+using PDSim.Protobuf;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -24,7 +24,7 @@ namespace PDSim.UI
             _planList = _root.Q<ListView>("PlanList");
         }
 
-        public PlanActionsListController InitializePlanList(List<PdPlanAction> list)
+        public PlanActionsListController InitializePlanList(List<PdSimActionInstance> list)
         {
             _actionListController = new PlanActionsListController();
             _actionListController.SetPlanActions(list);

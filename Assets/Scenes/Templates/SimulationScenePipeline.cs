@@ -1,5 +1,4 @@
 using PDSim.Simulation;
-using PDSim.Simulation.Data;
 using PDSim.Utils;
 using UnityEditor;
 using UnityEditor.SceneTemplate;
@@ -19,9 +18,9 @@ public class SimulationScenePipeline : SceneTemplatePipelineAdapter
         // Connect data assets to simulation manager
         var simulationManager = PdSimManager.Instance;
         var simulationDataRoot = AssetUtils.GetSimulationDataPath(scene.name);
-        simulationManager.types = AssetUtils.GetAsset<CustomTypes>(simulationDataRoot + "CustomTypes.asset");
-        simulationManager.fluents = AssetUtils.GetAsset<Fluents>(simulationDataRoot + "Fluents.asset");
-        simulationManager.actions = AssetUtils.GetAsset<Actions>(simulationDataRoot + "Actions.asset");
+        //simulationManager.types = AssetUtils.GetAsset<CustomTypes>(simulationDataRoot + "CustomTypes.asset");
+        //simulationManager.fluents = AssetUtils.GetAsset<Fluents>(simulationDataRoot + "Fluents.asset");
+        //simulationManager.actions = AssetUtils.GetAsset<Actions>(simulationDataRoot + "Actions.asset");
         //simulationManager.plan = AssetUtils.GetAsset<Plan>(simulationDataRoot + "Plan.asset");
         //simulationManager.problem = AssetUtils.GetAsset<Problem>(simulationDataRoot + "Problem.asset");
 

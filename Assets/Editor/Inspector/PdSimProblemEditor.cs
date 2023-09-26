@@ -37,6 +37,20 @@ namespace Editor.Inspector
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
+            // FEATURES
+            var features = _problem.features;
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("FEATURES", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            foreach (var feature in features)
+            {
+                EditorGUILayout.LabelField(feature, EditorStyles.largeLabel);
+            }
+            EditorGUI.indentLevel--;
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
             // TYPES DECLARATION
             var typesDeclaration = _problem.typesDeclaration;
 
@@ -65,9 +79,9 @@ namespace Editor.Inspector
             EditorGUILayout.Space();
 
             // INSTANT ACTIONS
-            if (_problem.instantActions.Count > 0)
+            if (_problem.instantaneousActions.Count > 0)
             {
-                var instantActions = _problem.instantActions;
+                var instantActions = _problem.instantaneousActions;
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.LabelField("INSTANT ACTIONS", EditorStyles.boldLabel);
                 EditorGUI.indentLevel++;

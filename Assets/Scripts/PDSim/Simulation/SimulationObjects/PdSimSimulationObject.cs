@@ -1,4 +1,6 @@
+using PDSim.Protobuf;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,7 +8,8 @@ namespace PDSim.Simulation
 {
     public class PdSimSimulationObject : MonoBehaviour
     {
-        //PUBLIC VARIABLES
+        // Object settings
+        // ---------------
 
         [Tooltip("The type of the object in the PDDL domain.")]
         public string objectType;
@@ -14,22 +17,78 @@ namespace PDSim.Simulation
         [Tooltip("Use Navmesh Agent for movement.")]
         public bool useNavMeshAgent = false;
 
+        [Tooltip("(Optional) Movement Settings")]
         public MovementSettings movementSettings;
 
 
-        //PRIVATE VARIABLES
-        // Default values
+        // Movement settings
+        // -----------------
+
         private const float Speed = 1f;
         private const float AngularSpeed = 120f;
         private const float Acceleration = 8f;
         private const float StoppingDistance = 0.1f;
 
+        // NavMeshAgent 
+        // ------------
+
         private NavMeshAgent _navMeshAgent;
 
+        // Object State
+        // ------------
 
+        // Keep track of the object's state when actions are applied
+        private Dictionary<string, PdSimFluentAssignment> state;
+
+
+        // Add a fluent assignment to the object's state
+        public void AddFluentAssignment(PdSimFluentAssignment fluentAssignment)
+        {
+            state[fluentAssignment.fluentName] = fluentAssignment;
+        }
+
+        // Check if a condition holds for the object
+        public bool ConditionHolds(PdSimCondition condition)
+        {
+            bool[] holds = new bool[condition.assignments.Count];
+            for (var i = 0; i < condition.assignments.Count; i++)
+            {
+                var assignment = condition.assignments[i];
+                if (state.ContainsKey(assignment.fluentName))
+                {
+                    holds[i] = state[assignment.fluentName].value == assignment.value;
+                }
+                else
+                {
+                    holds[i] = false;
+                }
+            }
+
+            // TODO: support xor,..
+            if (condition.functor.valueSymbol == "AND")
+            {
+                // All conditions must hold
+                foreach (var hold in holds)
+                {
+                    if (!hold) return false;
+                }
+                return true;
+            }
+            else
+            {
+                // At least one condition must hold
+                foreach (var hold in holds)
+                {
+                    if (hold) return true;
+                }
+                return false;
+            }
+        }
 
         private void Awake()
         {
+            state = new Dictionary<string, PdSimFluentAssignment>();
+
             if (!useNavMeshAgent) return;
             _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
             if (_navMeshAgent == null)
@@ -42,7 +101,7 @@ namespace PDSim.Simulation
 
         private void OnMouseEnter()
         {
-            PdSimManager.Instance.HoverObject(name);
+            PdSimManager.Instance.HoverObject(this);
         }
 
         private void OnMouseExit()
