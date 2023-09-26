@@ -1,27 +1,18 @@
 namespace PDSim.Connection
 {
-    public class BackendTestConnectionRequest : NetMqClient
+    public class BackendTestConnectionRequest : NetMqClientJson
     {
         public BackendTestConnectionRequest()
         {
-            request.Add("request", "test");
-        }
-    }
-    public class BackendParseRequest : NetMqClient
-    {
-        public BackendParseRequest(string domainPath, string problemPath)
-        {
-            request.Add("request", "parse");
-            request.Add("domain_path", domainPath);
-            request.Add("problem_path", problemPath);
+            request.Add("request", "ping");
         }
     }
 
     public class ProtobufRequest : NetMqClientBytes
     {
-        public ProtobufRequest()
+        public ProtobufRequest(string requestType)
         {
-            request.Add("request", "test-proto");
+            request.Add("request", requestType);
         }
     }
 }

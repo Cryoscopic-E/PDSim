@@ -7,52 +7,53 @@ namespace PDSim.Protobuf
     public class ProtobufReader
     {
 
-        public void Read(byte[] data)
+        public void Read(byte[] problem, byte[] plan)
         {
-            var parsed = Problem.Parser.ParseFrom(data);
+            var parsedProblem = Problem.Parser.ParseFrom(problem);
+            var parsedPlan = PlanGenerationResult.Parser.ParseFrom(plan);
 
-            var problem = ScriptableObject.CreateInstance<PdSimProblem>();
+            var pdSimProblem = ScriptableObject.CreateInstance<PdSimProblem>();
             var instance = ScriptableObject.CreateInstance<PdSimInstance>();
 
-            problem.domainName = parsed.DomainName;
+            pdSimProblem.domainName = parsedProblem.DomainName;
 
-            problem.problemName = parsed.ProblemName;
+            pdSimProblem.problemName = parsedProblem.ProblemName;
 
             // TYPES DECLARATION
-            problem.typesDeclaration = new PdSimTypesDeclaration();
-            problem.typesDeclaration.Populate(parsed.Types_);
+            pdSimProblem.typesDeclaration = new PdSimTypesDeclaration();
+            pdSimProblem.typesDeclaration.Populate(parsedProblem.Types_);
 
 
             // FLUENTS
-            problem.fluents = new List<PdSimFluent>();
-            foreach (var fluent in parsed.Fluents)
+            pdSimProblem.fluents = new List<PdSimFluent>();
+            foreach (var fluent in parsedProblem.Fluents)
             {
                 var newFluent = new PdSimFluent(fluent);
-                problem.fluents.Add(newFluent);
+                pdSimProblem.fluents.Add(newFluent);
             }
 
 
 
             // ACTIONS
-            problem.durativeActions = new List<PdSimDurativeAction>();
-            problem.instantActions = new List<PdSimInstantaneousAction>();
-            foreach (var action in parsed.Actions)
+            pdSimProblem.durativeActions = new List<PdSimDurativeAction>();
+            pdSimProblem.instantActions = new List<PdSimInstantaneousAction>();
+            foreach (var action in parsedProblem.Actions)
             {
                 if (action.Duration == null)
                 {
                     var newAction = new PdSimInstantaneousAction(action);
-                    problem.instantActions.Add(newAction);
+                    pdSimProblem.instantActions.Add(newAction);
                 }
                 else
                 {
                     var newAction = new PdSimDurativeAction(action);
-                    problem.durativeActions.Add(newAction);
+                    pdSimProblem.durativeActions.Add(newAction);
                 }
             }
 
             // OBJECTS
             instance.objects = new List<PdSimObject>();
-            foreach (var obj in parsed.Objects)
+            foreach (var obj in parsedProblem.Objects)
             {
                 var newObject = new PdSimObject(obj.Name, obj.Type);
                 instance.objects.Add(newObject);
@@ -60,7 +61,7 @@ namespace PDSim.Protobuf
 
             // INIT
             instance.init = new List<PdSimFluentAssignment>();
-            foreach (var fluent in parsed.InitialState)
+            foreach (var fluent in parsedProblem.InitialState)
             {
 
                 var val = fluent.Value.Atom;
@@ -72,6 +73,14 @@ namespace PDSim.Protobuf
                 }
             }
 
+            // PLAN
+            instance.plan = new List<PdSimActionInstance>();
+            foreach (var action in parsedPlan.Plan.Actions)
+            {
+                var newAction = new PdSimActionInstance(action);
+                instance.plan.Add(newAction);
+            }
+
 
 
 
@@ -79,7 +88,7 @@ namespace PDSim.Protobuf
             var problemPath = "Assets/Testprotobuf/ProtobufProblem.asset";
             var instancePath = "Assets/Testprotobuf/ProtobufInstance.asset";
 
-            AssetDatabase.CreateAsset(problem, problemPath);
+            AssetDatabase.CreateAsset(pdSimProblem, problemPath);
             AssetDatabase.CreateAsset(instance, instancePath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

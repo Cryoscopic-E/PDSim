@@ -672,6 +672,23 @@ namespace PDSim.Protobuf
                 endTime = PdSimUtils.RealToFloat(actionInstance.EndTime);
             }
         }
+
+        public override string ToString()
+        {
+            // Action instance in format: Name (Parameter1, Parameter2, ...)
+            string actionInstance = string.Format("{0} (", name);
+            foreach (var parameter in parameters)
+            {
+                actionInstance += string.Format("{0}, ", parameter.ToString());
+            }
+            actionInstance = actionInstance.Remove(actionInstance.Length - 2);
+            actionInstance += ")";
+
+            if (startTime >= 0)
+                actionInstance += $" |{startTime}, {endTime}|";
+
+            return actionInstance;
+        }
     }
 
     [Serializable]

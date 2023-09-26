@@ -73,6 +73,21 @@ namespace Editor.Inspector
             EditorGUILayout.Space();
 
             serializedObject.ApplyModifiedProperties();
+
+            // PLAN
+            var plan = _instance.plan;
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.LabelField("PLAN", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.BeginVertical();
+            foreach (var action in plan)
+            {
+                EditorGUILayout.LabelField(action.ToString(), EditorStyles.largeLabel);
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUI.indentLevel--;
         }
 
         private void DrawNodes(PdSimTypesDeclaration.TypeNode node, int depth = 0)

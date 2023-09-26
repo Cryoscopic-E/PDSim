@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 
+
 public class TestProtobuf : EditorWindow
 {
     [MenuItem("PDSim/Testprotobuf")]
@@ -32,11 +33,17 @@ public class TestProtobuf : EditorWindow
 
     private IEnumerator TestConnection()
     {
-        var request = new ProtobufRequest();
-        var response = request.Connect();
+        var request_problem = new ProtobufRequest("problem");
+        var request_plan = new ProtobufRequest("plan");
+
+        var response_problem = request_problem.Connect();
+        Debug.Log(response_problem);
+
+        var response_plan = request_plan.Connect();
+        Debug.Log(response_plan);
 
         var reader = new ProtobufReader();
-        reader.Read(response);
+        reader.Read(response_problem, response_plan);
         yield return null;
 
     }
