@@ -16,22 +16,30 @@ namespace PDSim.Protobuf
 
         public PdSimAtom(Atom atom)
         {
-            contentCase = atom.ContentCase;
-            switch (contentCase)
+            if (atom == null)
             {
-                default:
-                case Atom.ContentOneofCase.Symbol:
-                    valueSymbol = atom.Symbol;
-                    break;
-                case Atom.ContentOneofCase.Int:
-                    valueSymbol = atom.Int.ToString();
-                    break;
-                case Atom.ContentOneofCase.Real:
-                    valueSymbol = PdSimUtils.RealToFloat(atom.Real).ToString();
-                    break;
-                case Atom.ContentOneofCase.Boolean:
-                    valueSymbol = atom.Boolean.ToString();
-                    break;
+                contentCase = Atom.ContentOneofCase.None;
+                valueSymbol = string.Empty;
+            }
+            else
+            {
+                contentCase = atom.ContentCase;
+                switch (contentCase)
+                {
+                    default:
+                    case Atom.ContentOneofCase.Symbol:
+                        valueSymbol = atom.Symbol;
+                        break;
+                    case Atom.ContentOneofCase.Int:
+                        valueSymbol = atom.Int.ToString();
+                        break;
+                    case Atom.ContentOneofCase.Real:
+                        valueSymbol = PdSimUtils.RealToFloat(atom.Real).ToString();
+                        break;
+                    case Atom.ContentOneofCase.Boolean:
+                        valueSymbol = atom.Boolean.ToString();
+                        break;
+                }
             }
         }
 
@@ -302,6 +310,14 @@ namespace PDSim.Protobuf
         }
     }
 
+    public enum EffetKind
+    {
+        None = 0,
+        Assignment,
+        Increase,
+        Decrease
+    }
+
     /// <summary>
     /// Base class that represents an effect in the action.
     /// </summary>
@@ -313,11 +329,29 @@ namespace PDSim.Protobuf
         public List<PdSimParameter> forAllVariables;
         public PdSimCondition effectCondition;
         public List<int> actionParametersMap;
+        public EffetKind effectKind;
         public PdSimEffect(Effect effect, List<PdSimParameter> actionParameters)
         {
             var e = effect.Effect_;
-
             var value = new PdSimAtom(e.Value.Atom);
+
+            // kind of effect
+            switch (e.Kind)
+            {
+                default:
+                    effectKind = EffetKind.None;
+                    break;
+                case EffectExpression.Types.EffectKind.Assign:
+                    effectKind = EffetKind.Assignment;
+                    break;
+                case EffectExpression.Types.EffectKind.Increase:
+                    effectKind = EffetKind.Increase;
+                    break;
+                case EffectExpression.Types.EffectKind.Decrease:
+                    effectKind = EffetKind.Decrease;
+                    break;
+            }
+
 
             var fluent = e.Fluent.List;
             var fluentName = fluent[0].Atom.Symbol;
@@ -409,7 +443,14 @@ namespace PDSim.Protobuf
 
             effect += effectCondition.ToString();
 
-            effect += timing.ToString() + fluentAssignment.ToString();
+            effect += timing.ToString();
+
+            if (effectKind == EffetKind.Increase || effectKind == EffetKind.Decrease)
+            {
+                effect += $" |{effectKind.ToString().ToUpper()}| ";
+            }
+
+            effect += fluentAssignment.ToString();
 
             effect += "\n";
 
@@ -685,26 +726,36 @@ namespace PDSim.Protobuf
             var atomUpperBound = duration.ControllableInBounds.Upper.Atom;
             var atomLowerBound = duration.ControllableInBounds.Lower.Atom;
 
-            // check if atom is int or real
-            if (atomUpperBound.ContentCase == Atom.ContentOneofCase.Int)
+            if (atomUpperBound == null || atomLowerBound == null)
             {
-                upperBound = atomUpperBound.Int;
+                upperBound = 0f;
+                lowerBound = 0f;
+            }
+            else
+            {
+
+                // check if atom is int or real
+                if (atomUpperBound.ContentCase == Atom.ContentOneofCase.Int)
+                {
+                    upperBound = atomUpperBound.Int;
+                }
+
+                if (atomLowerBound.ContentCase == Atom.ContentOneofCase.Int)
+                {
+                    lowerBound = atomLowerBound.Int;
+                }
+
+                if (atomUpperBound.ContentCase == Atom.ContentOneofCase.Real)
+                {
+                    upperBound = PdSimUtils.RealToFloat(atomUpperBound.Real);
+                }
+
+                if (atomLowerBound.ContentCase == Atom.ContentOneofCase.Real)
+                {
+                    lowerBound = PdSimUtils.RealToFloat(atomLowerBound.Real);
+                }
             }
 
-            if (atomLowerBound.ContentCase == Atom.ContentOneofCase.Int)
-            {
-                lowerBound = atomLowerBound.Int;
-            }
-
-            if (atomUpperBound.ContentCase == Atom.ContentOneofCase.Real)
-            {
-                upperBound = PdSimUtils.RealToFloat(atomUpperBound.Real);
-            }
-
-            if (atomLowerBound.ContentCase == Atom.ContentOneofCase.Real)
-            {
-                lowerBound = PdSimUtils.RealToFloat(atomLowerBound.Real);
-            }
         }
 
         public override string ToString()

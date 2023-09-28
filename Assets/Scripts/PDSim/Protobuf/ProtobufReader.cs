@@ -54,6 +54,7 @@ namespace PDSim.Protobuf
                 }
                 else
                 {
+                    Debug.Log(action);
                     var newAction = new PdSimDurativeAction(action);
                     pdSimProblem.durativeActions.Add(newAction);
                 }
