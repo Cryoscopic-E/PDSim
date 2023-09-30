@@ -33,6 +33,8 @@ namespace PDSim.Simulation
         public PdSimProblem problemModel;
         public PdSimInstance problemInstance;
 
+        private bool isTimedProblem;
+
 
         // Dicionaries for accessing data runtime
         // --------------------------------------
@@ -59,6 +61,9 @@ namespace PDSim.Simulation
         // Simulation Data
         // ---------------
 
+        // Current environment state
+        private Dictionary<string, PdSimFluentAssignment> environmentState = new Dictionary<string, PdSimFluentAssignment>();
+
         // Current animation objects active
         private List<GameObject> currentAnimationObjects = new List<GameObject>();
 
@@ -72,6 +77,10 @@ namespace PDSim.Simulation
 
         // Events and Delegates
         // --------------------
+
+        // OnTemporalSimulation set all subscribed elements to display temporal planning
+        public delegate void TemporalSimulation();
+        public event TemporalSimulation OnTemporalSimulation;
 
         // OnSimulationInitBlock is called when the simulation is animating the initial state
         public delegate void SimulationInitBlock();
@@ -104,6 +113,10 @@ namespace PDSim.Simulation
 
         private void Start()
         {
+            isTimedProblem = problemModel.durativeActions.Count > 0;
+            if (isTimedProblem)
+                OnTemporalSimulation();
+
             // Gameobjects References
             _objects = new Dictionary<string, PdSimSimulationObject>();
             var problemObjectsRootObject = GameObject.Find("Problem Objects");
@@ -161,12 +174,32 @@ namespace PDSim.Simulation
                     var obj = _objects[objectName];
                     obj.AddFluentAssignment(fluent);
                 }
+                else
+                {
+                    environmentState[fluent.fluentName] = fluent;
+                }
+
                 yield return fluent;
             }
         }
 
-        //private List<PdSimFluentAssignment> EffectsFromActionInstance(PdSimActionInstance actionInstance)
-        //{
+        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimInstantaneousAction pdSimAction)
+        {
+            var effect = new List<PdSimFluentAssignment>();
+
+            foreach (var action in pdSimAction.effects)
+            {
+                // TODO check condition
+                effect.Add(action.fluentAssignment);
+            }
+            return EnumerateFluents(effect);
+        }
+
+
+
+
+        // private List<PdSimFluentAssignment> EffectsFromActionInstance(PdSimActionInstance actionInstance)
+        // {
         //    var effects = new List<PdSimFluentAssignment>();
         //    var actionName = actionInstance.name;
 
@@ -195,19 +228,8 @@ namespace PDSim.Simulation
         //    }
 
 
-        //    foreach (var effect in action.)
-        //    {
-        //        var fluent = _predicates[effect.fluentName];
-        //        var fluentAssignment = new PdSimFluentAssignment()
-        //        {
-        //            fluentName = fluent.name,
-        //            value = effect.value,
-        //            parameters = actionInstance.parameters
-        //        };
-        //        effects.Add(fluentAssignment);
-        //    }
         //    return effects;
-        //}
+        // }
 
         public void StartSimulation()
         {
@@ -422,8 +444,6 @@ namespace PDSim.Simulation
                 problemObjects = problemObjectsRootObject.AddComponent<ProblemObjects>();
             }
 
-
-
             var leafNodes = problemModel.typesDeclaration.GetLeafNodes();
             foreach (var type in leafNodes)
             {
@@ -467,16 +487,16 @@ namespace PDSim.Simulation
             AssetDatabase.Refresh();
 
             // Spawn objects
-            //foreach (var obj in problem.objects)
-            //{
-            //    var type = obj.type;
-            //    var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
-            //    var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
+            foreach (var obj in problemInstance.objects)
+            {
+                var type = obj.type;
+                var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";
+                var prefab = AssetDatabase.LoadAssetAtPath<PdSimSimulationObject>(prefabPath);
 
 
-            //    var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
-            //    instance.gameObject.name = obj.name;
-            //}
+                var instance = PrefabUtility.InstantiatePrefab(prefab, problemObjectsRootObject.transform) as PdSimSimulationObject;
+                instance.gameObject.name = obj.name;
+            }
         }
     }
 }

@@ -116,6 +116,28 @@ namespace PDSim.Protobuf
         {
             return contentCase == Atom.ContentOneofCase.Boolean && bool.Parse(valueSymbol) == true;
         }
+
+        public bool IncreaseValue(float amount)
+        {
+            if (contentCase != Atom.ContentOneofCase.Real)
+                return false;
+            
+            var value = float.Parse(valueSymbol);
+            value += amount;
+            valueSymbol = value.ToString();
+            return true;
+        }
+
+        public bool DecreaseValue(float amount)
+        {
+            if (contentCase != Atom.ContentOneofCase.Real)
+                return false;
+            
+            var value = float.Parse(valueSymbol);
+            value -= amount;
+            valueSymbol = value.ToString();
+            return true;
+        }
     }
 
 

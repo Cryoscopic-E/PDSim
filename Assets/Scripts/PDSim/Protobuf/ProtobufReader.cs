@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using PDSim.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace PDSim.Protobuf
     public class ProtobufReader
     {
 
-        public void Read(byte[] problem, byte[] plan)
+        public void Read(byte[] problem, byte[] plan, string simulationName)
         {
             var parsedProblem = Problem.Parser.ParseFrom(problem);
             var parsedPlan = PlanGenerationResult.Parser.ParseFrom(plan);
@@ -91,11 +92,10 @@ namespace PDSim.Protobuf
             }
 
 
-
-
             //Save asset
-            var problemPath = "Assets/Testprotobuf/ProtobufProblem.asset";
-            var instancePath = "Assets/Testprotobuf/ProtobufInstance.asset";
+            var simulationDataRoot = AssetUtils.GetSimulationDataPath(simulationName);
+            var problemPath = simulationDataRoot + "/PdSimProblem.asset";
+            var instancePath = simulationDataRoot + "/PdSimInstance.asset";
 
             AssetDatabase.CreateAsset(pdSimProblem, problemPath);
             AssetDatabase.CreateAsset(instance, instancePath);

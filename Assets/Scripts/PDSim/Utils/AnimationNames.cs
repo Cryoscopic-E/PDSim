@@ -5,7 +5,7 @@ namespace PDSim.Utils
 {
     public static class AnimationNames
     {
-        public static string UniqueAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)
+        public static string UniqueBooleanAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)
         {
             var animationName = predicateName;
             if (!value.IsTrue())
@@ -19,9 +19,16 @@ namespace PDSim.Utils
             return animationName;
         }
 
-        public static string UniqueAnimationName(PdSimFluentAssignment predicate)
+        public static string UniqueNumericAnimationName(string predicateName, List<string> attributeTypes)
         {
-            return UniqueAnimationName(predicate.value, predicate.fluentName, predicate.parameters);
+            var animationName = predicateName;
+
+            foreach (var item in attributeTypes)
+            {
+                animationName += "_" + item;
+            }
+
+            return animationName;
         }
     }
 }
