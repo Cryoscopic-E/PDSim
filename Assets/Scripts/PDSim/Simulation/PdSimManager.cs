@@ -162,7 +162,7 @@ namespace PDSim.Simulation
             }
         }
 
-        private IEnumerator<PdSimFluentAssignment> EnumerateFluents(List<PdSimFluentAssignment> fluents)
+        private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> fluents)
         {
             foreach (var fluent in fluents)
             {
@@ -183,19 +183,43 @@ namespace PDSim.Simulation
             }
         }
 
-        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimInstantaneousAction pdSimAction)
+        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
         {
-            var effect = new List<PdSimFluentAssignment>();
-
-            foreach (var action in pdSimAction.effects)
+            foreach (var effect in pdSimActionEffect)
             {
-                // TODO check condition
-                effect.Add(action.fluentAssignment);
+                switch (effect.effectKind)
+                {
+                    default:
+                    case EffetKind.None:
+                        break;
+                    case EffetKind.Assignment:
+                        break;
+                    case EffetKind.Increase:
+                        break;
+                    case EffetKind.Decrease:
+                        break;
+                }
+
+
+
+
+
+
+                var parametersMap = effect.actionParametersMap;
+                var actionPlanParameters = planAction.parameters;
+
+                var parametersObjects = new List<string>();
+                foreach (var p in parametersMap)
+                {
+                    parametersObjects.Add(actionPlanParameters[p]);
+                }
+
+
+
+
             }
-            return EnumerateFluents(effect);
+            yield return null;
         }
-
-
 
 
         // private List<PdSimFluentAssignment> EffectsFromActionInstance(PdSimActionInstance actionInstance)
@@ -236,30 +260,59 @@ namespace PDSim.Simulation
             StartCoroutine(SimulationRoutine());
         }
 
+
+        private IEnumerator SimulateSequentialPlan()
+        {
+            var plan = problemInstance.plan;
+            for (var i = 0; i < plan.Count; i++)
+            {
+                var planAction = plan[i];
+
+                OnSimulationActionBlock(planAction.name, i);
+
+                var actionDefinition = _instantaneousActions[planAction.name];
+
+                var fluentEnumerator = EnumerateActionEffects(planAction, actionDefinition.effects);
+
+                yield return AnimationMachineLoop(fluentEnumerator);
+            }
+            OnSimulationFinished();
+            yield return null;
+        }
+
+        private IEnumerator SimulateTemporalPlan()
+        {
+            yield return null;
+        }
+
         private IEnumerator SimulationRoutine()
         {
             _simulationRunning = true;
             OnSimulationInitBlock();
 
-            var fluentEnumerator = EnumerateFluents(problemInstance.init);
+            var fluentEnumerator = EnumerateFluentAssignments(problemInstance.init);
+
             yield return AnimationMachineLoop(fluentEnumerator);
 
-            // Animate Plan
-            //var plan = problemInstance.plan;
-            //for (var i = 0; i < plan.Count; i++)
-            //{
-            //    var action = plan[i];
+            if (isTimedProblem)
+            {
+                yield return SimulateTemporalPlan();
+            }
+            else
+            {
+                yield return SimulateSequentialPlan();
+            }
 
-            //    OnSimulationActionBlock(action.name, i);
-
-            //    fluentEnumerator = EnumerateFluents(action);
-
-            //    yield return AnimationMachineLoop(fluentEnumerator);
-            //}
             OnSimulationFinished();
             yield return null;
         }
 
+
+
+
+
+        // Animation
+        // ---------
 
         // state machine for the animation of a fluent (start, end)
         public enum AnimationState
@@ -333,8 +386,6 @@ namespace PDSim.Simulation
             }
             //Debug.Log("Queue Count: " + animationQueue.Count);
         }
-
-
 
         private IEnumerator AnimationMachineLoop(IEnumerator<PdSimFluentAssignment> fluentEnumerator)
         {

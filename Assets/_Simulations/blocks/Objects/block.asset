@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e66c6366d904e98bc83428217d4fd7, type: 3}
+  m_Name: block
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"graph":{"variables":{"Kind":"Flow","collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[],"controlOutputDefinitions":[],"valueInputDefinitions":[],"valueOutputDefinitions":[],"title":"PDSim
+      Object Script","summary":"Start/Update Custom Routines","pan":{"x":0.0,"y":0.0},"zoom":1.0,"elements":[{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":-144.0},"guid":"8a54b637-aacb-4407-aa1d-fdec642b54d7","$version":"A","$type":"Unity.VisualScripting.Start","$id":"9"},{"defaultValues":{"renderer":null},"position":{"x":41.0,"y":-115.0},"guid":"dca1e78c-4350-4f4b-a9fc-0d7b58bc3ac4","$version":"A","$type":"PDSim.Animations.RandomColor","$id":"11"},{"specifyFallback":false,"kind":"Object","defaultValues":{"name":{"$content":"Cube-Model","$type":"System.String"},"object":null},"position":{"x":-272.0,"y":57.0},"guid":"866edfdd-8b43-4acd-8e7a-a568acb920e0","$version":"A","$type":"Unity.VisualScripting.GetVariable","$id":"13"},{"sourceUnit":{"$ref":"9"},"sourceKey":"trigger","destinationUnit":{"$ref":"11"},"destinationKey":"inputTrigger","guid":"956b5523-6009-466b-91bb-6224b22f829e","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"13"},"sourceKey":"value","destinationUnit":{"$ref":"11"},"destinationKey":"renderer","guid":"2cf1f972-3fb1-42e3-afd5-86e86eda77c1","$type":"Unity.VisualScripting.ValueConnection"}],"$version":"A"}}'
+    _objectReferences: []
