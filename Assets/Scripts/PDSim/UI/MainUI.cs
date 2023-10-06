@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using PDSim.Protobuf;
 using PDSim.Simulation;
 using PDSim.UI;
 using UnityEngine;
@@ -89,22 +91,22 @@ public class MainUI : MonoBehaviour
 
 
         // Simulation Manager Events
-        //simManager.OnSimulationReady += SimulationReady;
+        simManager.OnSimulationReady += SimulationReady;
         simManager.OnSimulationInitBlock += SimulationInitBlock;
         simManager.OnSimulationActionBlock += SimulationActionBlock;
         simManager.OnSimulationStep += SimulationStep;
         simManager.OnSimulationFinished += SimulationFinished;
-        //simManager.OnSimulationObjectHovered += SimulationObjectHovered;
+        simManager.OnSimulationObjectHovered += SimulationObjectHovered;
         simManager.OnSimulationObjectUnhovered += SimulationObjectUnhovered;
 
     }
 
-    //private void SimulationReady(List<PdPlanAction> planList)
-    //{
-    //    actionStatus.text = "Ready";
-    //    predicateAnimated.text = "";
-    //    PlanListUI.InitializePlanList(planList);
-    //}
+    private void SimulationReady(List<PdSimActionInstance> planList)
+    {
+       actionStatus.text = "Ready";
+       predicateAnimated.text = "";
+       PlanListUI.InitializePlanList(planList);
+    }
 
     private void SimulationActionBlock(string actionName, int index)
     {
@@ -130,11 +132,11 @@ public class MainUI : MonoBehaviour
         predicateAnimated.text = "";
     }
 
-    //private void SimulationObjectHovered(string objectName, List<PdBooleanPredicate> state)
-    //{
+    private void SimulationObjectHovered(PdSimSimulationObject simObject)
+    {
+       StateListUI.InitializeList(simObject);
+    }
 
-    //    StateListUI.InitializePlanList(objectName, state);
-    //}
     private void SimulationObjectUnhovered()
     {
         StateListUI.Clear();

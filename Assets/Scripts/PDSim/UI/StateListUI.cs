@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using PDSim.Protobuf;
+using PDSim.Simulation;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,11 +28,11 @@ namespace PDSim.UI
             objectName = _root.Q<Label>("ObjectName");
         }
 
-        public StateListController InitializePlanList(string name, List<PdSimFluentAssignment> list)
+        public StateListController InitializeList(PdSimSimulationObject simObject)
         {
-            objectName.text = name;
+            objectName.text = simObject.name;
             _stateListController.InitializeStateList(_root, itemTemplate);
-            _stateListController.SetPlanActions(list);
+            _stateListController.SetState(simObject.GetObjectState());
             return _stateListController;
         }
 

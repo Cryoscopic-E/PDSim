@@ -185,75 +185,45 @@ namespace PDSim.Simulation
 
         private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
         {
+            // application of effect as Fluent assignment
+            var fluentsEffect = new List<PdSimFluentAssignment>(); //list of all the fluents in the effect to animate
+            var objectsParameters = new List<string>(); // List of object in the scen to call the animation
             foreach (var effect in pdSimActionEffect)
             {
-                switch (effect.effectKind)
+                if (effect.forAllVariables.Count > 0)
                 {
-                    default:
-                    case EffetKind.None:
-                        break;
-                    case EffetKind.Assignment:
-                        break;
-                    case EffetKind.Increase:
-                        break;
-                    case EffetKind.Decrease:
-                        break;
+                // Is ForAll
+                var allVariableObjects = new List<string>();
+                var variableIndexes = new List<int>();
+                
+                    foreach(var f in effect.forAllVariables)
+                    {
+                        allVariableObjects.AddRange(_typeToObjects[f.type]);
+                    }
                 }
 
+                // Is Conditional
 
+                if (effect.effectCondition.assignments.Count > 0)
+                {
 
-
+                }
 
 
                 var parametersMap = effect.actionParametersMap;
                 var actionPlanParameters = planAction.parameters;
-
-                var parametersObjects = new List<string>();
                 foreach (var p in parametersMap)
                 {
-                    parametersObjects.Add(actionPlanParameters[p]);
+                    objectsParameters.Add(actionPlanParameters[p]);
                 }
 
-
-
-
+                var effectApplied = new PdSimFluentAssignment(effect.fluentAssignment.value, effect.fluentAssignment.fluentName, objectsParameters);
+                fluentsEffect.Add(effectApplied);
+               
             }
-            yield return null;
+            return EnumerateFluentAssignments(fluentsEffect);
         }
 
-
-        // private List<PdSimFluentAssignment> EffectsFromActionInstance(PdSimActionInstance actionInstance)
-        // {
-        //    var effects = new List<PdSimFluentAssignment>();
-        //    var actionName = actionInstance.name;
-
-        //    // Get the action from the instantanous actions or durative actions
-        //    PdSimInstantaneousAction actionInst = null;
-        //    PdSimDurativeAction actionDur = null;
-
-        //    if (_instantaneousActions.ContainsKey(actionName))
-        //    {
-        //        actionInst = _instantaneousActions[actionName];
-        //        var list = new List<PdSimFluentAssignment>();
-        //        foreach (var effect in actionInst.effects)
-        //        {
-        //            list.Add(effect.fluentAssignment);
-        //        }
-        //        return list;
-        //    }
-        //    else if (_durativeActions.ContainsKey(actionName))
-        //    {
-        //        actionDur = _durativeActions[actionName];
-        //    }
-        //    else
-        //    {
-        //        Debug.LogError("Action not found: " + actionName);
-        //        return effects;
-        //    }
-
-
-        //    return effects;
-        // }
 
         public void StartSimulation()
         {
@@ -294,22 +264,21 @@ namespace PDSim.Simulation
 
             yield return AnimationMachineLoop(fluentEnumerator);
 
+            OnSimulationReady(problemInstance.plan);
+
             if (isTimedProblem)
             {
                 yield return SimulateTemporalPlan();
             }
             else
             {
+                
                 yield return SimulateSequentialPlan();
             }
 
             OnSimulationFinished();
             yield return null;
         }
-
-
-
-
 
         // Animation
         // ---------

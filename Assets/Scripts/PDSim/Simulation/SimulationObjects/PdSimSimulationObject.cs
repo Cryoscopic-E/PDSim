@@ -1,6 +1,7 @@
 using PDSim.Protobuf;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,7 +40,11 @@ namespace PDSim.Simulation
 
         // Keep track of the object's state when actions are applied
         private Dictionary<string, PdSimFluentAssignment> state;
-
+        
+        public List<PdSimFluentAssignment> GetObjectState()
+        {
+            return state.Values.ToList();
+        }
 
         // Add a fluent assignment to the object's state
         public void AddFluentAssignment(PdSimFluentAssignment fluentAssignment)

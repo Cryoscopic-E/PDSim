@@ -18,7 +18,7 @@ public class StateListController
         SetupList();
     }
 
-    public void SetPlanActions(List<PdSimFluentAssignment> fluents)
+    public void SetState(List<PdSimFluentAssignment> fluents)
     {
         _state = fluents;
         stateList.itemsSource = _state;
