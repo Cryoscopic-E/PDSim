@@ -121,7 +121,7 @@ namespace PDSim.Protobuf
         {
             if (contentCase != Atom.ContentOneofCase.Real)
                 return false;
-            
+
             var value = float.Parse(valueSymbol);
             value += amount;
             valueSymbol = value.ToString();
@@ -132,7 +132,7 @@ namespace PDSim.Protobuf
         {
             if (contentCase != Atom.ContentOneofCase.Real)
                 return false;
-            
+
             var value = float.Parse(valueSymbol);
             value -= amount;
             valueSymbol = value.ToString();

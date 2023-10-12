@@ -190,19 +190,28 @@ namespace PDSim.Simulation
             var objectsParameters = new List<string>(); // List of object in the scen to call the animation
             foreach (var effect in pdSimActionEffect)
             {
-                if (effect.forAllVariables.Count > 0)
+                var variableMap = new Dictionary<int, string>(); // maps which parameters are variables
+                if (effect.forAllVariables.Count > 0) // Is ForAll
                 {
-                // Is ForAll
-                var allVariableObjects = new List<string>();
-                var variableIndexes = new List<int>();
-                
-                    foreach(var f in effect.forAllVariables)
+                    for (var i = 0; i < effect.forAllVariables.Count; i++)
                     {
-                        allVariableObjects.AddRange(_typeToObjects[f.type]);
+                        var f = effect.forAllVariables[i];
+                        // Get the variable index in the fluent
+                        var variableIndex = effect.fluentAssignment.parameters.IndexOf(f.name);
+                        variableMap.Add(variableIndex, f.type);
+                    }
+
+                    var fluent = effect.fluentAssignment;
+
+                    // Create fluent assignment
+                    var name = fluent.fluentName;
+
+                    for (var i = 0; i < fluent.parameters.Count; i++)
+                    {
                     }
                 }
 
-                // Is Conditional
+                // Is Only Conditional
 
                 if (effect.effectCondition.assignments.Count > 0)
                 {
@@ -219,7 +228,7 @@ namespace PDSim.Simulation
 
                 var effectApplied = new PdSimFluentAssignment(effect.fluentAssignment.value, effect.fluentAssignment.fluentName, objectsParameters);
                 fluentsEffect.Add(effectApplied);
-               
+
             }
             return EnumerateFluentAssignments(fluentsEffect);
         }
@@ -272,7 +281,7 @@ namespace PDSim.Simulation
             }
             else
             {
-                
+
                 yield return SimulateSequentialPlan();
             }
 
