@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.PlayerSettings;
 
 namespace PDSim.Simulation
 {
@@ -34,6 +35,10 @@ namespace PDSim.Simulation
         public PdSimInstance problemInstance;
 
         private bool isTimedProblem;
+
+        // State
+        // -----
+        private State _state;
 
 
         // Dicionaries for accessing data runtime
@@ -117,6 +122,14 @@ namespace PDSim.Simulation
             if (isTimedProblem)
                 OnTemporalSimulation();
 
+            // State
+            _state = new State();
+            foreach (var init in problemInstance.init)
+            {
+                var node = StateNode.FromAssignment(init);
+                _state.AddOrUpdate(node);
+            }
+
             // Gameobjects References
             _objects = new Dictionary<string, PdSimSimulationObject>();
             var problemObjectsRootObject = GameObject.Find("Problem Objects");
@@ -134,6 +147,16 @@ namespace PDSim.Simulation
                 _predicates.Add(predicate.name, predicate);
             }
 
+            // Type to objects name map
+            _typeToObjects = new Dictionary<string, List<string>>();
+            foreach (var obj in problemInstance.objects)
+            {
+                if (!_typeToObjects.ContainsKey(obj.type))
+                    _typeToObjects.Add(obj.type, new List<string>());
+                _typeToObjects[obj.type].Add(obj.name);
+            }
+
+            
             var actions = problemModel.instantaneousActions;
             // Action References
             _instantaneousActions = new Dictionary<string, PdSimInstantaneousAction>();
@@ -160,6 +183,9 @@ namespace PDSim.Simulation
                 // Effect needs to match the name of the predicate
                 _effectToAnimations.Add(fluentAnimation.metaData.name, fluentAnimation);
             }
+
+            
+           
         }
 
         private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> fluents)
@@ -528,4 +554,22 @@ namespace PDSim.Simulation
             }
         }
     }
+
+
+    
+
+    //public class StateNodeEqualityComparer: IEqualityComparer<StateNode>
+    //{
+    //    public bool Equals(StateNode x, StateNode y)
+    //    {
+    //        // Equals if fluent name, type and parameters are the same
+    //        return x.fluentName == y.fluentName && x.fluentType == y.fluentType && x.parameters.SequenceEqual(y.parameters);
+    //    }
+
+    //    public int GetHashCode(StateNode obj)
+    //    {
+    //        return obj.fluentName.GetHashCode() ^ obj.fluentValue.GetHashCode() ^ obj.fluentType.GetHashCode();
+    //    }
+    //}
+
 }

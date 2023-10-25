@@ -9,11 +9,11 @@
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button04.png?fileID=2800000&guid=45545cdd40e4ab64e98cab74e55062d6&type=3#red_button04');
-    -unity-slice-left: 30;
-    -unity-slice-top: 30;
-    -unity-slice-right: 30;
-    -unity-slice-bottom: 30;
+    background-image: url('project://database/Assets/UI/FreeButtonSet/Textures/buttons/button_50.png?fileID=2800000&guid=a24331652574b3e479d00a8c0c41d820&type=3#button_50');
+    -unity-slice-left: 0;
+    -unity-slice-top: 0;
+    -unity-slice-right: 0;
+    -unity-slice-bottom: 0;
     -unity-background-scale-mode: stretch-to-fill;
     background-color: rgba(0, 0, 0, 0);
     -unity-background-image-tint-color: rgb(255, 255, 255);
@@ -85,4 +85,5 @@
     padding-right: 15px;
     padding-top: 15px;
     padding-bottom: 15px;
+    color: rgb(255, 255, 255);
 }
