@@ -184,8 +184,8 @@ namespace PDSim.Simulation
                 _effectToAnimations.Add(fluentAnimation.metaData.name, fluentAnimation);
             }
 
-            
-           
+
+            OnSimulationReady(problemInstance.plan);
         }
 
         private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> fluents)
@@ -298,8 +298,6 @@ namespace PDSim.Simulation
             var fluentEnumerator = EnumerateFluentAssignments(problemInstance.init);
 
             yield return AnimationMachineLoop(fluentEnumerator);
-
-            OnSimulationReady(problemInstance.plan);
 
             if (isTimedProblem)
             {

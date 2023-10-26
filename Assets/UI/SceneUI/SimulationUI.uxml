@@ -17,10 +17,8 @@
                     <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI/FreeButtonSet/Textures/icons/128x128/pause.png?fileID=2800000&amp;guid=b148167244e305a42b332c5e3103a0f3&amp;type=3#pause&apos;); width: 50px; height: 50px; flex-direction: column; align-items: center; justify-content: center; margin-left: 5px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;" />
                 </ui:Button>
                 <ui:Button display-tooltip-when-elided="true" enable-rich-text="true" name="PrevButton" class="button-controls buttons" style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; display: none;">
-                    <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI/PNGs/Icons/previous.png?fileID=2800000&amp;guid=d1cd0dd585ab5224bae8384639649c40&amp;type=3#previous&apos;); width: 50px; height: 50px; flex-direction: column; align-items: center; justify-content: center; margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;" />
                 </ui:Button>
                 <ui:Button display-tooltip-when-elided="true" enable-rich-text="true" name="NextButton" class="button-controls buttons" style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; display: none;">
-                    <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI/PNGs/Icons/next.png?fileID=2800000&amp;guid=b5d5687a91490f545bbc1f82162041c7&amp;type=3#next&apos;); width: 50px; height: 50px; flex-direction: column; align-items: center; justify-content: center; margin-left: 4px; margin-right: 4px; margin-top: 4px; margin-bottom: 4px;" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:GroupBox>

@@ -99,7 +99,6 @@ namespace Editor.UI
             cancelButton.clickable.clicked += () =>
             {
                 Close();
-
             };
 
         }

@@ -35,7 +35,7 @@
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button08.png?fileID=2800000&guid=1b7fbbc3cc105c040b1324a760a984b7&type=3#red_button08');
+    background-image: url('project://database/Assets/UI/FreeButtonSet/Textures/buttons/button_50_hover.png?fileID=2800000&guid=c49dec645e591114caac11d081103cfc&type=3#button_50_hover');
     -unity-slice-left: 30;
     -unity-slice-top: 30;
     -unity-slice-right: 30;
@@ -62,7 +62,7 @@
     letter-spacing: 0;
     padding-left: 15px;
     padding-right: 15px;
-    background-image: url('project://database/Assets/UI/PNGs/Elements/red_button03.png?fileID=2800000&guid=2bacff7ad0f0ed84b876beea564d506d&type=3#red_button03');
+    background-image: url('project://database/Assets/UI/FreeButtonSet/Textures/buttons/button_50_down.png?fileID=2800000&guid=9250aeb511890d54abc18d44c5aefcf3&type=3#button_50_down');
     -unity-slice-left: 30;
     -unity-slice-top: 30;
     -unity-slice-right: 30;

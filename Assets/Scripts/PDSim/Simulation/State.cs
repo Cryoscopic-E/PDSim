@@ -9,7 +9,6 @@ namespace PDSim.Simulation
 {
     public class State
     {
-
         private HashSet<StateNode> _state;
 
         public State()
@@ -59,15 +58,27 @@ namespace PDSim.Simulation
                 return true;
             }
         }
+
+        public StateNode Query (string fluentName, List<string> parameters)
+        {
+            return _state.FirstOrDefault(n => n.fluentName == fluentName && n.parameters.SequenceEqual(parameters));
+        }
     }
 
 
     public class StateNode
     {
+        // Statics
+        public static readonly string BooleanType = "Boolean";
+        public static readonly string NumberType = "Number";
+        public static readonly string SymbolType = "Symbol";
+        public static readonly List<string> NoParam = new List<string> { };
+
         public string fluentName;
         public string fluentValue;
         public string fluentType;
         public List<string> parameters;
+
 
         public StateNode(string fluentName, string fluentValue, string fluentType, List<string> parameters)
         {

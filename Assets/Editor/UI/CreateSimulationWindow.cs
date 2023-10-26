@@ -89,49 +89,6 @@ namespace Editor.UI
             yield return null;
         }
 
-        // /// <summary>
-        // ///  Send Parse request to PDSim Backend Server
-        // /// </summary>
-        // /// <returns></returns>
-
-        // private IEnumerator ParseFiles()
-        // {
-        //     var request = new BackendParseRequest(_domainPathText.value, _problemPathText.value);
-
-        //     // Check  for errors (parse_error, syntax_error, assertion_error,error)
-        //     var response = request.Connect();
-        //     if (response["status"]?.ToString() == "OK")
-        //     {
-        //         //Debug.Log("Parse Successful");
-        //     }
-        //     else
-        //     {
-        //         if (response["parse_error"] != null)
-        //         {
-        //             EditorUtility.DisplayDialog("Parse Error", response["parse_error"].ToString(), "OK");
-        //             yield break;
-        //         }
-        //         if (response["syntax_error"] != null)
-        //         {
-        //             EditorUtility.DisplayDialog("Syntax Error", response["syntax_error"].ToString(), "OK");
-        //             yield break;
-        //         }
-        //         if (response["assertion_error"] != null)
-        //         {
-        //             EditorUtility.DisplayDialog("Assertion Error", response["assertion_error"].ToString(), "OK");
-        //             yield break;
-        //         }
-        //         if (response["error"] != null)
-        //         {
-        //             EditorUtility.DisplayDialog("Error", response["error"].ToString(), "OK");
-        //             yield break;
-        //         }
-
-        //     }
-        //     _parsedJson = response;
-        //     yield return null;
-        // }
-
         private IEnumerator ReadFromServer()
         {
             var request_problem = new ProtobufRequest("problem");
@@ -192,6 +149,7 @@ namespace Editor.UI
 
             var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
             EditorSceneManager.SaveScene(result.scene, newScenePath);
+            Close();
         }
 
         /// <summary>
