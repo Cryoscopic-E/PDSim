@@ -59,6 +59,17 @@ namespace PDSim.Simulation
             }
         }
 
+        public bool AddOrUpdate(PdSimFluentAssignment assignment)
+        {
+            var node = StateNode.FromAssignment(assignment);
+            return AddOrUpdate(node);
+        }
+
+        public bool Remove(StateNode node)
+        {
+            return _state.Remove(node);
+        }
+
         public StateNode Query (string fluentName, List<string> parameters)
         {
             return _state.FirstOrDefault(n => n.fluentName == fluentName && n.parameters.SequenceEqual(parameters));

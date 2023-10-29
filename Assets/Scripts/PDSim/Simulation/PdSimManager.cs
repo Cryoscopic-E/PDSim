@@ -552,22 +552,4 @@ namespace PDSim.Simulation
             }
         }
     }
-
-
-    
-
-    //public class StateNodeEqualityComparer: IEqualityComparer<StateNode>
-    //{
-    //    public bool Equals(StateNode x, StateNode y)
-    //    {
-    //        // Equals if fluent name, type and parameters are the same
-    //        return x.fluentName == y.fluentName && x.fluentType == y.fluentType && x.parameters.SequenceEqual(y.parameters);
-    //    }
-
-    //    public int GetHashCode(StateNode obj)
-    //    {
-    //        return obj.fluentName.GetHashCode() ^ obj.fluentValue.GetHashCode() ^ obj.fluentType.GetHashCode();
-    //    }
-    //}
-
 }

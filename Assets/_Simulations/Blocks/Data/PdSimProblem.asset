@@ -1,0 +1,349 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e82bf94bd81663e5ea88fffcb1554d4c, type: 3}
+  m_Name: PdSimProblem
+  m_EditorClassIdentifier: 
+  domainName: blocksworld_domain
+  problemName: blocksworld
+  features:
+  - Equalities
+  - ActionBased
+  - NegativeConditions
+  - FlatTyping
+  typesDeclaration:
+    serializableTypeNodes:
+    - name: object
+      childrenCount: 1
+      indexFirstChild: 1
+    - name: block
+      childrenCount: 0
+      indexFirstChild: 2
+  fluents:
+  - name: clear
+    type: 3
+    parameters:
+    - name: obj
+      type: block
+  - name: on-table
+    type: 3
+    parameters:
+    - name: obj
+      type: block
+  - name: arm-empty
+    type: 3
+    parameters: []
+  - name: holding
+    type: 3
+    parameters:
+    - name: obj
+      type: block
+  - name: on
+    type: 3
+    parameters:
+    - name: above
+      type: block
+    - name: below
+      type: block
+  instantaneousActions:
+  - name: pickup
+    parameters:
+    - name: obj
+      type: block
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: holding
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: clear
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: on-table
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: arm-empty
+        parameters: []
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 
+      effectKind: 1
+  - name: putdown
+    parameters:
+    - name: obj
+      type: block
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: holding
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: clear
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: on-table
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: arm-empty
+        parameters: []
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 
+      effectKind: 1
+  - name: stack
+    parameters:
+    - name: obj
+      type: block
+    - name: underobj
+      type: block
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: arm-empty
+        parameters: []
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: clear
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: on
+        parameters:
+        - obj
+        - underobj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 0000000001000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: clear
+        parameters:
+        - underobj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 01000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: holding
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+  - name: unstack
+    parameters:
+    - name: obj
+      type: block
+    - name: underobj
+      type: block
+    effects:
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: holding
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: True
+        fluentName: clear
+        parameters:
+        - underobj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 01000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: on
+        parameters:
+        - obj
+        - underobj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 0000000001000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: clear
+        parameters:
+        - obj
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 00000000
+      effectKind: 1
+    - fluentAssignment:
+        value:
+          contentCase: 4
+          valueSymbol: False
+        fluentName: arm-empty
+        parameters: []
+      forAllVariables: []
+      effectCondition:
+        functor:
+          contentCase: 0
+          valueSymbol: 
+        assignments: []
+      actionParametersMap: 
+      effectKind: 1
+  durativeActions: []

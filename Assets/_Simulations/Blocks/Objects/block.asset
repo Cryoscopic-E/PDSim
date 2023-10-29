@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e66c6366d904e98bc83428217d4fd7, type: 3}
+  m_Name: block
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"graph":{"variables":{"Kind":"Flow","collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[],"controlOutputDefinitions":[],"valueInputDefinitions":[],"valueOutputDefinitions":[],"title":"PDSim
+      Object Script","summary":"Start/Update Custom Routines","pan":{"x":0.0,"y":0.0},"zoom":1.0,"elements":[{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":-144.0},"guid":"a709670b-865a-4f6a-9f3d-140b338da8fb","$version":"A","$type":"Unity.VisualScripting.Start","$id":"9"},{"specifyFallback":false,"kind":"Object","defaultValues":{"name":{"$content":"Cube-Model","$type":"System.String"},"object":null},"position":{"x":-138.0,"y":20.0},"guid":"3441391c-3001-4aa9-b951-75173188c950","$version":"A","$type":"Unity.VisualScripting.GetVariable","$id":"11"},{"defaultValues":{"renderer":null},"position":{"x":114.0,"y":-40.0},"guid":"868aeb3a-510f-4535-a5f8-0370d7a79429","$version":"A","$type":"PDSim.Animations.RandomColor","$id":"13"},{"sourceUnit":{"$ref":"9"},"sourceKey":"trigger","destinationUnit":{"$ref":"13"},"destinationKey":"inputTrigger","guid":"b7cd51eb-eb4d-4ad4-be4c-cf7f8823781b","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"11"},"sourceKey":"value","destinationUnit":{"$ref":"13"},"destinationKey":"renderer","guid":"54a0a5bb-4b0f-4843-a644-aaf2d7caf917","$type":"Unity.VisualScripting.ValueConnection"}],"$version":"A"}}'
+    _objectReferences: []
