@@ -66,9 +66,6 @@ namespace PDSim.Simulation
         // Simulation Data
         // ---------------
 
-        // Current environment state
-        private Dictionary<string, PdSimFluentAssignment> environmentState = new Dictionary<string, PdSimFluentAssignment>();
-
         // Current animation objects active
         private List<GameObject> currentAnimationObjects = new List<GameObject>();
 
@@ -118,6 +115,8 @@ namespace PDSim.Simulation
 
         private void Start()
         {
+
+            // Problem is temporal set UI
             isTimedProblem = problemModel.durativeActions.Count > 0;
             if (isTimedProblem)
                 OnTemporalSimulation();
@@ -193,32 +192,45 @@ namespace PDSim.Simulation
             foreach (var fluent in fluents)
             {
                 // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
-                // ?o is the object which state is being changed
+                // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
                 if (fluent.parameters.Count > 0)
                 {
                     var objectName = fluent.parameters[0];
                     var obj = _objects[objectName];
                     obj.AddFluentAssignment(fluent);
                 }
-                else
-                {
-                    environmentState[fluent.fluentName] = fluent;
-                }
-
+               _state.AddOrUpdate(fluent);
                 yield return fluent;
             }
+        }
+
+        private PdSimFluentAssignment GroundEffect(PdSimActionInstance planAction, PdSimEffect effect)
+        {
+            var parametersMap = effect.actionParametersMap;
+            var actionPlanParameters = planAction.parameters;
+            var objectsParameters = new List<string>();
+            foreach (var p in parametersMap)
+            {
+                objectsParameters.Add(actionPlanParameters[p]);
+            }
+            var effectApplied = new PdSimFluentAssignment(effect.fluentAssignment.value, effect.fluentAssignment.fluentName, objectsParameters);
+            return effectApplied;
         }
 
         private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
         {
             // application of effect as Fluent assignment
-            var fluentsEffect = new List<PdSimFluentAssignment>(); //list of all the fluents in the effect to animate
-            var objectsParameters = new List<string>(); // List of object in the scen to call the animation
+            //list of all the fluents in the effect to animate
+            var fluentsEffect = new List<PdSimFluentAssignment>();
+            
             foreach (var effect in pdSimActionEffect)
             {
-                var variableMap = new Dictionary<int, string>(); // maps which parameters are variables
-                if (effect.forAllVariables.Count > 0) // Is ForAll
+                // map if an index of an effect paramenter correspond to a variable
+                var variableMap = new Dictionary<int, string>();
+                // If is ForAll
+                if (effect.forAllVariables.Count > 0)
                 {
+                    // Get variable position in effect definition
                     for (var i = 0; i < effect.forAllVariables.Count; i++)
                     {
                         var f = effect.forAllVariables[i];
@@ -227,34 +239,28 @@ namespace PDSim.Simulation
                         variableMap.Add(variableIndex, f.type);
                     }
 
+                    var forAllApplied = new List<PdSimFluentAssignment>();
                     var fluent = effect.fluentAssignment;
-
                     // Create fluent assignment
                     var name = fluent.fluentName;
 
                     for (var i = 0; i < fluent.parameters.Count; i++)
                     {
+                        // If index in var map
+
                     }
                 }
 
-                // Is Only Conditional
+                var groundedEffect = GroundEffect(planAction, effect);
+
+                // IsConditional
 
                 if (effect.effectCondition.assignments.Count > 0)
                 {
 
                 }
 
-
-                var parametersMap = effect.actionParametersMap;
-                var actionPlanParameters = planAction.parameters;
-                foreach (var p in parametersMap)
-                {
-                    objectsParameters.Add(actionPlanParameters[p]);
-                }
-
-                var effectApplied = new PdSimFluentAssignment(effect.fluentAssignment.value, effect.fluentAssignment.fluentName, objectsParameters);
-                fluentsEffect.Add(effectApplied);
-
+                fluentsEffect.Add(groundedEffect);
             }
             return EnumerateFluentAssignments(fluentsEffect);
         }
