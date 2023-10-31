@@ -226,39 +226,29 @@ namespace PDSim.Simulation
             foreach (var effect in pdSimActionEffect)
             {
                 // map if an index of an effect paramenter correspond to a variable
-                var variableMap = new Dictionary<int, string>();
+                var variableMap = new Dictionary<string, List<string>>();
                 // If is ForAll
-                if (effect.forAllVariables.Count > 0)
+                var isForAll = effect.forAllVariables.Count > 0;
+                var isConditional = effect.effectCondition.assignments.Count > 0;
+                if (isForAll)
                 {
-                    // Get variable position in effect definition
                     for (var i = 0; i < effect.forAllVariables.Count; i++)
                     {
                         var f = effect.forAllVariables[i];
-                        // Get the variable index in the fluent
-                        var variableIndex = effect.fluentAssignment.parameters.IndexOf(f.name);
-                        variableMap.Add(variableIndex, f.type);
+                        var type = f.type;
+                        var allObjects = _typeToObjects[type];
+                        // Maps variable name to all objects of that type e.g: (forall (?o - object) (at ?o ?l)) maps ?o -> [o1, o2, o3]
+                        variableMap.Add(f.name, allObjects);
                     }
-
-                    var forAllApplied = new List<PdSimFluentAssignment>();
-                    var fluent = effect.fluentAssignment;
-                    // Create fluent assignment
-                    var name = fluent.fluentName;
-
-                    for (var i = 0; i < fluent.parameters.Count; i++)
-                    {
-                        // If index in var map
-
-                    }
+                }
+                // IsConditional
+                if (effect.effectCondition.assignments.Count > 0)
+                {
+                    var condition = effect.effectCondition;
+                    
                 }
 
                 var groundedEffect = GroundEffect(planAction, effect);
-
-                // IsConditional
-
-                if (effect.effectCondition.assignments.Count > 0)
-                {
-
-                }
 
                 fluentsEffect.Add(groundedEffect);
             }
