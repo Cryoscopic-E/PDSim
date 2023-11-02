@@ -52,43 +52,7 @@ namespace PDSim.Simulation
             state[fluentAssignment.fluentName] = fluentAssignment;
         }
 
-        // Check if a condition holds for the object
-        public bool ConditionHolds(PdSimCondition condition)
-        {
-            bool[] holds = new bool[condition.assignments.Count];
-            for (var i = 0; i < condition.assignments.Count; i++)
-            {
-                var assignment = condition.assignments[i];
-                if (state.ContainsKey(assignment.fluentName))
-                {
-                    holds[i] = state[assignment.fluentName].value == assignment.value;
-                }
-                else
-                {
-                    holds[i] = false;
-                }
-            }
-
-            // TODO: support xor,..
-            if (condition.functor.valueSymbol == "AND")
-            {
-                // All conditions must hold
-                foreach (var hold in holds)
-                {
-                    if (!hold) return false;
-                }
-                return true;
-            }
-            else
-            {
-                // At least one condition must hold
-                foreach (var hold in holds)
-                {
-                    if (hold) return true;
-                }
-                return false;
-            }
-        }
+        
 
         private void Awake()
         {

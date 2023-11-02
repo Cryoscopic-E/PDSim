@@ -22,15 +22,32 @@ namespace PDSim.Simulation
             return _state.ToList();
         }
 
-        public bool Holds(List<StateNode> nodes)
+
+        public bool Holds(List<StateNode> nodes, string functor = "AND")
         {
-            return nodes.Any(nodeToCheck => _state.Any(node =>
-            node.fluentName == nodeToCheck.fluentName &&
-            node.parameters.SequenceEqual(nodeToCheck.parameters) &&
-            node.fluentType == nodeToCheck.fluentType &&
-            node.fluentValue == nodeToCheck.fluentValue
-            ));
+            if (functor == "AND")
+            {
+                return nodes.All(nodeToCheck => _state.Any(node =>
+                                 node.fluentName == nodeToCheck.fluentName &&
+                                 node.parameters.SequenceEqual(nodeToCheck.parameters) &&
+                                 node.fluentType == nodeToCheck.fluentType &&
+                                 node.fluentValue == nodeToCheck.fluentValue));
+            }
+            else if (functor == "OR")
+            {
+                return nodes.Any(nodeToCheck => _state.Any(node =>
+                                 node.fluentName == nodeToCheck.fluentName &&
+                                 node.parameters.SequenceEqual(nodeToCheck.parameters) &&
+                                 node.fluentType == nodeToCheck.fluentType &&
+                                 node.fluentValue == nodeToCheck.fluentValue));
+            }
+            else
+            {
+                return false;
+            }
         }
+
+
 
         public bool AddOrUpdate(StateNode node)
         {

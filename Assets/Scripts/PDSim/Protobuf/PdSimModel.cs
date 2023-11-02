@@ -348,8 +348,6 @@ namespace PDSim.Protobuf
     {
 
         public PdSimFluentAssignment fluentAssignment;
-        public List<PdSimParameter> forAllVariables;
-        public PdSimCondition effectCondition;
         public List<int> actionParametersMap;
         public EffetKind effectKind;
         public PdSimEffect(Effect effect, List<PdSimParameter> actionParameters)
@@ -385,49 +383,32 @@ namespace PDSim.Protobuf
                 var parameter = fluent[i].Atom.Symbol;
                 parameters.Add(parameter);
 
+                // if parameter is in action parameters, add index
+                var index = actionParameters.FindIndex(p => p.name == parameter);
+                actionParametersMap.Add(index);
+
+
                 // map parameter to action parameter
-                for (int j = 0; j < actionParameters.Count; j++)
-                {
-                    if (parameter == actionParameters[j].name)
-                    {
-                        actionParametersMap.Add(j);
-                        break;
-                    }
-                }
+                //for (int j = 0; j < actionParameters.Count; j++)
+                //{
+                //    if (parameter == actionParameters[j].name)
+                //    {
+                //        actionParametersMap.Add(j);
+                //    }
+                //    else
+                //    {
+                //        // if parameter is not in action parameters, add -1
+                //        actionParametersMap.Add(-1);
+                //    }
+                //}
             }
             fluentAssignment = new PdSimFluentAssignment(value, fluentName, parameters);
 
-            //forall
-            forAllVariables = new List<PdSimParameter>();
-            foreach (var parameter in e.Forall)
-            {
-                forAllVariables.Add(new PdSimParameter(parameter.Atom.Symbol, parameter.Type));
-            }
-
-            // conditional effect
-            effectCondition = new PdSimCondition(e.Condition);
+        
         }
-
-        public bool IsForAll()
-        {
-            return forAllVariables.Count > 0;
-        }
-
         public override string ToString()
         {
             string effect = "";
-            if (IsForAll())
-            {
-                effect += $"FORALL ";
-                foreach (var variable in forAllVariables)
-                {
-                    effect += string.Format("{0}, ", variable.ToString());
-                }
-                effect = effect.Remove(effect.Length - 2);
-                effect += "\n";
-            }
-
-            effect += effectCondition.ToString();
 
             effect += fluentAssignment.ToString();
 
@@ -452,18 +433,6 @@ namespace PDSim.Protobuf
         public override string ToString()
         {
             string effect = "";
-            if (IsForAll())
-            {
-                effect += $"FORALL ";
-                foreach (var variable in forAllVariables)
-                {
-                    effect += string.Format("{0}, ", variable.ToString());
-                }
-                effect = effect.Remove(effect.Length - 2);
-                effect += "\n";
-            }
-
-            effect += effectCondition.ToString();
 
             effect += timing.ToString();
 
@@ -501,117 +470,6 @@ namespace PDSim.Protobuf
                 return $"|{timepoint} <> Delay: {delay}|";
             else
                 return $"|{timepoint}| ";
-        }
-    }
-
-
-    /// <summary>
-    /// Represents a condition in the action effect.
-    /// </summary>
-    [Serializable]
-    public class PdSimCondition
-    {
-        public PdSimAtom functor;
-        public List<PdSimFluentAssignment> assignments;
-
-        public PdSimCondition(Expression expression)
-        {
-            functor = PdSimAtom.Empty();
-            assignments = new List<PdSimFluentAssignment>();
-            if (expression.Kind == ExpressionKind.StateVariable)
-            {
-                var expressionList = expression.List;
-                var parameters = new List<string>();
-                var fluentName = string.Empty;
-                foreach (var exp in expressionList)
-                {
-                    if (exp.Kind == ExpressionKind.FluentSymbol)
-                        fluentName = exp.Atom.Symbol;
-                    else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
-                    {
-                        parameters.Add(exp.Atom.Symbol);
-                    }
-                }
-
-                assignments.Add(new PdSimFluentAssignment(PdSimAtom.Boolean(true), fluentName, parameters));
-            }
-            else if (expression.Kind == ExpressionKind.FunctionApplication)
-            {
-                var firstAtom = expression.List[0].Atom;
-                functor = PdSimAtom.Symbol(firstAtom.Symbol);
-                // Case first element is a symbol not, then is a state variable
-                if (firstAtom.Symbol == "up:not")
-                {
-                    var expressionStart = expression.List[1];
-                    var parameters = new List<string>();
-                    var fluentName = string.Empty;
-                    foreach (var exp in expressionStart.List)
-                    {
-                        if (exp.Kind == ExpressionKind.FluentSymbol)
-                            fluentName = exp.Atom.Symbol;
-                        else if (exp.Kind == ExpressionKind.Variable || exp.Kind == ExpressionKind.Parameter)
-                        {
-                            parameters.Add(exp.Atom.Symbol);
-                        }
-                    }
-                    assignments.Add(new PdSimFluentAssignment(PdSimAtom.Boolean(false), fluentName, parameters));
-                }
-                else // case functor is and, or, ..
-                {
-                    for (var i = 1; i < expression.List.Count; i++)
-                    {
-                        var expressionStart = expression.List[i];
-                        var parameters = new List<string>();
-                        var fluentName = string.Empty;
-                        var value = PdSimAtom.Boolean(true); // default value is true
-
-
-                        foreach (var exp in expressionStart.List)
-                        {
-                            if (exp.Kind == ExpressionKind.FluentSymbol)
-                                fluentName = exp.Atom.Symbol;
-                            else if (exp.Kind == ExpressionKind.FunctionSymbol)
-                            {
-                                value = PdSimAtom.Symbol(exp.Atom.Symbol);
-                            }
-                            else if (exp.Kind == ExpressionKind.StateVariable)
-                            {
-                                foreach (var exp2 in exp.List)
-                                {
-                                    if (exp2.Kind == ExpressionKind.FluentSymbol)
-                                        fluentName = exp2.Atom.Symbol;
-                                    else if (exp2.Kind == ExpressionKind.Variable || exp2.Kind == ExpressionKind.Parameter)
-                                    {
-                                        parameters.Add(exp2.Atom.Symbol);
-                                    }
-                                }
-                            }
-                            else // is a parameter or variable
-                            {
-                                parameters.Add(exp.Atom.Symbol);
-                            }
-                        }
-                        assignments.Add(new PdSimFluentAssignment(value, fluentName, parameters));
-                    }
-                }
-            }
-        }
-
-        public override string ToString()
-        {
-            string condition = string.Empty;
-
-            if (assignments.Count > 0)
-            {
-                condition += $"IF\n";
-                foreach (var assignment in assignments)
-                {
-                    condition += string.Format("{0} \n", assignment.ToString());
-                }
-                condition += "THEN\n";
-            }
-
-            return condition;
         }
     }
 
