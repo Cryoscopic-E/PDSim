@@ -63,7 +63,9 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
+
       "version": "1.8.9",
+
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -72,7 +74,9 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
+
       "version": "2.1.0",
+
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -249,7 +253,9 @@
       }
     },
     "com.unity.visualscripting": {
+
       "version": "1.9.1",
+
       "depth": 0,
       "source": "registry",
       "dependencies": {
