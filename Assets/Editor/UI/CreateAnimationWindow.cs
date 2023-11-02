@@ -1,8 +1,8 @@
-using PDSim.VisualScripting;
-using PDSim.Components;
+using System.Collections.Generic;
+using PDSim.Protobuf;
 using PDSim.Simulation;
 using PDSim.Utils;
-using System.Collections.Generic;
+using PDSim.VisualScripting;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -17,7 +17,7 @@ namespace Editor.UI
     {
         public VisualTreeAsset predicateAnimationAttributeTemplate;
 
-        private PdTypedPredicate _metadata;
+        private PdSimFluent _metadata;
 
         private Toggle _isNegated;
 
@@ -25,7 +25,7 @@ namespace Editor.UI
 
         private FluentAnimation _context;
 
-        public static void ShowAsModal(PdTypedPredicate metadata, FluentAnimation context)
+        public static void ShowAsModal(PdSimFluent metadata, FluentAnimation context)
         {
             var wnd = GetWindow<CreateAnimationWindow>();
             wnd.titleContent = new GUIContent("Create New Animation");
@@ -58,6 +58,12 @@ namespace Editor.UI
             animationName.text = _metadata.ToString();
 
             // Negated
+
+            if (_metadata.type != ValueType.Boolean)
+                root.Q<VisualElement>("NegatedContainer").style.display = DisplayStyle.None;
+            else
+                root.Q<VisualElement>("NegatedContainer").style.display = DisplayStyle.Flex;
+
             _isNegated = root.Q<Toggle>("Negated");
 
 
@@ -93,7 +99,6 @@ namespace Editor.UI
             cancelButton.clickable.clicked += () =>
             {
                 Close();
-
             };
 
         }
@@ -118,7 +123,11 @@ namespace Editor.UI
                 attributesString += controller.label + " - " + controller.value + "\n";
             }
             // Create a unique name for the animation, in format: "Negated_PredicateName_AttributeType1_AttributeType2_..."
-            var animationName = AnimationNames.UniqueAnimationName(negated, predicateName, attributeTypes);
+            var animationName = "";
+            if (_metadata.type == ValueType.Boolean)
+                animationName = AnimationNames.UniqueBooleanAnimationName(PdSimAtom.Boolean(!negated), predicateName, attributeTypes);
+            else
+                animationName = AnimationNames.UniqueNumericAnimationName(predicateName, attributeTypes);
 
             // Load the prefab
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/PDSim/Fluent Animation.prefab");

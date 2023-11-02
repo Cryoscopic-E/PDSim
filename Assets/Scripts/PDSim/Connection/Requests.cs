@@ -1,22 +1,18 @@
-using Newtonsoft.Json.Linq;
-using System;
-
 namespace PDSim.Connection
 {
-    public class BackendTestConnectionRequest : NetMqClient
+    public class BackendTestConnectionRequest : NetMqClientJson
     {
-        public BackendTestConnectionRequest() 
+        public BackendTestConnectionRequest()
         {
-            request.Add("request", "test");
+            request.Add("request", "ping");
         }
     }
-    public class BackendParseRequest : NetMqClient
+
+    public class ProtobufRequest : NetMqClientBytes
     {
-        public BackendParseRequest(string domainPath, string problemPath)
+        public ProtobufRequest(string requestType)
         {
-            request.Add("request", "parse");
-            request.Add("domain_path", domainPath);
-            request.Add("problem_path", problemPath);
+            request.Add("request", requestType);
         }
     }
 }

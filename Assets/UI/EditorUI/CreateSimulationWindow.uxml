@@ -9,23 +9,6 @@
         <ui:Button text="Refresh" display-tooltip-when-elided="true" enable-rich-text="true" name="RefreshConnectionButton" style="height: 20px; width: 70px;" />
     </ui:GroupBox>
     <ui:TextField picking-mode="Ignore" label="Simulation Name" name="SimulationName" readonly="false" style="margin-top: 0; margin-left: 10px; margin-right: 10px; margin-bottom: 0;" />
-    <ui:GroupBox style="flex-direction: column; align-items: flex-start; justify-content: flex-start; margin-left: 10px; margin-right: 10px; margin-top: 20px; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
-        <ui:Label text="Files" display-tooltip-when-elided="true" style="-unity-font-style: bold; margin-bottom: 6px;" />
-        <ui:GroupBox style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <ui:Label text="Domain" display-tooltip-when-elided="true" style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; justify-content: center; align-items: center;" />
-            <ui:GroupBox style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: row;">
-                <ui:TextField picking-mode="Ignore" max-length="-1" name="DomainPath" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; width: 320px;" />
-                <ui:Button text="..." display-tooltip-when-elided="true" name="DomainFileSearchButton" />
-            </ui:GroupBox>
-        </ui:GroupBox>
-        <ui:GroupBox style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
-            <ui:Label text="Problem" display-tooltip-when-elided="true" style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; justify-content: center; align-items: center;" />
-            <ui:GroupBox style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: row;">
-                <ui:TextField picking-mode="Ignore" max-length="-1" name="ProblemPath" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; width: 320px;" />
-                <ui:Button text="..." display-tooltip-when-elided="true" name="ProblemFileSearchButton" />
-            </ui:GroupBox>
-        </ui:GroupBox>
-    </ui:GroupBox>
     <ui:GroupBox style="margin-left: 0; margin-right: 0; margin-top: 21px; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; align-items: center; flex-direction: row; justify-content: center;">
         <ui:Button text="Create" display-tooltip-when-elided="true" name="CreateSimulationButton" />
         <ui:Button text="Cancel" display-tooltip-when-elided="true" name="CancelButton" />

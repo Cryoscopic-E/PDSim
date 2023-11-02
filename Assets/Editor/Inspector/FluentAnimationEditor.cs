@@ -28,7 +28,6 @@ namespace Editor.Inspector
                 var element = list.serializedProperty.GetArrayElementAtIndex(index);
                 var nameProperty = element.FindPropertyRelative("name");
                 var machineProperty = element.FindPropertyRelative("machine");
-                var orderProperty = element.FindPropertyRelative("order");
 
                 // Draw the list item as a label field.
                 var nameRect = new Rect(rect.x, rect.y, rect.width * 0.45f, rect.height);
@@ -37,7 +36,6 @@ namespace Editor.Inspector
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.LabelField(nameRect, nameProperty.stringValue, EditorStyles.boldLabel);
                 EditorGUI.PropertyField(machineRect, machineProperty, GUIContent.none);
-                EditorGUI.PropertyField(orderRect, orderProperty, GUIContent.none);
                 EditorGUILayout.EndHorizontal();
             };
             // When user clicks on add button, open the CreateAnimationWindow.

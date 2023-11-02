@@ -1,7 +1,7 @@
-using PDSim.Components;
+using System.Collections.Generic;
+using PDSim.Protobuf;
 using PDSim.Simulation;
 using PDSim.UI;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -101,11 +101,11 @@ public class MainUI : MonoBehaviour
 
     }
 
-    private void SimulationReady(List<PdPlanAction> planList)
+    private void SimulationReady(List<PdSimActionInstance> planList)
     {
-        actionStatus.text = "Ready";
-        predicateAnimated.text = "";
-        PlanListUI.InitializePlanList(planList);
+       actionStatus.text = "Ready";
+       predicateAnimated.text = "";
+       PlanListUI.InitializePlanList(planList);
     }
 
     private void SimulationActionBlock(string actionName, int index)
@@ -132,11 +132,11 @@ public class MainUI : MonoBehaviour
         predicateAnimated.text = "";
     }
 
-    private void SimulationObjectHovered(string objectName, List<PdBooleanPredicate> state)
+    private void SimulationObjectHovered(PdSimSimulationObject simObject)
     {
-
-        StateListUI.InitializePlanList(objectName, state);
+       StateListUI.InitializeList(simObject);
     }
+
     private void SimulationObjectUnhovered()
     {
         StateListUI.Clear();

@@ -1,14 +1,14 @@
-using PDSim.Components;
+using PDSim.Protobuf;
 using System.Collections.Generic;
 
 namespace PDSim.Utils
 {
     public static class AnimationNames
     {
-        public static string UniqueAnimationName(bool negated, string predicateName, List<string> attributeTypes)
+        public static string UniqueBooleanAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)
         {
             var animationName = predicateName;
-            if (negated)
+            if (!value.IsTrue())
                 animationName = "NOT_" + animationName;
 
             foreach (var item in attributeTypes)
@@ -19,9 +19,16 @@ namespace PDSim.Utils
             return animationName;
         }
 
-        public static string UniqueAnimationName(PdBooleanPredicate predicate)
+        public static string UniqueNumericAnimationName(string predicateName, List<string> attributeTypes)
         {
-            return UniqueAnimationName(predicate.value, predicate.name, predicate.attributes);
+            var animationName = predicateName;
+
+            foreach (var item in attributeTypes)
+            {
+                animationName += "_" + item;
+            }
+
+            return animationName;
         }
     }
 }

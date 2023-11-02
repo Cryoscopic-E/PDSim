@@ -1,4 +1,4 @@
-using PDSim.Components;
+using PDSim.Protobuf;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,7 +8,7 @@ namespace PDSim.Simulation
     [System.Serializable]
     public class FluentAnimation : MonoBehaviour
     {
-        public PdTypedPredicate metaData;
+        public PdSimFluent metaData;
         public List<FluentAnimationData> animationData;
 
         public bool AddAnimationData(ScriptMachine machine, int order = 0)
@@ -26,8 +26,7 @@ namespace PDSim.Simulation
             animationData.Add(new FluentAnimationData()
             {
                 name = machine.name,
-                machine = machine,
-                order = order
+                machine = machine
             });
             return true;
         }
@@ -40,6 +39,5 @@ namespace PDSim.Simulation
     {
         public string name;
         public ScriptMachine machine;
-        public int order;
     }
 }

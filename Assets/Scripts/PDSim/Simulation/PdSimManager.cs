@@ -1,5 +1,4 @@
-using PDSim.Components;
-using PDSim.Simulation.Data;
+using PDSim.Protobuf;
 using PDSim.Utils;
 using PDSim.VisualScripting;
 using System.Collections;
@@ -9,13 +8,15 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using static UnityEditor.PlayerSettings;
 
 namespace PDSim.Simulation
 {
     public class PdSimManager : MonoBehaviour
     {
-        // Singleton
+        // Singleton Instance
+        // ------------------
+
         private static PdSimManager _instance;
         public static PdSimManager Instance
         {
@@ -27,25 +28,48 @@ namespace PDSim.Simulation
             }
         }
 
+        // Data Assets (Problem model, plan, etc.)
+        // ---------------------------------------
+
+        public PdSimProblem problemModel;
+        public PdSimInstance problemInstance;
+
+        private bool isTimedProblem;
+
+        // State
+        // -----
+        private State _state;
 
 
-        public CustomTypes types;
-        public Fluents fluents;
-        public Actions actions;
-        public Plan plan;
-        public Problem problem;
+        // Dicionaries for accessing data runtime
+        // --------------------------------------
 
-
+        // Access GameObjects with problem objects' names
         private Dictionary<string, PdSimSimulationObject> _objects;
 
-        private Dictionary<string, PdAction> _actions;
+        // Access problem objects names with type
+        private Dictionary<string, List<string>> _typeToObjects;
 
+        // Access Instantaneous actions with action names
+        private Dictionary<string, PdSimInstantaneousAction> _instantaneousActions;
 
-        private Dictionary<string, PdTypedPredicate> _predicates;
+        // Access Durative actions with action names
+        private Dictionary<string, PdSimDurativeAction> _durativeActions;
+
+        // Access Fluents with fluent names
+        private Dictionary<string, PdSimFluent> _predicates;
+
+        // Map fluent effect names to animations
         private Dictionary<string, FluentAnimation> _effectToAnimations;
 
+
+        // Simulation Data
+        // ---------------
+
+        // Current animation objects active
         private List<GameObject> currentAnimationObjects = new List<GameObject>();
 
+        // Simulation State
         private bool _simulationRunning = false;
         public bool SimulationRunning
         {
@@ -53,34 +77,58 @@ namespace PDSim.Simulation
         }
 
 
+        // Events and Delegates
+        // --------------------
 
+        // OnTemporalSimulation set all subscribed elements to display temporal planning
+        public delegate void TemporalSimulation();
+        public event TemporalSimulation OnTemporalSimulation;
+
+        // OnSimulationInitBlock is called when the simulation is animating the initial state
         public delegate void SimulationInitBlock();
         public event SimulationInitBlock OnSimulationInitBlock;
 
+        // OnSimulationActionBlock is called when the simulation is animating an action
         public delegate void SimulationActionBlock(string block, int i);
         public event SimulationActionBlock OnSimulationActionBlock;
 
-
+        // OnSimulationStep is called when the simulation is animating a single fluent
         public delegate void SimulationStep(string predicate);
         public event SimulationStep OnSimulationStep;
 
-        public delegate void SimulationReady(List<PdPlanAction> actions);
+        // OnSimulationReady is called when the simulation is ready to start
+        public delegate void SimulationReady(List<PdSimActionInstance> actions);
         public event SimulationReady OnSimulationReady;
 
+        // OnSimulationFinished is called when the simulation is finished
         public delegate void SimulationFinished();
         public event SimulationFinished OnSimulationFinished;
 
-
-        // TODO:Change to be a separate script attached to each object
-        public delegate void SimulationObjectHovered(string objectName, List<PdBooleanPredicate> fluents);
+        // OnSimulationObjectHovered is called when the mouse hovers over an object
+        public delegate void SimulationObjectHovered(PdSimSimulationObject simulationObject);
         public event SimulationObjectHovered OnSimulationObjectHovered;
+
+        // OnSimulationObjectUnHovered is called when the mouse exits an object
         public delegate void SimulationObjectUnhovered();
         public event SimulationObjectUnhovered OnSimulationObjectUnhovered;
-        private Dictionary<string, Dictionary<string, PdBooleanPredicate>> objectStates;
 
 
         private void Start()
         {
+
+            // Problem is temporal set UI
+            isTimedProblem = problemModel.durativeActions.Count > 0;
+            if (isTimedProblem)
+                OnTemporalSimulation();
+
+            // State
+            _state = new State();
+            foreach (var init in problemInstance.init)
+            {
+                var node = StateNode.FromAssignment(init);
+                _state.AddOrUpdate(node);
+            }
+
             // Gameobjects References
             _objects = new Dictionary<string, PdSimSimulationObject>();
             var problemObjectsRootObject = GameObject.Find("Problem Objects");
@@ -90,20 +138,39 @@ namespace PDSim.Simulation
                 _objects.Add(child.name, child.gameObject.GetComponent<PdSimSimulationObject>());
             }
 
+            var fluents = problemModel.fluents;
             // Predicate References
-            _predicates = new Dictionary<string, PdTypedPredicate>();
-            foreach (var predicate in fluents.fluents)
+            _predicates = new Dictionary<string, PdSimFluent>();
+            foreach (var predicate in fluents)
             {
                 _predicates.Add(predicate.name, predicate);
             }
 
-            // Action References
-            _actions = new Dictionary<string, PdAction>();
-            foreach (var action in actions.actions)
+            // Type to objects name map
+            _typeToObjects = new Dictionary<string, List<string>>();
+            foreach (var obj in problemInstance.objects)
             {
-                _actions.Add(action.name, action);
+                if (!_typeToObjects.ContainsKey(obj.type))
+                    _typeToObjects.Add(obj.type, new List<string>());
+                _typeToObjects[obj.type].Add(obj.name);
             }
 
+            
+            var actions = problemModel.instantaneousActions;
+            // Action References
+            _instantaneousActions = new Dictionary<string, PdSimInstantaneousAction>();
+            foreach (var action in actions)
+            {
+                _instantaneousActions.Add(action.name, action);
+            }
+
+            var durativeActions = problemModel.durativeActions;
+            // Durative Action References
+            _durativeActions = new Dictionary<string, PdSimDurativeAction>();
+            foreach (var action in durativeActions)
+            {
+                _durativeActions.Add(action.name, action);
+            }
 
             // Effect Animation References
             var animationsRootObject = GameObject.Find("Animations");
@@ -116,83 +183,128 @@ namespace PDSim.Simulation
                 _effectToAnimations.Add(fluentAnimation.metaData.name, fluentAnimation);
             }
 
-            objectStates = new Dictionary<string, Dictionary<string, PdBooleanPredicate>>();
-            foreach (var obj in _objects)
-            {
-                objectStates.Add(obj.Key, new Dictionary<string, PdBooleanPredicate>());
-            }
 
-            OnSimulationReady(plan.actions);
+            OnSimulationReady(problemInstance.plan);
         }
 
-        private IEnumerator<PdBooleanPredicate> EnumerateFluents(List<PdBooleanPredicate> fluents)
+        private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> fluents)
         {
             foreach (var fluent in fluents)
             {
-                if (fluent.attributes.Count > 0)
+                // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
+                // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
+                if (fluent.parameters.Count > 0)
                 {
-                    var objectName = fluent.attributes[0];
-                    objectStates[objectName][fluent.name] = fluent;
+                    var objectName = fluent.parameters[0];
+                    var obj = _objects[objectName];
+                    obj.AddFluentAssignment(fluent);
                 }
+               _state.AddOrUpdate(fluent);
                 yield return fluent;
             }
         }
 
-        private IEnumerator<PdBooleanPredicate> EnumerateFluents(PdPlanAction action)
+        private PdSimFluentAssignment GroundEffect(PdSimActionInstance planAction, PdSimEffect effect)
         {
-            var actionDefinition = _actions[action.name];
+            var parametersMap = effect.actionParametersMap;
+            var effectFluent = effect.fluentAssignment;
+            var actionPlanParameters = planAction.parameters;
+            var objectsParameters = new List<string>();
 
-            foreach (var fluent in actionDefinition.effects)
+   
+
+
+            for (var i = 0; i < parametersMap.Count; i++)
             {
-                // Map fluents attributes to action attributes
-                var attributeMap = fluent.parameterMapping;
-                var yieldFluent = new PdBooleanPredicate()
+                var p = parametersMap[i];
+                if (p == -1)
+                    objectsParameters.Add(effectFluent.parameters[i]);
+                else
                 {
-                    name = fluent.name,
-                    attributes = new List<string>(),
-                    value = fluent.value
-                };
-                foreach (var index in attributeMap)
-                {
-                    yieldFluent.attributes.Add(action.parameters[index]);
+                    var parameter = actionPlanParameters[p];
+                    objectsParameters.Add(parameter);
                 }
-
-                if (yieldFluent.attributes.Count > 0)
-                {
-                    var objectName = yieldFluent.attributes[0];
-                    objectStates[objectName][yieldFluent.name] = yieldFluent;
-                }
-
-                yield return yieldFluent;
             }
+            var joinedParameters = string.Join(",", objectsParameters.ToArray());            
+
+            var effectApplied = new PdSimFluentAssignment(effectFluent.value, effectFluent.fluentName, objectsParameters);
+
+            return effectApplied;
         }
+
+
+        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
+        {
+            // application of effect as Fluent assignment
+            //list of all the fluents in the effect to animate
+            var fluentsEffect = new List<PdSimFluentAssignment>();
+            
+            foreach (var effect in pdSimActionEffect)
+            {
+                
+                var groundedEffect = GroundEffect(planAction, effect);
+
+                fluentsEffect.Add(groundedEffect);
+            }
+            return EnumerateFluentAssignments(fluentsEffect);
+        }
+
 
         public void StartSimulation()
         {
             StartCoroutine(SimulationRoutine());
         }
 
-        private IEnumerator SimulationRoutine()
+
+        private IEnumerator SimulateSequentialPlan()
         {
-            _simulationRunning = true;
-            OnSimulationInitBlock();
-            var fluentEnumerator = EnumerateFluents(problem.initialState);
-            yield return AnimationMachineLoop(fluentEnumerator);
-
-            // Animate Plan
-            for (var i = 0; i < plan.actions.Count; i++)
+            var plan = problemInstance.plan;
+            for (var i = 0; i < plan.Count; i++)
             {
-                var action = plan.actions[i];
+                var planAction = plan[i];
 
-                OnSimulationActionBlock(action.name, i);
+                OnSimulationActionBlock(planAction.name, i);
 
-                fluentEnumerator = EnumerateFluents(action);
+                var actionDefinition = _instantaneousActions[planAction.name];
+
+                var fluentEnumerator = EnumerateActionEffects(planAction, actionDefinition.effects);
 
                 yield return AnimationMachineLoop(fluentEnumerator);
             }
             OnSimulationFinished();
+            yield return null;
         }
 
+        private IEnumerator SimulateTemporalPlan()
+        {
+            yield return null;
+        }
+
+        private IEnumerator SimulationRoutine()
+        {
+            _simulationRunning = true;
+            OnSimulationInitBlock();
+
+            var fluentEnumerator = EnumerateFluentAssignments(problemInstance.init);
+
+            yield return AnimationMachineLoop(fluentEnumerator);
+
+            if (isTimedProblem)
+            {
+                yield return SimulateTemporalPlan();
+            }
+            else
+            {
+
+                yield return SimulateSequentialPlan();
+            }
+
+            OnSimulationFinished();
+            yield return null;
+        }
+
+        // Animation
+        // ---------
 
         // state machine for the animation of a fluent (start, end)
         public enum AnimationState
@@ -214,56 +326,60 @@ namespace PDSim.Simulation
 
         private Queue<AnimationQueueElement> animationQueue = new Queue<AnimationQueueElement>();
 
-        private void UpdateQueue(PdBooleanPredicate fluent)
+        private void UpdateQueue(PdSimFluentAssignment fluent)
         {
             //Debug.Log("Animation Data count: " + _effectToAnimations[fluent.name].animationData.Count);
-            foreach (var animationData in _effectToAnimations[fluent.name].animationData)
+            foreach (var animationData in _effectToAnimations[fluent.fluentName].animationData)
             {
-                var inputObjects = fluent.attributes.Select(attribute => _objects[attribute]).ToArray();
+                var inputObjects = fluent.parameters.Select(p => _objects[p]).ToArray();
 
-                if (!fluent.value && !animationData.name.StartsWith("NOT_"))
-                    continue;
 
-                var attributes = fluent.attributes;
-                // get types of attributes
-                var fluentParam = _effectToAnimations[fluent.name].metaData.parameters;
-                var attributeTypes = attributes.Select(attribute => _objects[attribute].objectType).ToList();
-
-                // check if types match string
-                if (fluentParam.Count == attributeTypes.Count)
+                var fluentValueContent = fluent.value.contentCase;
+                // Case 1: Fluent is Boolean type
+                if (fluentValueContent == Atom.ContentOneofCase.Boolean)
                 {
-                    var match = true;
-                    for (var i = 0; i < fluentParam.Count; i++)
-                    {
-                        var fluentDefinitionType = fluentParam[i].type;
-                        var objectType = attributeTypes[i];
-                        //Debug.Log("Type: " + fluentDefinitionType + " " + objectType);
-                        if (fluentDefinitionType != objectType && !types.typeTree.IsChildOf(objectType, fluentDefinitionType))
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (!match)
+                    // check fluent value and animation name to see if they match (e.g. (at ?o ?l) and at_object_location) or not((at ?o ?l)) and NOT_at_object_location))
+                    if (!fluent.value.IsTrue() && !animationData.name.StartsWith("NOT_"))
                         continue;
-                }
-                else
-                {
-                    continue;
-                }
 
-                animationQueue.Enqueue(new AnimationQueueElement()
-                {
-                    animationName = animationData.name,
-                    objects = fluent.attributes.Select(attribute => _objects[attribute].gameObject).ToArray()
-                });
+
+                    var attributes = fluent.parameters;
+                    var fluentParam = _effectToAnimations[fluent.fluentName].metaData.parameters;
+                    var attributeTypes = attributes.Select(attribute => _objects[attribute].objectType).ToList();
+                    var typeTree = problemModel.typesDeclaration;
+                    // check if types match string
+                    if (fluentParam.Count == attributeTypes.Count)
+                    {
+                        var match = true;
+                        for (var i = 0; i < fluentParam.Count; i++)
+                        {
+                            var fluentDefinitionType = fluentParam[i].type;
+                            var objectType = attributeTypes[i];
+                            //Debug.Log("Type: " + fluentDefinitionType + " " + objectType);
+                            if (fluentDefinitionType != objectType && !typeTree.IsChildOf(objectType, fluentDefinitionType))
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (!match)
+                            continue;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    animationQueue.Enqueue(new AnimationQueueElement()
+                    {
+                        animationName = animationData.name,
+                        objects = fluent.parameters.Select(p => _objects[p].gameObject).ToArray()
+                    });
+                }
             }
             //Debug.Log("Queue Count: " + animationQueue.Count);
         }
 
-
-
-        private IEnumerator AnimationMachineLoop(IEnumerator<PdBooleanPredicate> fluentEnumerator)
+        private IEnumerator AnimationMachineLoop(IEnumerator<PdSimFluentAssignment> fluentEnumerator)
         {
             _animationState = AnimationState.None;
             while (_animationState != AnimationState.Finished)
@@ -292,8 +408,8 @@ namespace PDSim.Simulation
                     case AnimationState.Ready:
                         var animation = animationQueue.Dequeue();
                         // Log objects one line
-                        var objectNames = fluentEnumerator.Current.attributes.Aggregate((a, b) => a + ", " + b);
-                        var fluentString = fluentEnumerator.Current.name + "(" + objectNames + ")";
+                        var objectNames = fluentEnumerator.Current.parameters.Aggregate((a, b) => a + ", " + b);
+                        var fluentString = fluentEnumerator.Current.fluentName + "(" + objectNames + ")";
                         OnSimulationStep(fluentString);
                         TriggerAnimation(animation.animationName, animation.objects);
                         break;
@@ -317,10 +433,9 @@ namespace PDSim.Simulation
             }
         }
 
-        public void HoverObject(string name)
+        public void HoverObject(PdSimSimulationObject simulationObject)
         {
-            var states = objectStates[name].Values.ToList();
-            OnSimulationObjectHovered(name, states);
+            OnSimulationObjectHovered(simulationObject);
         }
 
         public void ClearHover()
@@ -350,7 +465,7 @@ namespace PDSim.Simulation
                 animationsRootObject = new GameObject("Animations");
             }
 
-            foreach (var fluent in fluents.fluents)
+            foreach (var fluent in problemModel.fluents)
             {
                 var fluentAnimation = animationsRootObject.AddComponent<FluentAnimation>();
                 fluentAnimation.metaData = fluent;
@@ -372,9 +487,7 @@ namespace PDSim.Simulation
                 problemObjects = problemObjectsRootObject.AddComponent<ProblemObjects>();
             }
 
-
-            var leafNodes = types.typeTree.GetLeafNodes();
-
+            var leafNodes = problemModel.typesDeclaration.GetLeafNodes();
             foreach (var type in leafNodes)
             {
                 var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
@@ -417,7 +530,7 @@ namespace PDSim.Simulation
             AssetDatabase.Refresh();
 
             // Spawn objects
-            foreach (var obj in problem.objects)
+            foreach (var obj in problemInstance.objects)
             {
                 var type = obj.type;
                 var prefabPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name) + "/" + type + ".prefab";

@@ -1,4 +1,4 @@
-﻿using PDSim.Components;
+﻿using PDSim.Protobuf;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -18,7 +18,7 @@ public class StateListController
         SetupList();
     }
 
-    public void SetPlanActions(List<PdBooleanPredicate> fluents)
+    public void SetState(List<PdSimFluentAssignment> fluents)
     {
         _state = fluents;
         stateList.itemsSource = _state;
@@ -32,7 +32,7 @@ public class StateListController
         stateList.Rebuild();
     }
 
-    private List<PdBooleanPredicate> _state = new();
+    private List<PdSimFluentAssignment> _state = new();
 
     void SetupList()
     {

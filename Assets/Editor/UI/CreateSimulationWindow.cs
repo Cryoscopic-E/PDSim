@@ -1,9 +1,9 @@
-using Newtonsoft.Json.Linq;
-using PDSim.Connection;
-using PDSim.Simulation.Data;
-using PDSim.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using PDSim.Connection;
+using PDSim.Protobuf;
+using PDSim.Utils;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -15,7 +15,7 @@ namespace Editor.UI
 {
     public class CreateSimulationWindow : EditorWindow
     {
-        [MenuItem("PDSim/CreateSimulationWindow")]
+        [MenuItem("PDSim/Create Simulation")]
         public static void ShowWindow()
         {
             var wnd = GetWindow<CreateSimulationWindow>();
@@ -24,12 +24,9 @@ namespace Editor.UI
         private bool _connectionStatus = false;
         private Label _connectionStatusLabel;
         private TextField _simulationNameField;
-        private TextField _domainPathText;
-        private TextField _problemPathText;
         private Button _createSimulationButton;
         private Button _cancelButton;
         private JObject _parsedJson;
-        private ServerStatus _serverStatus;
         public void CreateGUI()
         {
             // Set Window not resizable
@@ -46,8 +43,6 @@ namespace Editor.UI
 
             _connectionStatusLabel = root.Q<Label>("Status");
             _simulationNameField = root.Q<TextField>("SimulationName");
-            _domainPathText = root.Q<TextField>("DomainPath");
-            _problemPathText = root.Q<TextField>("ProblemPath");
             _createSimulationButton = rootVisualElement.Q<Button>("CreateSimulationButton");
             _cancelButton = rootVisualElement.Q<Button>("CancelButton");
 
@@ -94,46 +89,22 @@ namespace Editor.UI
             yield return null;
         }
 
-        /// <summary>
-        ///  Send Parse request to PDSim Backend Server
-        /// </summary>
-        /// <returns></returns>
-
-        private IEnumerator ParseFiles()
+        private IEnumerator ReadFromServer()
         {
-            var request = new BackendParseRequest(_domainPathText.value, _problemPathText.value);
+            var request_problem = new ProtobufRequest("problem");
+            var request_plan = new ProtobufRequest("plan");
 
-            // Check  for errors (parse_error, syntax_error, assertion_error,error)
-            var response = request.Connect();
-            if (response["status"]?.ToString() == "OK")
-            {
-                //Debug.Log("Parse Successful");
-            }
-            else
-            {
-                if (response["parse_error"] != null)
-                {
-                    EditorUtility.DisplayDialog("Parse Error", response["parse_error"].ToString(), "OK");
-                    yield break;
-                }
-                if (response["syntax_error"] != null)
-                {
-                    EditorUtility.DisplayDialog("Syntax Error", response["syntax_error"].ToString(), "OK");
-                    yield break;
-                }
-                if (response["assertion_error"] != null)
-                {
-                    EditorUtility.DisplayDialog("Assertion Error", response["assertion_error"].ToString(), "OK");
-                    yield break;
-                }
-                if (response["error"] != null)
-                {
-                    EditorUtility.DisplayDialog("Error", response["error"].ToString(), "OK");
-                    yield break;
-                }
+            var response_problem = request_problem.Connect();
 
-            }
-            _parsedJson = response;
+            var response_plan = request_plan.Connect();
+
+            var reader = new ProtobufReader();
+
+
+            // Create Simulation Scene
+            var simulationName = _simulationNameField.value;
+            AssetUtils.CreateFolders(simulationName);
+            reader.Read(response_problem, response_plan, simulationName);
             yield return null;
         }
 
@@ -155,32 +126,15 @@ namespace Editor.UI
             }
 
             // Display loading bar 
-            EditorUtility.DisplayProgressBar("Parsing Files", "Creating Simulation", 0.5f);
+            EditorUtility.DisplayProgressBar("Collecting Protobuf Model", "Creating Simulation", 0.5f);
 
             // Launch Parsing
-            yield return EditorCoroutineUtility.StartCoroutine(ParseFiles(), this);
+            yield return EditorCoroutineUtility.StartCoroutine(ReadFromServer(), this);
 
             EditorUtility.ClearProgressBar();
 
-
-            // Create PdSim Environment Scriptable Objects
-            if (_parsedJson != null && !_parsedJson.ContainsKey("error"))
-            {
-                AssetUtils.CreateFolders(_simulationNameField.value);
-                CreatePDSimData();
-                // Create scene from template
-                CreateSimulationScene();
-
-                // Close window
-                Close();
-            }
-
-            if (_parsedJson != null && _parsedJson.ContainsKey("error"))
-            {
-                EditorUtility.DisplayDialog("Error", _parsedJson["error"].ToString(), "OK");
-                yield break;
-            }
-
+            // Create Simulation Scene
+            CreateSimulationScene();
 
             yield return null;
         }
@@ -195,26 +149,7 @@ namespace Editor.UI
 
             var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
             EditorSceneManager.SaveScene(result.scene, newScenePath);
-        }
-
-        private void CreatePDSimData()
-        {
-            var simData = new List<PdSimData>
-            {
-                CreateInstance<CustomTypes>(),
-                CreateInstance<Fluents>(),
-                CreateInstance<Plan>(),
-                CreateInstance<Actions>(),
-                CreateInstance<Problem>()
-            };
-            var dataPath = AssetUtils.GetSimulationDataPath(_simulationNameField.value);
-            foreach (var so in simData)
-            {
-                so.CreateInstance(_parsedJson);
-                AssetDatabase.CreateAsset(so, dataPath + so.GetType().Name + ".asset");
-            }
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            Close();
         }
 
         /// <summary>
@@ -254,48 +189,6 @@ namespace Editor.UI
                 return false;
             }
 
-            // Check if domain path is empty
-            if (string.IsNullOrEmpty(_domainPathText.text))
-            {
-                validationMessage = "Domain path cannot be empty";
-                return false;
-            }
-
-            // Check if problem path is empty
-            if (string.IsNullOrEmpty(_problemPathText.text))
-            {
-                validationMessage = "Problem path cannot be empty";
-                return false;
-            }
-
-            // Domain Path is a directory
-            if (AssetUtils.DirectoryExist(_domainPathText.text))
-            {
-                validationMessage = "Domain path cannot be a directory";
-                return false;
-            }
-
-            // Problem Path is a directory
-            if (AssetUtils.DirectoryExist(_problemPathText.text))
-            {
-                validationMessage = "Problem path cannot be a directory";
-                return false;
-            }
-
-            // Check if domain file exists
-            if (!AssetUtils.FileExists(_domainPathText.text))
-            {
-                validationMessage = "Domain file does not exist";
-                return false;
-            }
-
-            // Check if problem file exists
-            if (!AssetUtils.FileExists(_problemPathText.text))
-            {
-                validationMessage = "Problem file does not exist";
-                return false;
-            }
-
             validationMessage = "";
             return true;
         }
@@ -312,12 +205,6 @@ namespace Editor.UI
             _createSimulationButton.clicked += CreateSimulationButtonClicked;
 
             _cancelButton.clicked += CancelButtonClicked;
-
-            var domainButton = rootVisualElement.Q<Button>("DomainFileSearchButton");
-            domainButton.clicked += DomainFileSelectionButtonClicked;
-
-            var problemButton = rootVisualElement.Q<Button>("ProblemFileSearchButton");
-            problemButton.clicked += ProblemFileSelectionButtonClicked;
 
             var refreshServerButton = rootVisualElement.Q<Button>("RefreshConnectionButton");
             refreshServerButton.clicked += RefreshConnectionButtonClicked;
@@ -350,24 +237,6 @@ namespace Editor.UI
         }
 
         /// <summary>
-        ///  Domain file selection button clicked.
-        ///  Opens a file selection dialog to select a domain file.
-        /// </summary>
-        private void DomainFileSelectionButtonClicked()
-        {
-            _domainPathText.value = EditorUtility.OpenFilePanel("Select Domain", "", "pddl");
-        }
-
-        /// <summary>
-        ///  Problem file selection button clicked.
-        ///  Opens a file selection dialog to select a problem file.
-        /// </summary>
-        private void ProblemFileSelectionButtonClicked()
-        {
-            _problemPathText.value = EditorUtility.OpenFilePanel("Select Problem", "", "pddl");
-        }
-
-        /// <summary>
         ///  Refresh connection button clicked.
         ///  Tests the connection to the backend server.
         /// </summary>
@@ -378,14 +247,4 @@ namespace Editor.UI
         #endregion
     }
 
-    internal struct ServerStatus
-    {
-        public bool IsConnected { get; set; }
-        public bool ParseRequested { get; set; }
-        public bool PlanRequested { get; set; }
-        public bool ParseError { get; set; }
-        public bool PlanError { get; set; }
-        public string ParseErrorMessage { get; set; }
-        public string PlanErrorMessage { get; set; }
-    }
 }

@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using PDSim.Components;
-using UnityEngine;
+using PDSim.Protobuf;
+using PDSim.Simulation;
 using UnityEngine.UIElements;
 
 namespace Editor.UI
@@ -11,9 +10,9 @@ namespace Editor.UI
 
         private DropdownField _attribute;
 
-        private PdObject _metadata;
+        private PdSimParameter _metadata;
 
-        public void SetMetadata(PdObject metadata)
+        public void SetMetadata(PdSimParameter metadata)
         {
             _metadata = metadata;
         }
@@ -34,7 +33,7 @@ namespace Editor.UI
 
             _attribute = root.Q<DropdownField>("Attribute");
             _attribute.label = "?" + _metadata.name;
-            _attribute.choices = _metadata.childrenTypes;
+            _attribute.choices = PdSimManager.Instance.problemModel.typesDeclaration.GetChildrenTypes(_metadata.type);
             _attribute.value = _attribute.choices[0];
 
         }
