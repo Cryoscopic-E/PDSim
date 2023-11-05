@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace PDSim.Simulation
 {
+    /// <summary>
+    /// Class to store animation data for a simulation object
+    /// </summary>
     [System.Serializable]
     public class FluentAnimation : MonoBehaviour
     {

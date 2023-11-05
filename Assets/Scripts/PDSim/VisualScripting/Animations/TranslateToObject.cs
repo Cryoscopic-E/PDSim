@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace PDSim.Animations
+namespace PDSim.VisualScripting.Animations
 {
     [UnitCategory("PDSim/Animations")]
     public class TranslateToObject : WaitUnit
@@ -52,16 +52,17 @@ namespace PDSim.Animations
             var startPosition = movingObj.transform.position;
             var goal = targetObj.transform.position;
 
+            // offset the goal position
             if (movingObjOffset != null)
             {
                 goal -= movingObjOffset.localPosition;
             }
-
             if (targetObjOffset != null)
             {
                 goal += targetObjOffset.localPosition;
             }
 
+            // if the duration is 0, just set the position and return
             if (duration == 0)
             {
                 movingObj.transform.position = goal;
@@ -69,6 +70,7 @@ namespace PDSim.Animations
                 yield return exit;
             }
 
+            // if the height should be matched first
             if (flow.GetValue<bool>(matchHeightFirst))
             {
                 // align height first for a third of the duration
@@ -95,7 +97,7 @@ namespace PDSim.Animations
             }
             else
             {
-
+                // Lerp the position for the duration
                 for (float progress = 0; progress < duration; progress += Time.deltaTime)
                 {
                     movingObj.transform.position = Vector3.Lerp(startPosition, goal, progress / duration);

@@ -7,6 +7,13 @@ using UnityEngine;
 
 namespace PDSim.Simulation
 {
+    /// <summary>
+    /// Class to keep track of the state of the simulation
+    /// 
+    /// The state is a set of fluent assignments
+    /// 
+    /// The state is updated by applying actions during the simulation
+    /// </summary>
     public class State
     {
         private HashSet<StateNode> _state;
@@ -87,7 +94,7 @@ namespace PDSim.Simulation
             return _state.Remove(node);
         }
 
-        public StateNode Query (string fluentName, List<string> parameters)
+        public StateNode Query(string fluentName, List<string> parameters)
         {
             return _state.FirstOrDefault(n => n.fluentName == fluentName && n.parameters.SequenceEqual(parameters));
         }

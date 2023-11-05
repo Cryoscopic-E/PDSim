@@ -8,7 +8,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.PlayerSettings;
+using PDSim.Simulation.SimulationObject;
 
 namespace PDSim.Simulation
 {
@@ -155,7 +155,7 @@ namespace PDSim.Simulation
                 _typeToObjects[obj.type].Add(obj.name);
             }
 
-            
+
             var actions = problemModel.instantaneousActions;
             // Action References
             _instantaneousActions = new Dictionary<string, PdSimInstantaneousAction>();
@@ -199,7 +199,7 @@ namespace PDSim.Simulation
                     var obj = _objects[objectName];
                     obj.AddFluentAssignment(fluent);
                 }
-               _state.AddOrUpdate(fluent);
+                _state.AddOrUpdate(fluent);
                 yield return fluent;
             }
         }
@@ -211,7 +211,7 @@ namespace PDSim.Simulation
             var actionPlanParameters = planAction.parameters;
             var objectsParameters = new List<string>();
 
-   
+
 
 
             for (var i = 0; i < parametersMap.Count; i++)
@@ -225,7 +225,7 @@ namespace PDSim.Simulation
                     objectsParameters.Add(parameter);
                 }
             }
-            var joinedParameters = string.Join(",", objectsParameters.ToArray());            
+            var joinedParameters = string.Join(",", objectsParameters.ToArray());
 
             var effectApplied = new PdSimFluentAssignment(effectFluent.value, effectFluent.fluentName, objectsParameters);
 
@@ -236,12 +236,12 @@ namespace PDSim.Simulation
         private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
         {
             // application of effect as Fluent assignment
-            //list of all the fluents in the effect to animate
+            // list of all the fluents in the effect to animate
             var fluentsEffect = new List<PdSimFluentAssignment>();
-            
+
             foreach (var effect in pdSimActionEffect)
             {
-                
+
                 var groundedEffect = GroundEffect(planAction, effect);
 
                 fluentsEffect.Add(groundedEffect);

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace PDSim.Protobuf
 {
+    /// <summary>
+    /// Class to read a protobuf problem and plan and generate a PdSimProblem and PdSimInstance
+    /// </summary>
     public class ProtobufReader
     {
 

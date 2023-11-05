@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.VisualScripting;
 
-namespace PDSim.Animations
+namespace PDSim.VisualScripting.Animations
 {
     [UnitCategory("PDSim/Animations")]
     public class SpawnObject : Unit
@@ -32,13 +32,13 @@ namespace PDSim.Animations
         {
             inputTrigger = ControlInput("inputTrigger", (flow) => { return Spawn(flow); });
             outputTrigger = ControlOutput("outputTrigger");
-            
+
             prefabObject = ValueInput<GameObject>("prefabObject", null);
             newObjectName = ValueInput<string>("newObjectName", null);
             parentObject = ValueInput<GameObject>("parentObject", null);
             objectPosition = ValueInput<Vector3>("objectPosition", Vector3.zero);
             objectRotation = ValueInput<Vector3>("objectRotation", Quaternion.identity.eulerAngles);
-            
+
             Succession(inputTrigger, outputTrigger);
             Requirement(prefabObject, inputTrigger);
 

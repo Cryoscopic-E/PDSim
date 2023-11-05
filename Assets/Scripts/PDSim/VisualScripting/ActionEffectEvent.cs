@@ -4,19 +4,27 @@ using UnityEngine;
 
 namespace PDSim.VisualScripting
 {
+    /// <summary>
+    /// Class for the action effect event.
+    /// When an effect is scheduled to be animated, this event is triggered.
+    /// </summary>
+    [UnitTitle("Action Effect Event")]
     [UnitCategory("Events/PDSim")]
     public class ActionEffectEvent : EventUnit<EffectEventArgs>
     {
         protected override bool register => true;
 
+        // Total number of arguments of the effect
         [SerializeAs(nameof(ArgumentCount))]
         private int _argumentCount;
 
+        // Name of the effect to be animated (match PDDL "action-name")
         [SerializeAs(nameof(EffectName))]
         private string _effectName;
 
+        // List of arguments of the effect (match PDDL "object-type")
         [SerializeAs(nameof(EffectArguments))]
-        private List<string> _effectArguments; // Match PDDL "object-type"
+        private List<string> _effectArguments;
 
         [DoNotSerialize]
         public int ArgumentCount
@@ -38,13 +46,6 @@ namespace PDSim.VisualScripting
             get => _effectArguments;
             set => _effectArguments = value;
         }
-
-        /// <summary>
-        /// The name of the event.
-        /// </summary>
-        // [DoNotSerialize]
-        // [PortLabelHidden]
-        // protected ValueInput Name { get; private set;}
 
         [DoNotSerialize]
         public List<ValueOutput> ArgumentPorts { get; } = new List<ValueOutput>();

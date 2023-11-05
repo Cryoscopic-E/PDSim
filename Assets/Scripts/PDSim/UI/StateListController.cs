@@ -2,69 +2,72 @@
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-public class StateListController
+namespace PDSim.UI
 {
-    VisualTreeAsset itemTemplate;
-
-    ListView stateList;
-
-
-    public void InitializeStateList(VisualElement root, VisualTreeAsset labelTemplate)
+    public class StateListController
     {
-        itemTemplate = labelTemplate;
+        VisualTreeAsset itemTemplate;
 
-        stateList = root.Q<ListView>("StateList");
+        ListView stateList;
 
-        SetupList();
-    }
 
-    public void SetState(List<PdSimFluentAssignment> fluents)
-    {
-        _state = fluents;
-        stateList.itemsSource = _state;
-        stateList.Rebuild();
-    }
-
-    public void ClearList()
-    {
-        _state.Clear();
-        stateList.itemsSource.Clear();
-        stateList.Rebuild();
-    }
-
-    private List<PdSimFluentAssignment> _state = new();
-
-    void SetupList()
-    {
-        // Set up a make item function for a list entry
-        stateList.makeItem = () =>
+        public void InitializeStateList(VisualElement root, VisualTreeAsset labelTemplate)
         {
-            // Instantiate the UXML template for the entry
-            var newListEntry = itemTemplate.Instantiate();
+            itemTemplate = labelTemplate;
 
-            // Instantiate a controller for the data
-            var entry = new StateEntryController();
+            stateList = root.Q<ListView>("StateList");
 
-            // Assign the controller script to the visual element
-            newListEntry.userData = entry;
+            SetupList();
+        }
 
-            // Initialize the controller script
-            entry.SetVisualElement(newListEntry);
-
-            // Return the root of the instantiated visual tree
-            return newListEntry;
-        };
-
-        // Set up bind function for a specific list entry
-        stateList.bindItem = (item, index) =>
+        public void SetState(List<PdSimFluentAssignment> fluents)
         {
-            (item.userData as StateEntryController).SetData(_state[index]);
-        };
+            _state = fluents;
+            stateList.itemsSource = _state;
+            stateList.Rebuild();
+        }
 
-        // Set a fixed item height
-        stateList.fixedItemHeight = 45;
+        public void ClearList()
+        {
+            _state.Clear();
+            stateList.itemsSource.Clear();
+            stateList.Rebuild();
+        }
+
+        private List<PdSimFluentAssignment> _state = new();
+
+        void SetupList()
+        {
+            // Set up a make item function for a list entry
+            stateList.makeItem = () =>
+            {
+                // Instantiate the UXML template for the entry
+                var newListEntry = itemTemplate.Instantiate();
+
+                // Instantiate a controller for the data
+                var entry = new StateEntryController();
+
+                // Assign the controller script to the visual element
+                newListEntry.userData = entry;
+
+                // Initialize the controller script
+                entry.SetVisualElement(newListEntry);
+
+                // Return the root of the instantiated visual tree
+                return newListEntry;
+            };
+
+            // Set up bind function for a specific list entry
+            stateList.bindItem = (item, index) =>
+            {
+                (item.userData as StateEntryController).SetData(_state[index]);
+            };
+
+            // Set a fixed item height
+            stateList.fixedItemHeight = 45;
+        }
+
+
     }
-
 
 }
-

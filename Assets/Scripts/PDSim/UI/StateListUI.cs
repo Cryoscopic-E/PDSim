@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using PDSim.Protobuf;
-using PDSim.Simulation;
+using PDSim.Simulation.SimulationObject;
 using UnityEngine;
 using UnityEngine.UIElements;
 

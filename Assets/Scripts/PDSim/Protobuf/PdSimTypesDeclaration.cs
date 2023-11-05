@@ -42,12 +42,7 @@ namespace PDSim.Protobuf
             {
                 var parentType = typeDeclaration.ParentType;
                 var currentType = typeDeclaration.TypeName;
-                // if (parentType == null)
-                // {
-                //     // root node
-                //     node = new TypeNode(currentType);
-                //     _root = node;
-                // }
+
                 if (parentType == null || parentType == string.Empty)
                 {
                     // if parent is null or empty, add as child of 'object'

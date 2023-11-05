@@ -3,19 +3,20 @@ using UnityEngine;
 
 namespace PDSim.VisualScripting
 {
+    /// <summary>
+    /// Class for the action effect end event.
+    /// When an effect is finished animating, this event is triggered.
+    /// </summary>
     public class ActionEffectEndEvent : Unit
     {
-        [DoNotSerialize]// Mandatory attribute, to make sure we don’t serialize data that should never be serialized.
-        [PortLabelHidden]// Hide the port label, as we normally hide the label for default Input and Output triggers.
-        public ControlInput inputTrigger { get; private set; }
-
-        [DoNotSerialize]
-        public ControlOutput outputTrigger { get; private set; }
-
-        [DoNotSerialize]
-        public ValueInput myValue;
+        // Connects to animation definition
         [DoNotSerialize]
         [PortLabelHidden]
+        public ControlInput inputTrigger { get; private set; }
+
+        // When triggered, notify the animation is finished
+        [DoNotSerialize]
+        public ControlOutput outputTrigger { get; private set; }
 
 
         [SerializeAs(nameof(EffectName))]
@@ -28,9 +29,6 @@ namespace PDSim.VisualScripting
             set => _effectName = value;
         }
 
-
-
-
         protected override void Definition()
         {
 
@@ -41,6 +39,7 @@ namespace PDSim.VisualScripting
 
         private ControlOutput Trigger(Flow flow)
         {
+            // Trigger the event to notify the animation is finished
             EventBus.Trigger(EventNames.actionEffectEnd, EffectName);
             return outputTrigger;
         }

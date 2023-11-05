@@ -1,20 +1,23 @@
 ﻿using PDSim.Protobuf;
 using UnityEngine.UIElements;
 
-public class StateEntryController
+namespace PDSim.UI
 {
-    Label label;
-
-
-    public void SetVisualElement(VisualElement visualElement)
+    public class StateEntryController
     {
-        label = visualElement.Q<Label>("Item");
+        Label label;
+
+
+        public void SetVisualElement(VisualElement visualElement)
+        {
+            label = visualElement.Q<Label>("Item");
+        }
+
+
+        public void SetData(PdSimFluentAssignment data)
+        {
+            label.text = data.ToString();
+        }
     }
 
-
-    public void SetData(PdSimFluentAssignment data)
-    {
-        label.text = data.ToString();
-    }
 }
-
