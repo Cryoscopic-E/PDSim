@@ -1,20 +1,21 @@
 ﻿using PDSim.Protobuf;
 using UnityEngine.UIElements;
 
-public class ActionEntryController
+namespace PDSim.UI
 {
-    Label label;
-
-
-    public void SetVisualElement(VisualElement visualElement)
+    public class ActionEntryController
     {
-        label = visualElement.Q<Label>("Item");
-    }
+        Label label;
+
+        public void SetVisualElement(VisualElement visualElement)
+        {
+            label = visualElement.Q<Label>("Item");
+        }
 
 
-    public void SetActionData(PdSimActionInstance data)
-    {
-        label.text = data.ToString();
+        public void SetActionData(PdSimActionInstance data)
+        {
+            label.text = data.ToString();
+        }
     }
 }
-

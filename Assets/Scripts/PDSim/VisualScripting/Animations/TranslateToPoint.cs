@@ -2,8 +2,11 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace PDSim.Animation
+namespace PDSim.VisualScripting.Animations
 {
+    /// <summary>
+    /// Animation unity coroutine for translating an object to a point.
+    /// </summary>
     [UnitCategory("PDSim/Animations")]
     public class TranslateToPoint : WaitUnit
     {
@@ -23,13 +26,6 @@ namespace PDSim.Animation
         [DoNotSerialize]
         public ValueInput duration;
 
-
-
-
-
-        /// <summary>
-        /// Object new Position
-        /// </summary>
         [DoNotSerialize]
         public ValueOutput result;
 
@@ -118,10 +114,11 @@ namespace PDSim.Animation
 
             result = ValueOutput<Vector3>("End Position", (flow) => resultValue);
 
-            Requirement(movingObject, enter); //Specifies that we need the myValueA value to be set before the node can run.
-            Requirement(targetPoint, enter); //Specifies that we need the myValueB value to be set before the node can run.
-            //Succession(inputTrigger, outputTrigger); //Specifies that the input trigger port's input exits at the output trigger port. Not setting your succession also dims connected nodes, but the execution still completes.
-            Assignment(enter, result);//Specifies that data is written to the result string output when the inputTrigger is triggered.
+            Requirement(movingObject, enter);
+            Requirement(targetPoint, enter);
+
+            // Data is written to the result string output when the inputTrigger is triggered.
+            Assignment(enter, result);
         }
 
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace PDSim.Utils
 {
+    /// <summary>
+    /// Helper class to generate unique animation names
+    /// </summary>
     public static class AnimationNames
     {
         public static string UniqueBooleanAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)

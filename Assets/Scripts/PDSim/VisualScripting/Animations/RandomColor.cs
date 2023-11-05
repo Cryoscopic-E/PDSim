@@ -1,8 +1,12 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace PDSim.Animations
+namespace PDSim.VisualScripting.Animations
 {
+
+    /// <summary>
+    /// Animation unit to change the color of a renderer
+    /// </summary>
     [UnitCategory("PDSim/Animations")]
     public class RandomColor : Unit
     {

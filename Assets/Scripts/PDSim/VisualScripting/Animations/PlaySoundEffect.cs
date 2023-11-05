@@ -1,8 +1,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace PDSim.Animations
+namespace PDSim.VisualScripting.Animations
 {
+    /// <summary>
+    /// Animation unit to play a sound effect
+    /// </summary>
     [UnitCategory("PDSim/Animations")]
     public class PlaySoundEffect : Unit
     {

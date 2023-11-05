@@ -3,35 +3,37 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
-
-public class PDSimMain : EditorWindow
+namespace PDSim.UI
 {
-    [MenuItem("Window/UI Toolkit/PDSimMain")]
-    public static void ShowExample()
+    public class PDSimMain : EditorWindow
     {
-        PDSimMain wnd = GetWindow<PDSimMain>();
-        wnd.titleContent = new GUIContent("PDSimMain");
-    }
+        [MenuItem("Window/UI Toolkit/PDSimMain")]
+        public static void ShowExample()
+        {
+            PDSimMain wnd = GetWindow<PDSimMain>();
+            wnd.titleContent = new GUIContent("PDSimMain");
+        }
 
-    public void CreateGUI()
-    {
-        // Each editor window contains a root VisualElement object
-        VisualElement root = rootVisualElement;
+        public void CreateGUI()
+        {
+            // Each editor window contains a root VisualElement object
+            VisualElement root = rootVisualElement;
 
-        // VisualElements objects can contain other VisualElement following a tree hierarchy.
-        VisualElement label = new Label("Hello World! From C#");
-        root.Add(label);
+            // VisualElements objects can contain other VisualElement following a tree hierarchy.
+            VisualElement label = new Label("Hello World! From C#");
+            root.Add(label);
 
-        // Import UXML
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/PDSimMain.uxml");
-        VisualElement labelFromUXML = visualTree.Instantiate();
-        root.Add(labelFromUXML);
+            // Import UXML
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/PDSimMain.uxml");
+            VisualElement labelFromUXML = visualTree.Instantiate();
+            root.Add(labelFromUXML);
 
-        // A stylesheet can be added to a VisualElement.
-        // The style will be applied to the VisualElement and all of its children.
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/UI/PDSimMain.uss");
-        VisualElement labelWithStyle = new Label("Hello World! With Style");
-        labelWithStyle.styleSheets.Add(styleSheet);
-        root.Add(labelWithStyle);
+            // A stylesheet can be added to a VisualElement.
+            // The style will be applied to the VisualElement and all of its children.
+            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/UI/PDSimMain.uss");
+            VisualElement labelWithStyle = new Label("Hello World! With Style");
+            labelWithStyle.styleSheets.Add(styleSheet);
+            root.Add(labelWithStyle);
+        }
     }
 }

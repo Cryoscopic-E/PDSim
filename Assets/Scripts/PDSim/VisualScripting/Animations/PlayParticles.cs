@@ -3,8 +3,11 @@ using Unity.VisualScripting;
 
 
 
-namespace PDSim.Animations
+namespace PDSim.VisualScripting.Animations
 {
+    /// <summary>
+    /// Animation unit to play a particle effect
+    /// </summary>
     [UnitCategory("PDSim/Animations")]
     public class PlayParticles : Unit
     {
@@ -28,12 +31,12 @@ namespace PDSim.Animations
         {
             inputTrigger = ControlInput("inputTrigger", (flow) => { return Spawn(flow); });
             outputTrigger = ControlOutput("outputTrigger");
-            
+
             particleSystem = ValueInput<GameObject>("particleSystem", null);
-            
+
             particlePosition = ValueInput<Vector3>("position", Vector3.zero);
             particleRotation = ValueInput<Vector3>("rotation", Quaternion.identity.eulerAngles);
-            
+
             Succession(inputTrigger, outputTrigger);
             Requirement(particleSystem, inputTrigger);
 

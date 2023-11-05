@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace PDSim.Protobuf
 {
+    /// <summary>
+    /// A PdSim problem instance
+    /// 
+    /// This is the PDDL domain representation
+    /// </summary>
     public class PdSimProblem : ScriptableObject
     {
         public string domainName;
