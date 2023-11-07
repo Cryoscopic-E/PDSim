@@ -6,10 +6,6 @@
     <ui:VisualElement name="FluentOriginal">
         <ui:Label text="(at ?x-object ?l-location)" display-tooltip-when-elided="true" name="Predicate" style="margin-top: 10px; padding-left: 10px; padding-right: 10px; align-items: center; justify-content: center; flex-direction: row; -unity-text-align: middle-center; font-size: 15px; -unity-font-definition: url(&apos;project://database/Assets/UI/Fonts/Text-Font.asset?fileID=11400000&amp;guid=2c4fcf671ad72124392a8074fb1f75a0&amp;type=2#Text-Font&apos;);" />
     </ui:VisualElement>
-    <ui:VisualElement name="NegatedContainer" style="margin-top: 10px; display: flex;">
-        <ui:Label text="Animation for Negative Predicate" display-tooltip-when-elided="true" style="padding-left: 15px; padding-right: 10px; background-color: rgb(64, 114, 125);" />
-        <ui:Toggle label="Negative" name="Negated" style="margin-left: 20px; margin-right: 20px; margin-top: 20px; padding-left: 15px;" />
-    </ui:VisualElement>
     <ui:VisualElement name="AttributesTypes" style="margin-top: 20px;">
         <ui:Label text="Attributes Types" display-tooltip-when-elided="true" style="padding-left: 15px; padding-right: 10px; background-color: rgb(144, 87, 86);" />
         <ui:ScrollView name="TypesList" style="margin-left: 20px; margin-right: 20px; padding-left: 0; padding-right: 0; margin-top: 10px;" />

@@ -8,21 +8,21 @@ namespace PDSim.Utils
     /// </summary>
     public static class AnimationNames
     {
-        public static string UniqueBooleanAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)
-        {
-            var animationName = predicateName;
-            if (!value.IsTrue())
-                animationName = "NOT_" + animationName;
+        // public static string UniqueBooleanAnimationName(PdSimAtom value, string predicateName, List<string> attributeTypes)
+        // {
+        //     var animationName = predicateName;
+        //     if (!value.IsTrue())
+        //         animationName = "NOT_" + animationName;
 
-            foreach (var item in attributeTypes)
-            {
-                animationName += "_" + item;
-            }
+        //     foreach (var item in attributeTypes)
+        //     {
+        //         animationName += "_" + item;
+        //     }
 
-            return animationName;
-        }
+        //     return animationName;
+        // }
 
-        public static string UniqueNumericAnimationName(string predicateName, List<string> attributeTypes)
+        public static string UniqueAnimationName(string predicateName, List<string> attributeTypes)
         {
             var animationName = predicateName;
 

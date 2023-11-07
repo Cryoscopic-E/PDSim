@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PDSim.Protobuf;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -50,6 +51,19 @@ namespace PDSim.VisualScripting
         [DoNotSerialize]
         public List<ValueOutput> ArgumentPorts { get; } = new List<ValueOutput>();
 
+        // Value Type of the effect
+        [SerializeAs(nameof(EffectValueType))]
+        private ValueType _effectValueType;
+
+        [DoNotSerialize]
+        public ValueType EffectValueType
+        {
+            get => _effectValueType;
+            set => _effectValueType = value;
+        }
+
+        [DoNotSerialize]
+        public ValueOutput Value;
 
         protected override void Definition()
         {
@@ -64,6 +78,20 @@ namespace PDSim.VisualScripting
             {
                 ArgumentPorts.Add(ValueOutput<GameObject>(EffectArguments[i]));
             }
+
+            if (EffectValueType == ValueType.Boolean)
+            {
+                Value = ValueOutput<bool>("Boolean");
+            }
+            else if (EffectValueType == ValueType.Real || EffectValueType == ValueType.Int)
+            {
+                Value = ValueOutput<float>("Number");
+            }
+            else
+            {
+                Value = ValueOutput<string>("Symbol");
+            }
+
         }
 
         public override EventHook GetHook(GraphReference reference)
@@ -79,15 +107,28 @@ namespace PDSim.VisualScripting
 
         protected override void AssignArguments(Flow flow, EffectEventArgs args)
         {
+            // Set attributes value
             for (var i = 0; i < ArgumentCount; i++)
             {
                 flow.SetValue(ArgumentPorts[i], args.arguments[i]);
             }
-        }
+            // Set value
+            var contentCase = args.value.contentCase;
+            switch (contentCase)
+            {
+                default:
+                case Atom.ContentOneofCase.Symbol:
+                    flow.SetValue(Value, args.value.valueSymbol);
+                    break;
+                case Atom.ContentOneofCase.Int:
+                case Atom.ContentOneofCase.Real:
+                    flow.SetValue(Value, float.Parse(args.value.valueSymbol));
+                    break;
+                case Atom.ContentOneofCase.Boolean:
+                    flow.SetValue(Value, bool.Parse(args.value.valueSymbol));
+                    break;
+            }
 
-        public static void Trigger(GameObject target, string name, params GameObject[] args)
-        {
-            EventBus.Trigger(EventNames.actionEffectStart, target, new CustomEventArgs(name, args));
         }
     }
 
@@ -96,11 +137,14 @@ namespace PDSim.VisualScripting
     {
         public readonly string name;
 
+        public readonly PdSimAtom value;
+
         public readonly GameObject[] arguments;
 
-        public EffectEventArgs(string name, params GameObject[] arguments)
+        public EffectEventArgs(string name, PdSimAtom value, params GameObject[] arguments)
         {
             this.name = name;
+            this.value = value;
             this.arguments = arguments;
         }
     }

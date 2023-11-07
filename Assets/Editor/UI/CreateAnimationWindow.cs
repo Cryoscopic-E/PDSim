@@ -19,8 +19,6 @@ namespace Editor.UI
 
         private PdSimFluent _metadata;
 
-        private Toggle _isNegated;
-
         private ScrollView _predicateAnimationAttributeList;
 
         private FluentAnimation _context;
@@ -56,16 +54,6 @@ namespace Editor.UI
 
             var animationName = root.Q<Label>("Predicate");
             animationName.text = _metadata.ToString();
-
-            // Negated
-
-            if (_metadata.type != ValueType.Boolean)
-                root.Q<VisualElement>("NegatedContainer").style.display = DisplayStyle.None;
-            else
-                root.Q<VisualElement>("NegatedContainer").style.display = DisplayStyle.Flex;
-
-            _isNegated = root.Q<Toggle>("Negated");
-
 
             // Types list
 
@@ -110,10 +98,10 @@ namespace Editor.UI
         private void CreateAnimation()
         {
             var predicateName = _metadata.name;
-            var negated = _isNegated.value;
             var attributeTypes = new List<string>();
             var attributes = new List<string>();
             var attributesString = string.Empty;
+            var valueType = _metadata.type;
 
             foreach (var item in _predicateAnimationAttributeList.Children())
             {
@@ -122,12 +110,8 @@ namespace Editor.UI
                 attributes.Add(controller.label + " " + controller.value);
                 attributesString += controller.label + " - " + controller.value + "\n";
             }
-            // Create a unique name for the animation, in format: "Negated_PredicateName_AttributeType1_AttributeType2_..."
-            var animationName = "";
-            if (_metadata.type == ValueType.Boolean)
-                animationName = AnimationNames.UniqueBooleanAnimationName(PdSimAtom.Boolean(!negated), predicateName, attributeTypes);
-            else
-                animationName = AnimationNames.UniqueNumericAnimationName(predicateName, attributeTypes);
+
+            var animationName = AnimationNames.UniqueAnimationName(predicateName, attributeTypes);
 
             // Load the prefab
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/PDSim/Fluent Animation.prefab");
@@ -154,7 +138,8 @@ namespace Editor.UI
                 position = new Vector2(-300, -180),
                 ArgumentCount = attributes.Count,
                 EffectName = animationName,
-                EffectArguments = attributes
+                EffectArguments = attributes,
+                EffectValueType = valueType
             };
 
             var contIn = new ControlInputDefinition();
@@ -165,15 +150,22 @@ namespace Editor.UI
             contrOut.key = "Exit";
             contrOut.hideLabel = true;
 
+
+            // Animation definition subgraph
+
             var superUnit = new SubgraphUnit();
             superUnit.nest.source = GraphSource.Embed;
+
+            // Create control ports
             superUnit.nest.embed = new FlowGraph()
             {
                 controlInputDefinitions = { contIn },
                 controlOutputDefinitions = { contrOut }
             };
 
+            // Create value ports
 
+            // For each attribute
             foreach (var a in attributes)
             {
                 var el = new ValueInputDefinition();
@@ -182,19 +174,41 @@ namespace Editor.UI
                 superUnit.nest.embed.valueInputDefinitions.Add(el);
             }
 
+            // For the value
+            var val = new ValueInputDefinition();
 
+            if (valueType == ValueType.Boolean)
+            {
+                val.key = "Boolean";
+                val.type = typeof(bool);
+            }
+            else if (valueType == ValueType.Real || valueType == ValueType.Int)
+            {
+                val.key = "Number";
+                val.type = typeof(float);
+            }
+            else
+            {
+                val.key = "Symbol";
+                val.type = typeof(string);
+            }
+            superUnit.nest.embed.valueInputDefinitions.Add(val);
+
+
+            // Create the input and output units nodes in the subgraph
             var inputUnit = new GraphInput();
             inputUnit.position = new Vector2(-250, -30);
             var outputUnit = new GraphOutput();
             outputUnit.position = new Vector2(250, -30);
 
-
+            // Add the value output to the input unit
             superUnit.nest.graph.title = "Animation Definition";
             superUnit.nest.graph.summary = "Click to edit animation definition";
             superUnit.nest.embed.units.Add(inputUnit);
             superUnit.nest.embed.units.Add(outputUnit);
 
 
+            // Add the EffectEndEvent to the main graph
             var effectEndEvent = new ActionEffectEndEvent()
             {
                 position = new Vector2(200, -144),
@@ -202,21 +216,26 @@ namespace Editor.UI
             };
 
 
+            // Add the units to the main graph
             graph.units.Add(effectEvent);
             graph.units.Add(superUnit);
             graph.units.Add(effectEndEvent);
 
+            // Add the connections to the main graph
+
+            // For the controls
             var conn = new ControlConnection(effectEvent.controlOutputs[0], superUnit.controlInputs[0]);
             var conn2 = new ControlConnection(superUnit.controlOutputs[0], effectEndEvent.controlInputs[0]);
             graph.controlConnections.Add(conn);
             graph.controlConnections.Add(conn2);
 
-
-            for (var i = 0; i < attributes.Count; i++)
+            // For the values (<= because of the value type)
+            for (var i = 0; i <= attributes.Count; i++)
             {
                 var valConn = new ValueConnection(effectEvent.valueOutputs[i], superUnit.valueInputs[i]);
                 graph.valueConnections.Add(valConn);
             }
+
 
 
 
