@@ -387,24 +387,10 @@ namespace PDSim.Protobuf
                 var index = actionParameters.FindIndex(p => p.name == parameter);
                 actionParametersMap.Add(index);
 
-
-                // map parameter to action parameter
-                //for (int j = 0; j < actionParameters.Count; j++)
-                //{
-                //    if (parameter == actionParameters[j].name)
-                //    {
-                //        actionParametersMap.Add(j);
-                //    }
-                //    else
-                //    {
-                //        // if parameter is not in action parameters, add -1
-                //        actionParametersMap.Add(-1);
-                //    }
-                //}
             }
             fluentAssignment = new PdSimFluentAssignment(value, fluentName, parameters);
 
-        
+
         }
         public override string ToString()
         {

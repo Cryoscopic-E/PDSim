@@ -76,14 +76,8 @@ namespace PDSim.Protobuf
             instance.init = new List<PdSimFluentAssignment>();
             foreach (var fluent in parsedProblem.InitialState)
             {
-
-                var val = fluent.Value.Atom;
-
-                if (val.ContentCase == Atom.ContentOneofCase.Boolean && val.Boolean)
-                {
-                    var newFluent = new PdSimFluentAssignment(fluent);
-                    instance.init.Add(newFluent);
-                }
+                var newFluent = new PdSimFluentAssignment(fluent);
+                instance.init.Add(newFluent);
             }
 
             // PLAN
