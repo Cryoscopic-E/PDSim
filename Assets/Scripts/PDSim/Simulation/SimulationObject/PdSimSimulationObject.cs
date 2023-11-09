@@ -65,7 +65,7 @@ namespace PDSim.Simulation.SimulationObject
                 _navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
             }
 
-            _navMeshAgent.enabled = useNavMeshAgent;
+            _navMeshAgent.enabled = useNavMeshAgent;            
         }
 
         private void OnMouseEnter()
