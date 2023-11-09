@@ -43,6 +43,13 @@ namespace PDSim.Protobuf
             }
         }
 
+        // Create a copy and new instance of the atom
+        public PdSimAtom(PdSimAtom atom)
+        {
+            contentCase = atom.contentCase;
+            valueSymbol = atom.valueSymbol;
+        }
+
         private PdSimAtom()
         {
             contentCase = Atom.ContentOneofCase.None;

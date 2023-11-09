@@ -187,10 +187,18 @@ namespace PDSim.Simulation
             OnSimulationReady(problemInstance.plan);
         }
 
-        private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> fluents)
+        /// <summary>
+        /// Given a list of grounded fluents, update the state and the objects
+        /// Yield return each fluent
+        /// </summary>
+        /// <param name="groundedFluents">Grounded action effects</param>
+        /// <returns>Fluent effect that have been added to the world state</returns>
+        private IEnumerator<PdSimFluentAssignment> EnumerateFluentAssignments(List<PdSimFluentAssignment> groundedFluents)
         {
-            foreach (var fluent in fluents)
+            foreach (var fluent in groundedFluents)
             {
+                // Update object state
+
                 // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
                 // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
                 if (fluent.parameters.Count > 0)
@@ -199,21 +207,26 @@ namespace PDSim.Simulation
                     var obj = _objects[objectName];
                     obj.AddFluentAssignment(fluent);
                 }
-                // Update state
+
+                // Update world state
                 _state.AddOrUpdate(fluent);
                 yield return fluent;
             }
         }
 
+        /// <summary>
+        /// Given a action instance (as appears in the plan) and a effect from the action definition
+        /// Ground the effect with the parameters of the action instance
+        /// </summary>
+        /// <param name="planAction">Plan action e.g: move(r1,l0,l1)</param>
+        /// <param name="effect">Action Effect</param>
+        /// <returns>Grounded Effect</returns>
         private PdSimFluentAssignment GroundEffect(PdSimActionInstance planAction, PdSimEffect effect)
         {
             var parametersMap = effect.actionParametersMap;
             var effectFluent = effect.fluentAssignment;
             var actionPlanParameters = planAction.parameters;
             var objectsParameters = new List<string>();
-
-
-
 
             for (var i = 0; i < parametersMap.Count; i++)
             {
@@ -226,20 +239,40 @@ namespace PDSim.Simulation
                     objectsParameters.Add(parameter);
                 }
             }
-            var joinedParameters = string.Join(",", objectsParameters.ToArray());
 
-            var effectApplied = new PdSimFluentAssignment(effectFluent.value, effectFluent.fluentName, objectsParameters);
+            var valueApplied = new PdSimAtom(effectFluent.value);
 
-            return effectApplied;
+
+            switch (effect.effectKind)
+            {
+                default:
+                case EffetKind.None:
+                case EffetKind.Assignment:
+                    break;
+                case EffetKind.Decrease:
+                    valueApplied.DecreaseValue(float.Parse(valueApplied.valueSymbol));
+                    break;
+                case EffetKind.Increase:
+                    valueApplied.IncreaseValue(float.Parse(valueApplied.valueSymbol));
+                    break;
+            }
+
+            return new PdSimFluentAssignment(valueApplied, effectFluent.fluentName, objectsParameters);
         }
 
-        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> pdSimActionEffect)
+
+        /// <summary>
+        /// Enumerate the grounded effects of an action instance
+        /// </summary>
+        /// <param name="planAction">Plan action e.g: move(r1,l0,l1)</param>
+        /// <param name="pdSimActionEffect">Action Effect definition</param>
+        /// <returns>Enumerator of the grounded effects</returns>
+        private IEnumerator<PdSimFluentAssignment> EnumerateActionEffects(PdSimActionInstance planAction, List<PdSimEffect> actionEffects)
         {
-            // application of effect as Fluent assignment
-            // list of all the fluents in the effect to animate
+
             var fluentsEffect = new List<PdSimFluentAssignment>();
 
-            foreach (var effect in pdSimActionEffect)
+            foreach (var effect in actionEffects)
             {
 
                 var groundedEffect = GroundEffect(planAction, effect);
@@ -274,8 +307,50 @@ namespace PDSim.Simulation
             yield return null;
         }
 
+        private float ActionTime(float time)
+        {
+            return (float)System.Math.Round(time, 2);
+        }
+
         private IEnumerator SimulateTemporalPlan()
         {
+            OnTemporalSimulation();
+
+            var plan = problemInstance.plan;
+            // Create a dictionary of plan actions with the time they start as key
+            Dictionary<float, List<PdSimActionInstance>> planBlocks = new Dictionary<float, List<PdSimActionInstance>>();
+            // Populate the dictionary with all the action start times
+            foreach (var action in plan)
+            {
+                var startTime = action.startTime;
+                startTime = ActionTime(startTime);
+                if (!planBlocks.ContainsKey(startTime))
+                    planBlocks.Add(startTime, new List<PdSimActionInstance>());
+                planBlocks[startTime].Add(action);
+            }
+
+            // Sort the dictionary by key (time)
+            var sortedPlanBlocks = planBlocks.OrderBy(x => x.Key).ToList();
+
+            // For each block of actions
+            for (var i = 0; i < sortedPlanBlocks.Count; i++)
+            {
+                var block = sortedPlanBlocks[i];
+                var startTime = block.Key;
+                var actions = block.Value;
+
+                OnSimulationActionBlock("Block " + i, i);
+
+                // For each action in the block
+                for (var j = 0; j < actions.Count; j++)
+                {
+                    var action = actions[j];
+                    var actionDefinition = _durativeActions[action.name];
+
+
+                }
+            }
+
             yield return null;
         }
 
