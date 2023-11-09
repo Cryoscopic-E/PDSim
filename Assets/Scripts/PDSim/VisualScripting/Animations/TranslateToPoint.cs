@@ -1,3 +1,4 @@
+using PDSim.Simulation.SimulationObject;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -50,12 +51,21 @@ namespace PDSim.VisualScripting.Animations
                 goal -= movingObjOffset.localPosition;
             }
 
-            if (duration == 0)
+            if (duration == 0.0f)
             {
-                movingObj.transform.position = goal;
                 resultValue = goal;
+                movingObj.transform.position = goal;
                 yield return exit;
             }
+
+            // if moving object is nav agent, set destination
+            var simObj = movingObj.GetComponent<PdSimSimulationObject>();
+            if (simObj.useNavMeshAgent)
+            {
+                // set the nav agent destination
+                yield return simObj.MoveTo(goal);
+            }
+
 
 
             if (flow.GetValue<bool>(matchHeightFirst))

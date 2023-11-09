@@ -12,8 +12,25 @@ using PDSim.Simulation.SimulationObject;
 
 namespace PDSim.Simulation
 {
+
+    public struct SimulationState
+    {
+        public bool isTimedProblem;
+        public bool simulatingPlan;
+        public PdSimActionInstance currentAction;
+    }
+
     public class PdSimManager : MonoBehaviour
     {
+
+        // State of the simulation
+        private SimulationState _simulationState;
+
+        public SimulationState SimulationState
+        {
+            get { return _simulationState; }
+        }
+
         // Singleton Instance
         // ------------------
 
@@ -128,6 +145,14 @@ namespace PDSim.Simulation
                 var node = StateNode.FromAssignment(init);
                 _state.AddOrUpdate(node);
             }
+
+            // Simulation State
+            _simulationState = new SimulationState()
+            {
+                isTimedProblem = isTimedProblem,
+                simulatingPlan = false,
+                currentAction = null
+            };
 
             // Gameobjects References
             _objects = new Dictionary<string, PdSimSimulationObject>();
@@ -287,13 +312,18 @@ namespace PDSim.Simulation
             StartCoroutine(SimulationRoutine());
         }
 
+        public PdSimActionInstance CurrentAction { get; set;}
 
         private IEnumerator SimulateSequentialPlan()
         {
+            _simulationState.simulatingPlan = true;
+
             var plan = problemInstance.plan;
             for (var i = 0; i < plan.Count; i++)
             {
                 var planAction = plan[i];
+
+                _simulationState.currentAction = planAction;
 
                 OnSimulationActionBlock(planAction.name, i);
 
@@ -304,6 +334,10 @@ namespace PDSim.Simulation
                 yield return AnimationMachineLoop(fluentEnumerator);
             }
             OnSimulationFinished();
+
+            _simulationState.simulatingPlan = false;
+            _simulationState.currentAction = null;
+
             yield return null;
         }
 

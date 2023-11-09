@@ -109,6 +109,8 @@ namespace PDSim.Simulation.SimulationObject
                 {
                     yield return null;
                 }
+
+                yield return new WaitUntil(() => _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance);
             }
             else
             {
