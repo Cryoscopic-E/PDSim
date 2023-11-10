@@ -83,6 +83,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4647242217670449244, guid: 3f3559426adb29e4db4e4e7662e5efd5, type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 4994800415274200705, guid: 3f3559426adb29e4db4e4e7662e5efd5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.61
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -107,7 +115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435292698034127583, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.55
       objectReference: {fileID: 0}
     - target: {fileID: 4435292698034127583, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_LocalPosition.y
@@ -115,7 +123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4435292698034127583, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 4.378
       objectReference: {fileID: 0}
     - target: {fileID: 4435292698034127583, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_LocalRotation.w
@@ -155,7 +163,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7449021867803973887, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_Size.y
-      value: 0.66
+      value: 0.71000004
       objectReference: {fileID: 0}
     - target: {fileID: 7449021867803973887, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_Size.z
@@ -163,7 +171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7449021867803973887, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_Center.y
-      value: 0.28
+      value: 0.305
       objectReference: {fileID: 0}
     - target: {fileID: 7449021867803973887, guid: 795d540cba09572438081a3f19f29dfa, type: 3}
       propertyPath: m_Center.z
@@ -209,7 +217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data:
-    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"Access-Point","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":null,"$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[{"name":"Access-Point","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
     _objectReferences:
     - {fileID: 1039241156461706250}
 --- !u!114 &-8204981060150177646
