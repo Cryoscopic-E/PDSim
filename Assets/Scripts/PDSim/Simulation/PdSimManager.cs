@@ -586,10 +586,10 @@ namespace PDSim.Simulation
         // Add the animations to the scene
         public void SetUpAnimations()
         {
-            var animationsRootObject = GameObject.Find("Animations");
+            var animationsRootObject = GameObject.Find("Effects Animations");
             if (animationsRootObject == null)
             {
-                animationsRootObject = new GameObject("Animations");
+                animationsRootObject = new GameObject("Effects Animations");
             }
 
             foreach (var fluent in problemModel.fluents)

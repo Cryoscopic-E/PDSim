@@ -13,15 +13,16 @@ namespace Helpers
 
         public Vector3 GetRandomPoint()
         {
-            // Random point in the area with offset
-            var point = new Vector3(
-                           Random.Range(0, size.x),
-                           offset.y,
-                           Random.Range(0, size.z));
+            // Get a random point in the area or volume defined by size and offset
+            Vector3 point = new Vector3(
+                Random.Range(transform.position.x - size.x / 2 + offset.x, transform.position.x + size.x / 2 + offset.x),
+                Random.Range(transform.position.y - size.y / 2 + offset.y, transform.position.y + size.y / 2 + offset.y),
+                Random.Range(transform.position.z - size.z / 2 + offset.z, transform.position.z + size.z / 2 + offset.z)
+            );
 
 
 
-            return transform.position + point;
+            return point;
 
         }
     }
