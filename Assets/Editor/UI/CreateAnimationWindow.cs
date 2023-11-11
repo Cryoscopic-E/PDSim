@@ -125,7 +125,7 @@ namespace Editor.UI
 
             // Set the position of the instance
             instance.transform.position = Vector3.zero;
-            instance.transform.parent = GameObject.Find("Animations").transform;
+            instance.transform.parent = GameObject.Find("Effects Animations").transform;
 
             // Set the animation script
             var graph = instance.GetComponent<ScriptMachine>().graph;

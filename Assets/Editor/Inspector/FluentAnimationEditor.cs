@@ -50,7 +50,7 @@ namespace Editor.Inspector
                 {
                     ReorderableList.defaultBehaviours.DoRemoveButton(List);
                     // Remove from scene under Animations
-                    var animation = GameObject.Find("Animations");
+                    var animation = GameObject.Find("Effects Animations");
                     // Find the child with the same name as the animation we want to remove.
                     for (var i = 0; i < animation.transform.childCount; i++)
                     {

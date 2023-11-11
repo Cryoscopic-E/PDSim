@@ -63,13 +63,7 @@ namespace PDSim.VisualScripting.Animations
                 goal += targetObjOffset.localPosition;
             }
 
-            // if the duration is 0, just set the position and return
-            if (duration == 0.0f)
-            {
-                resultValue = goal;
-                movingObj.transform.position = goal;
-                yield return exit;
-            }
+
 
             // if moving object is nav agent, set destination
             var simObj = movingObj.GetComponent<PdSimSimulationObject>();
@@ -77,42 +71,52 @@ namespace PDSim.VisualScripting.Animations
             {
                 // set the nav agent destination
                 yield return simObj.MoveTo(goal);
-            }
-
-
-
-            // if the height should be matched first
-            if (flow.GetValue<bool>(matchHeightFirst))
-            {
-                // align height first for a third of the duration
-                while (timer < duration / 3)
-                {
-                    timer += Time.deltaTime;
-
-                    movingObj.transform.position = Vector3.Lerp(startPosition, new Vector3(movingObj.transform.position.x, goal.y, movingObj.transform.position.z), timer / (duration / 3));
-
-                    yield return null;
-                }
-
-                startPosition = movingObj.transform.position;
-
-                // align x and z for the remaining duration
-                while (timer < duration)
-                {
-                    timer += Time.deltaTime;
-
-                    movingObj.transform.position = Vector3.Lerp(startPosition, goal, (timer - (duration / 3)) / (duration - (duration / 3)));
-
-                    yield return null;
-                }
+                movingObj.transform.position = goal;
             }
             else
             {
-                // Lerp the position for the duration
-                for (float progress = 0; progress < duration; progress += Time.deltaTime)
+                // if the duration is 0, just set the position and return
+                if (duration == 0.0f)
                 {
-                    movingObj.transform.position = Vector3.Lerp(startPosition, goal, progress / duration);
-                    yield return null;
+                    resultValue = goal;
+                    movingObj.transform.position = goal;
+                    yield return exit;
+                }
+
+
+                // if the height should be matched first
+                if (flow.GetValue<bool>(matchHeightFirst))
+                {
+                    // align height first for a third of the duration
+                    while (timer < duration / 3)
+                    {
+                        timer += Time.deltaTime;
+
+                        movingObj.transform.position = Vector3.Lerp(startPosition, new Vector3(movingObj.transform.position.x, goal.y, movingObj.transform.position.z), timer / (duration / 3));
+
+                        yield return null;
+                    }
+
+                    startPosition = movingObj.transform.position;
+
+                    // align x and z for the remaining duration
+                    while (timer < duration)
+                    {
+                        timer += Time.deltaTime;
+
+                        movingObj.transform.position = Vector3.Lerp(startPosition, goal, (timer - (duration / 3)) / (duration - (duration / 3)));
+
+                        yield return null;
+                    }
+                }
+                else
+                {
+                    // Lerp the position for the duration
+                    for (float progress = 0; progress < duration; progress += Time.deltaTime)
+                    {
+                        movingObj.transform.position = Vector3.Lerp(startPosition, goal, progress / duration);
+                        yield return null;
+                    }
                 }
             }
             resultValue = goal;

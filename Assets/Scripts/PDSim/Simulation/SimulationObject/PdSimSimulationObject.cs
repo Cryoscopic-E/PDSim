@@ -49,10 +49,10 @@ namespace PDSim.Simulation.SimulationObject
         // Add a fluent assignment to the object's state
         public void AddFluentAssignment(PdSimFluentAssignment fluentAssignment)
         {
-            state[fluentAssignment.fluentName] = fluentAssignment;
+            // Add only if object is active
+            if (gameObject.activeSelf)
+                state[fluentAssignment.fluentName] = fluentAssignment;
         }
-
-
 
         private void Awake()
         {
@@ -65,7 +65,7 @@ namespace PDSim.Simulation.SimulationObject
                 _navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
             }
 
-            _navMeshAgent.enabled = useNavMeshAgent;            
+            _navMeshAgent.enabled = useNavMeshAgent;
         }
 
         private void OnMouseEnter()

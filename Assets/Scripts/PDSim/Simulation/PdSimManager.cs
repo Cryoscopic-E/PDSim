@@ -198,8 +198,8 @@ namespace PDSim.Simulation
             }
 
             // Effect Animation References
-            var animationsRootObject = GameObject.Find("Animations");
-            var fluentAnimations = animationsRootObject.GetComponents<FluentAnimation>();
+            var effectsAnimationsRootObject = GameObject.Find("Effects Animations");
+            var fluentAnimations = effectsAnimationsRootObject.GetComponents<FluentAnimation>();
 
             _effectToAnimations = new Dictionary<string, FluentAnimation>();
             foreach (var fluentAnimation in fluentAnimations)
@@ -267,12 +267,28 @@ namespace PDSim.Simulation
 
             var valueApplied = new PdSimAtom(effectFluent.value);
 
-
             switch (effect.effectKind)
             {
                 default:
                 case EffetKind.None:
+                    break;
                 case EffetKind.Assignment:
+                    if (valueApplied.contentCase == Atom.ContentOneofCase.Symbol)
+                    {
+                        // check if the symbol is a parameter of the action
+                        var symbol = valueApplied.valueSymbol;
+                        // TODO: This is a hack, move to the model
+                        var actionDefinition = _instantaneousActions[planAction.name];
+                        var parameterIndex = actionDefinition.parameters.FindIndex(p => p.name == symbol);
+
+                        if (parameterIndex != -1)
+                        {
+                            // if it is, get the value of the parameter
+                            var parameterValue = planAction.parameters[parameterIndex];
+                            valueApplied.valueSymbol = parameterValue;
+                        }
+
+                    }
                     break;
                 case EffetKind.Decrease:
                     valueApplied.DecreaseValue(float.Parse(valueApplied.valueSymbol));
@@ -312,7 +328,7 @@ namespace PDSim.Simulation
             StartCoroutine(SimulationRoutine());
         }
 
-        public PdSimActionInstance CurrentAction { get; set;}
+        public PdSimActionInstance CurrentAction { get; set; }
 
         private IEnumerator SimulateSequentialPlan()
         {
