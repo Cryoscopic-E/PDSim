@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using PDSim.Protobuf;
 using PDSim.Simulation;
 using PDSim.Utils;
-using PDSim.VisualScripting;
+using PDSim.VisualScripting.Events;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -133,7 +133,7 @@ namespace Editor.UI
             graph.summary = attributesString;
 
             // Add the units
-            var effectEvent = new ActionEffectEvent()
+            var effectEvent = new EffectEvent()
             {
                 position = new Vector2(-300, -180),
                 ArgumentCount = attributes.Count,
@@ -209,7 +209,7 @@ namespace Editor.UI
 
 
             // Add the EffectEndEvent to the main graph
-            var effectEndEvent = new ActionEffectEndEvent()
+            var effectEndEvent = new EffectEndEvent()
             {
                 position = new Vector2(200, -144),
                 EffectName = animationName
