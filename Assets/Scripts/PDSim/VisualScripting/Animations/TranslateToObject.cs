@@ -63,8 +63,6 @@ namespace PDSim.VisualScripting.Animations
                 goal += targetObjOffset.localPosition;
             }
 
-
-
             // if moving object is nav agent, set destination
             var simObj = movingObj.GetComponent<PdSimSimulationObject>();
             if (simObj.useNavMeshAgent)

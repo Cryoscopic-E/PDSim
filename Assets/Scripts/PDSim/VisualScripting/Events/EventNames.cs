@@ -8,7 +8,5 @@
     {
         public static string actionEffectStart = "OnEffectStart";
         public static string actionEffectEnd = "OnEffectEnd";
-        public static string actionStart = "OnActionStart";
-        public static string actionEnd = "OnActionEnd";
     }
 }
