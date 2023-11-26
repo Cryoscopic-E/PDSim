@@ -403,6 +403,9 @@ namespace PDSim.Protobuf
         {
             string effect = "";
 
+            if (effectKind != EffetKind.None)
+                effect += $"|{effectKind.ToString().ToUpper()}| ";
+
             effect += fluentAssignment.ToString();
 
             effect += "\n";
