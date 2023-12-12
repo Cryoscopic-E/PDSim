@@ -73,11 +73,6 @@ namespace PDSim.Simulation.SimulationObject
             PdSimManager.Instance.HoverObject(this);
         }
 
-        private void OnMouseExit()
-        {
-            PdSimManager.Instance.ClearHover();
-        }
-
         #region HELPER FUNCTIONS
 
         // Move the object to a new position

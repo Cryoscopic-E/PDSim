@@ -18,6 +18,8 @@ namespace PDSim.UI
         {
             _root = GetComponent<UIDocument>().rootVisualElement;
 
+            _root.style.display = DisplayStyle.None;
+
             _stateListController = new StateListController();
 
 
@@ -42,13 +44,9 @@ namespace PDSim.UI
 
         public void ToggleVisibility()
         {
-            _root.visible = !_root.visible;
+            _root.style.display = _root.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        public void HighlightCurrentAction(int index)
-        {
-            _stateList.AddToSelection(index);
-        }
     }
 }
 

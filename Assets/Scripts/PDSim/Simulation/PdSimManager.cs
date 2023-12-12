@@ -132,6 +132,10 @@ namespace PDSim.Simulation
 
         private void Start()
         {
+            if (problemModel == null)
+            {
+                return;
+            }
 
             // Problem is temporal set UI
             isTimedProblem = problemModel.durativeActions.Count > 0;

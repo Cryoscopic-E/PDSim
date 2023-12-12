@@ -22,6 +22,8 @@ namespace PDSim.UI
             _movablePanel = new(_root);
 
             _planList = _root.Q<ListView>("PlanList");
+
+            _root.style.display = DisplayStyle.None;
         }
 
         public PlanActionsListController InitializePlanList(List<PdSimActionInstance> list)
@@ -34,8 +36,8 @@ namespace PDSim.UI
 
         public void ToggleVisibility()
         {
-            _root.visible = !_root.visible;
             _movablePanel.ResetPosition();
+            _root.style.display = _root.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void HighlightCurrentAction(int index)

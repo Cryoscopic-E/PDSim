@@ -9,7 +9,7 @@ namespace PDSim.VisualScripting.Animations
     /// Animation unit to play a particle effect
     /// </summary>
     [UnitCategory("PDSim/Animations")]
-    public class PlayParticles : Unit
+    public class PlayPauseParticles : Unit
     {
         [DoNotSerialize]
         public ControlInput inputTrigger;
@@ -21,37 +21,41 @@ namespace PDSim.VisualScripting.Animations
         public ValueInput particleSystem;
 
         [DoNotSerialize]
-        public ValueInput particlePosition;
-
-        [DoNotSerialize]
-        public ValueInput particleRotation;
+        public ValueInput play;
 
 
         protected override void Definition()
         {
-            inputTrigger = ControlInput("inputTrigger", (flow) => { return Spawn(flow); });
+            inputTrigger = ControlInput("inputTrigger", (flow) => { return PlayOrPause(flow); });
             outputTrigger = ControlOutput("outputTrigger");
 
             particleSystem = ValueInput<GameObject>("particleSystem", null);
 
-            particlePosition = ValueInput<Vector3>("position", Vector3.zero);
-            particleRotation = ValueInput<Vector3>("rotation", Quaternion.identity.eulerAngles);
+            play = ValueInput<bool>("play", true);
 
             Succession(inputTrigger, outputTrigger);
             Requirement(particleSystem, inputTrigger);
 
         }
 
-        private ControlOutput Spawn(Flow flow)
+        private ControlOutput PlayOrPause(Flow flow)
         {
             var particleObject = flow.GetValue<GameObject>(this.particleSystem);
             var particleSystem = particleObject.GetComponent<ParticleSystem>();
+            
+            if (flow.GetValue<bool>(this.play))
+            {
+                particleSystem.gameObject.SetActive(true);
+                particleSystem.Play();
+            }
+            else
+            {
+                particleSystem.Stop();
+                particleSystem.gameObject.SetActive(false);
+            }
 
+            
 
-            particleObject.transform.position = flow.GetValue<Vector3>(this.particlePosition);
-            particleObject.transform.rotation = Quaternion.Euler(flow.GetValue<Vector3>(this.particleRotation));
-
-            particleSystem.Play();
             return outputTrigger;
         }
     }

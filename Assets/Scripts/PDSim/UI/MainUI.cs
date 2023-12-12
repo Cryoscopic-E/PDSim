@@ -25,14 +25,18 @@ namespace PDSim.UI
 
         Button planPanelButton;
         Button actionTabButton;
-        Button simulationControlsButton;
+        Button simulationSpeedControlsButton;
         Button objectInfoButton;
         Button cameraControlsButton;
+
+        Slider simulationSpeedSlider;
 
         Label actionStatus;
         Label predicateAnimated;
 
         VisualElement actionInfo;
+
+        VisualElement speedBar;
 
         VisualElement cameraHints;
 
@@ -61,7 +65,12 @@ namespace PDSim.UI
             objectInfoButton = root.Q<Button>("ObjectInfoButton");
             cameraControlsButton = root.Q<Button>("CameraControlsButton");
 
+            simulationSpeedSlider = root.Q<Slider>("SpeedSlider");
+
+            simulationSpeedControlsButton = root.Q<Button>("SpeedControlButton");
+
             actionInfo = root.Q<VisualElement>("ActionInfo");
+            actionInfo.style.display = DisplayStyle.None;
 
             cameraHints = root.Q<VisualElement>("CameraHints");
             cameraHints.style.display = DisplayStyle.None;
@@ -76,11 +85,22 @@ namespace PDSim.UI
             prevButton.clicked += PrevButtonClicked;
             nextButton.clicked += NextButtonClicked;
 
+            speedBar = root.Q<VisualElement>("SpeedBar");
+            speedBar.style.display = DisplayStyle.None;
+            simulationSpeedControlsButton.clicked += () =>
+            {
+                speedBar.style.display = speedBar.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
+            };
+
             planPanelButton.clicked += PlanPanelButtonClicked;
             actionTabButton.clicked += ActionTabButtonClicked;
             objectInfoButton.clicked += ObjectInfoButtonClicked;
             cameraControlsButton.clicked += CameraControlsButtonClicked;
 
+            simulationSpeedSlider.RegisterValueChangedCallback((evt) =>
+            {
+                Time.timeScale = evt.newValue;
+            });
 
 
             var simulationNameLabel = root.Q<Label>("SimulationName");
@@ -207,7 +227,7 @@ namespace PDSim.UI
 
         private void ActionTabButtonClicked()
         {
-            actionInfo.visible = !actionInfo.visible;
+            actionInfo.style.display = actionInfo.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
 

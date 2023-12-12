@@ -27,8 +27,6 @@ namespace PDSim.VisualScripting.Animations
         [DoNotSerialize]
         public ValueInput duration;
 
-
-
         /// <summary>
         /// Object new Position
         /// </summary>
