@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/SceneUI/MainUI.uss?fileID=7433441132597879392&amp;guid=2ea056ba5e1f8e44ba3c892c13f48432&amp;type=3#MainUI" />
-    <ui:VisualElement name="BackGround" style="flex-grow: 1; background-image: url(&apos;project://database/Assets/UI/FreeButtonSet/Textures/background.png?fileID=2800000&amp;guid=a093780a76b8e8c4c8b121e123d21a82&amp;type=3#background&apos;);">
-        <ui:Label tabindex="-1" text="PDSim: Planning Domain Simulation" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text-header" />
-    </ui:VisualElement>
-</ui:UXML>

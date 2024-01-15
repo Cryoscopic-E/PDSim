@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:DropdownField label="?x" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="Attribute" style="flex-direction: row; justify-content: center; align-items: center; padding-left: 20px;" />
+</ui:UXML>

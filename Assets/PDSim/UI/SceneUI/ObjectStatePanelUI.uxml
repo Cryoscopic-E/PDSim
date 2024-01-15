@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/SceneUI/MainUI.uss?fileID=7433441132597879392&amp;guid=2ea056ba5e1f8e44ba3c892c13f48432&amp;type=3#MainUI" />
+    <ui:VisualElement name="Root" style="position: absolute; width: 20%; height: 351px; background-image: url(&apos;project://database/Assets/UI/FreeButtonSet/Textures/other/universal_panel_30.png?fileID=2800000&amp;guid=0b6605e33662e954eb4ff8943ef1c809&amp;type=3#universal_panel_30&apos;); -unity-slice-left: 25; -unity-slice-top: 25; -unity-slice-right: 25; -unity-slice-bottom: 25; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; align-items: center; justify-content: flex-start; top: 614px; left: 1481px; display: flex; -unity-background-image-tint-color: rgb(197, 193, 193);">
+        <ui:Label text="Name" display-tooltip-when-elided="true" name="ObjectName" class="text-header" style="width: 369px; -unity-text-align: upper-center; background-image: url(&apos;project://database/Assets/UI/FreeButtonSet/Textures/buttons/button_50.png?fileID=2800000&amp;guid=a24331652574b3e479d00a8c0c41d820&amp;type=3#button_50&apos;); -unity-slice-left: 10; -unity-slice-top: 10; -unity-slice-right: 10; -unity-slice-bottom: 10; -unity-background-scale-mode: stretch-to-fill; background-color: rgba(0, 0, 0, 0); -unity-background-image-tint-color: rgb(231, 195, 151); height: 61px;" />
+        <ui:VisualElement name="ListContainer" style="width: 100%; height: 100%;">
+            <ui:ListView focusable="false" name="StateList" view-data-key="PlanList" fixed-item-height="40" picking-mode="Ignore" selection-type="None" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
