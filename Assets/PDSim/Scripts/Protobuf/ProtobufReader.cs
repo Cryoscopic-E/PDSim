@@ -77,6 +77,15 @@ namespace PDSim.Protobuf
             foreach (var fluent in parsedProblem.InitialState)
             {
                 var newFluent = new PdSimFluentAssignment(fluent);
+                // only add boolean fluent if is true
+                if (newFluent.value.contentCase == Atom.ContentOneofCase.Boolean)
+                {
+                    if (newFluent.value.IsTrue())
+                        instance.init.Add(newFluent);
+                    else
+                        continue;
+                }
+                // default add symbolic and numeric fluents
                 instance.init.Add(newFluent);
             }
 
