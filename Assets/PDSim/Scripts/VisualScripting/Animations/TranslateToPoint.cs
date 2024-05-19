@@ -66,7 +66,9 @@ namespace PDSim.VisualScripting.Animations
                 {
                     resultValue = goal;
                     movingObj.transform.position = goal;
+                    yield return null;
                     yield return exit;
+                    yield break;
                 }
 
 

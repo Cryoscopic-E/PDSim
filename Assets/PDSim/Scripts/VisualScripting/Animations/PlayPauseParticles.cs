@@ -23,6 +23,12 @@ namespace PDSim.VisualScripting.Animations
         [DoNotSerialize]
         public ValueInput play;
 
+        [DoNotSerialize]
+        public ValueInput changeColor;
+
+        [DoNotSerialize]
+        public ValueInput color;
+
 
         protected override void Definition()
         {
@@ -33,8 +39,14 @@ namespace PDSim.VisualScripting.Animations
 
             play = ValueInput<bool>("play", true);
 
+
+            changeColor = ValueInput<bool>("changeColor", false);
+            color = ValueInput<Color>("color", Color.white); // Default color is white
+
             Succession(inputTrigger, outputTrigger);
             Requirement(particleSystem, inputTrigger);
+            Requirement(color, inputTrigger);
+            //Requirement(changeColor, inputTrigger);
 
         }
 
@@ -43,6 +55,16 @@ namespace PDSim.VisualScripting.Animations
             var particleObject = flow.GetValue<GameObject>(this.particleSystem);
             var particleSystem = particleObject.GetComponent<ParticleSystem>();
             
+            var shouldChangeColor = flow.GetValue<bool>(changeColor);
+
+
+            if (shouldChangeColor)
+            {
+                var mainModule = particleSystem.main;
+                mainModule.startColor = flow.GetValue<Color>(color);
+            }
+
+
             if (flow.GetValue<bool>(this.play))
             {
                 particleSystem.gameObject.SetActive(true);

@@ -76,8 +76,21 @@ namespace PDSim.VisualScripting.Animations
                 {
                     resultValue = goal;
                     movingObj.transform.position = goal;
+                    yield return null;
                     yield return exit;
+                    yield break;
                 }
+
+                // if MovementSettings is set, use those values
+                if (simObj.movementSettings != null)
+                {
+                    yield return simObj.MoveTo(goal);
+                    movingObj.transform.position = goal;
+                    yield return null;
+                    yield return exit;
+                    yield break;
+                }
+
 
 
                 // if the height should be matched first

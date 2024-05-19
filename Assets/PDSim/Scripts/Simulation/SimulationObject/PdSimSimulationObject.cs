@@ -110,29 +110,44 @@ namespace PDSim.Simulation.SimulationObject
             else
             {
                 // Lerp the object to the new position
+                // Initialize variables from movement settings or defaults
                 var t = 0f;
                 var startPosition = transform.position;
-                var distance = Vector3.Distance(startPosition, position);
-                var stopDistance = movementSettings != null ? movementSettings.stoppingDistance : StoppingDistance;
-                var acceleration = movementSettings != null ? movementSettings.acceleration : Acceleration;
-                var speed = movementSettings != null ? movementSettings.speed : Speed;
-                var focusTarget = movementSettings != null ? movementSettings.faceTarget : faceTarget;
-                var angularSpeed = movementSettings != null ? movementSettings.angularSpeed : AngularSpeed;
-                var objTransform = transform;
-                while (distance > stopDistance)
+                var targetPosition = position; // Assuming 'position' is a parameter or a known variable
+                var movementSettingsOrDefault = movementSettings ?? new MovementSettings
                 {
-                    t += Time.deltaTime * (speed / distance) * acceleration;
-                    transform.position = Vector3.Lerp(startPosition, position, t);
+                    stoppingDistance = StoppingDistance,
+                    acceleration = Acceleration,
+                    speed = Speed,
+                    faceTarget = faceTarget,
+                    angularSpeed = AngularSpeed
+                };
 
-                    if (focusTarget)
+                // Use destructuring for cleaner access to settings
+                var (stopDistance, acceleration, speed, focusTarget, angularSpeed) = (
+                    movementSettingsOrDefault.stoppingDistance,
+                    movementSettingsOrDefault.acceleration,
+                    movementSettingsOrDefault.speed,
+                    movementSettingsOrDefault.faceTarget,
+                    movementSettingsOrDefault.angularSpeed
+                );
+
+                if (Vector3.Distance(transform.position, targetPosition) > movementSettingsOrDefault.stoppingDistance)
+                {
+                    while (Vector3.Distance(transform.position, targetPosition) > stopDistance)
                     {
-                        var targetRotation = Quaternion.LookRotation(position - objTransform.position);
-                        objTransform.rotation = Quaternion.Slerp(objTransform.rotation, targetRotation,
-                            Time.deltaTime * angularSpeed);
-                    }
+                        t += Time.deltaTime * (speed / Vector3.Distance(startPosition, targetPosition)) * acceleration;
+                        transform.position = Vector3.Lerp(startPosition, targetPosition, t);
 
-                    distance = Vector3.Distance(objTransform.position, position);
-                    yield return null;
+                        if (focusTarget)
+                        {
+                            var targetDirection = (targetPosition - transform.position).normalized;
+                            var targetRotation = Quaternion.LookRotation(targetDirection);
+                            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * angularSpeed);
+                        }
+
+                        yield return null;
+                    }
                 }
             }
         }
