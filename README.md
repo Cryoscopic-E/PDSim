@@ -32,10 +32,12 @@ PDSim is being developed for the AIPlan4EU H2020 project (https://aiplan4eu-proj
 ## Publication
 If you are using PDSim in your work please cite it:
 ```
-@inproceedings{de2023pdsim,
-  title={PDSim: Planning Domain Simulation and Animation with the Unity Game Engine},
+@inproceedings{de2024planning,
+  title={Planning Domain Simulation: An Interactive System for Plan Visualisation},
   author={De Pellegrin, Emanuele and Petrick, Ronald PA},
-  booktitle={ICAPS 2023 Workshop on Knowledge Engineering for Planning and Scheduling (KEPS)},
-  year={2023}
+  booktitle={Proceedings of the International Conference on Automated Planning and Scheduling},
+  volume={34},
+  pages={133--141},
+  year={2024}
 }
 ```
