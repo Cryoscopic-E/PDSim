@@ -1,12 +1,11 @@
 ﻿using PDSim.Protobuf;
 using UnityEngine.UIElements;
 
-namespace PDSim.Editor.SceneUI
+namespace PDSim.SceneUI
 {
-    public class StateEntryController
+    public class ActionEntryController
     {
         Label label;
-
 
         public void SetVisualElement(VisualElement visualElement)
         {
@@ -14,10 +13,9 @@ namespace PDSim.Editor.SceneUI
         }
 
 
-        public void SetData(PdSimFluentAssignment data)
+        public void SetActionData(PdSimActionInstance data)
         {
             label.text = data.ToString();
         }
     }
-
 }

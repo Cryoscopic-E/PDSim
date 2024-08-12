@@ -1,6 +1,5 @@
 using System.Collections;
 using PDSim.Connection;
-using PDSim.Protobuf;
 using PDSim.Utils;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
@@ -34,7 +33,7 @@ namespace PDSim.Editor.EditorUI
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.cryoscopic-e.pdsim/Resources/EditorUI/CreateSimulationWindow.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.CREATESIM_WINDOW_UI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
 
@@ -138,9 +137,7 @@ namespace PDSim.Editor.EditorUI
 
         private void CreateSimulationScene()
         {
-            var sceneTemplate =
-                AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(
-                    "Packages/com.cryoscopic-e.pdsim/Runtime/Scenes/Templates/PdSimSimulationScene.scenetemplate");
+            var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(CommonPaths.TEMPLATE_VISUALISATION_SCENE);
 
             var newScenePath = AssetUtils.GetCurrentSimulationScenePath(_simulationNameField.value);
 

@@ -43,7 +43,7 @@ namespace PDSim.Editor.EditorUI
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.cryoscopic-e.pdsim/Resources/EditorUI/CreateAnimationDialog.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.ANIMATION_DIALOG_UI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
         }
@@ -114,7 +114,7 @@ namespace PDSim.Editor.EditorUI
             var animationName = AnimationNames.UniqueAnimationName(predicateName, attributeTypes);
 
             // Load the prefab
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Packages/com.cryoscopic-e.pdsim/Runtime/Prefabs/Fluent Animation.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CommonPaths.FLUENT_ANIMATION_PREFAB);
 
             // Instantiate the prefab as variant
             var instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;

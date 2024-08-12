@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
-namespace PDSim.Editor.SceneUI
+namespace PDSim.SceneUI
 {
     public class StateListController
     {

@@ -2,7 +2,7 @@ using PDSim.Simulation;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace PDSim.Editor.SceneUI
+namespace PDSim.SceneUI
 {
     public class StateListUI : MonoBehaviour
     {

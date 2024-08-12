@@ -603,6 +603,7 @@ namespace PDSim.Simulation
             }
         }
 
+        # if UNITY_EDITOR
         // Add the problem objects to the scene
         public void SetUpObjects()
         {
@@ -623,7 +624,7 @@ namespace PDSim.Simulation
             {
                 var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
                 // Get the generic object prefab
-                Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/PDSim/Prefabs/PdSimObject.prefab", typeof(GameObject));
+                Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(CommonPaths.PDSIM_OBJECT_PREFAB, typeof(GameObject));
                 // Create instance of generic object
                 var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
                 prefabInstance.GetComponent<PdSimSimulationObject>().objectType = type;
@@ -672,6 +673,7 @@ namespace PDSim.Simulation
                 instance.gameObject.name = obj.name;
             }
         }
+        # endif
 
         // Helper Functions
         // ----------------

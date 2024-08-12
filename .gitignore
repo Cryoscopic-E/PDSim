@@ -1,11 +1,14 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 
 
-Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
-Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
-Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
-Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
 
+/**/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+/**/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+/**/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow.meta
+/**/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+/**/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+
+!/**/[Aa]ssets/**/*.meta
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 /[Ll]ibrary/
@@ -16,8 +19,6 @@ Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.m
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-# Never ignore Asset meta data
-!/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*

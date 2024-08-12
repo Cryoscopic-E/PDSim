@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace PDSim.Editor.SceneUI
+namespace PDSim.SceneUI
 {
     public class MovablePanel : PointerManipulator
     {

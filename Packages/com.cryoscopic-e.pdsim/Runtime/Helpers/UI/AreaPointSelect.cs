@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 namespace PDSim.Helpers.UI
@@ -19,22 +18,8 @@ namespace PDSim.Helpers.UI
                 Random.Range(transform.position.y - size.y / 2 + offset.y, transform.position.y + size.y / 2 + offset.y),
                 Random.Range(transform.position.z - size.z / 2 + offset.z, transform.position.z + size.z / 2 + offset.z)
             );
-
-
-
             return point;
 
-        }
-    }
-
-    [CustomEditor(typeof(AreaPointSelect))]
-    public class WireBoxExample : Editor
-    {
-        void OnSceneGUI()
-        {
-            Handles.color = Color.yellow;
-            AreaPointSelect myObj = (AreaPointSelect)target;
-            Handles.DrawWireCube(myObj.transform.position + myObj.offset, myObj.size);
         }
     }
 }

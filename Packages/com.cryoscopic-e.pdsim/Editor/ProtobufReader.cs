@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using PDSim.Utils;
+using PDSim.Protobuf;
 using UnityEditor;
 using UnityEngine;
 
-namespace PDSim.Protobuf
+namespace PDSim.Editor
 {
     /// <summary>
     /// Class to read a protobuf problem and plan and generate a PdSimProblem and PdSimInstance

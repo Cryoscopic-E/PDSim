@@ -3,12 +3,11 @@ using UnityEngine.Windows;
 
 namespace PDSim.Utils
 {
+    # if UNITY_EDITOR
     public static class AssetUtils
     {
-        private const string SimulationsRootFolder = "Assets/_Simulations/";
         private const string SimData = "Data/";
         private const string SimObjectsFolder = "Objects/";
-        private const string SceneTemplatePath = "Packages/com.cryoscopic-e.pdsim/Runtime/Scenes/Templates/PDSimSceneTemplate.scenetemplate";
 
         private static void CreateFolderIfDontExist(string path)
         {
@@ -55,9 +54,9 @@ namespace PDSim.Utils
         public static void CreateFolders(string sceneName)
         {
             // Create the root folder for all simulations
-            CreateFolderIfDontExist(SimulationsRootFolder);
+            CreateFolderIfDontExist(CommonPaths.SIMULATIONS_ROOT_FOLDER);
             // Create the folder for the current simulation
-            var simulationPath = SimulationsRootFolder + sceneName + "/";
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/";
             CreateFolderIfDontExist(simulationPath);
             // Folder for the objects
             CreateFolderIfDontExist(simulationPath + SimObjectsFolder);
@@ -67,13 +66,13 @@ namespace PDSim.Utils
 
         public static string GetSimulationDataPath(string sceneName)
         {
-            var simulationPath = SimulationsRootFolder + sceneName + "/" + SimData;
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/" + SimData;
             return simulationPath;
         }
 
         public static string GetSimulationObjectsPath(string sceneName)
         {
-            var simulationPath = SimulationsRootFolder + sceneName + "/" + SimObjectsFolder;
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/" + SimObjectsFolder;
             return simulationPath;
         }
 
@@ -85,7 +84,7 @@ namespace PDSim.Utils
 
         public static string GetCurrentSimulationScenePath(string sceneName)
         {
-            var simulationPath = SimulationsRootFolder + sceneName + "/";
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/";
 
             CreateFolderIfDontExist(simulationPath);
 
@@ -94,7 +93,7 @@ namespace PDSim.Utils
 
         public static bool SimulationExists(string simulationName)
         {
-            var simulationPath = SimulationsRootFolder + simulationName + "/";
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + simulationName + "/";
 
             return DirectoryExist(simulationPath);
         }
@@ -112,4 +111,5 @@ namespace PDSim.Utils
         //    EditorSceneManager.SaveScene(result.scene, newScenePath);
         //}
     }
+    #endif
 }
