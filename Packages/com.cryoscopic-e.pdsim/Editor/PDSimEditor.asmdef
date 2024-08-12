@@ -1,0 +1,20 @@
+{
+    "name": "PDSimEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7d1fd50fcb4ecb34c874932353943f54",
+        "GUID:478a2357cc57436488a56e564b08d223",
+        "GUID:21b0c8d1703a94250bfac916590cea4f",
+        "GUID:ea715009a4efd4c6cbc85be3ae097dd3",
+        "GUID:315d634a9ac6d460a9515f5a56be6311"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

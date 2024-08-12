@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Root" style="position: absolute; width: 20%; height: 351px; -unity-slice-left: 25; -unity-slice-top: 25; -unity-slice-right: 25; -unity-slice-bottom: 25; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; align-items: center; justify-content: flex-start; top: 614px; left: 1481px; display: flex; -unity-background-image-tint-color: rgb(197, 193, 193);">
+        <ui:Label text="Name" display-tooltip-when-elided="true" name="ObjectName" class="text-header" style="width: 369px; -unity-text-align: upper-center; -unity-slice-left: 10; -unity-slice-top: 10; -unity-slice-right: 10; -unity-slice-bottom: 10; -unity-background-scale-mode: stretch-to-fill; background-color: rgba(0, 0, 0, 0); -unity-background-image-tint-color: rgb(231, 195, 151); height: 61px;" />
+        <ui:VisualElement name="ListContainer" style="width: 100%; height: 100%;">
+            <ui:ListView focusable="false" name="StateList" view-data-key="PlanList" fixed-item-height="40" picking-mode="Ignore" selection-type="None" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

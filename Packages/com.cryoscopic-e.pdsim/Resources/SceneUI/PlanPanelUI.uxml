@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Root" style="position: absolute; width: 20%; height: 50%; -unity-slice-left: 40; -unity-slice-top: 40; -unity-slice-right: 40; -unity-slice-bottom: 40; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; align-items: center; justify-content: flex-start; top: 280px; left: 158px; display: flex; -unity-background-image-tint-color: rgb(197, 193, 193); border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;">
+        <ui:Label text="Plan Actions" display-tooltip-when-elided="true" class="text-header" style="width: 100%; -unity-text-align: upper-center; -unity-slice-left: 10; -unity-slice-top: 10; -unity-slice-right: 10; -unity-slice-bottom: 10; -unity-background-scale-mode: stretch-to-fill; background-color: rgba(255, 255, 255, 0); -unity-background-image-tint-color: rgb(240, 241, 169);" />
+        <ui:VisualElement name="ListContainer" style="width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0);">
+            <ui:ListView focusable="false" name="PlanList" view-data-key="PlanList" fixed-item-height="40" picking-mode="Ignore" selection-type="None" style="background-color: rgba(255, 255, 255, 0);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
