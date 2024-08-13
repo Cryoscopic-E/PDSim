@@ -1,0 +1,104 @@
+VisualElement {
+}
+
+.play-button {
+    width: 30px;
+    height: 30px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    -unity-background-scale-mode: stretch-to-fill;
+    background-image: resource('UITextures/forward');
+    -unity-background-image-tint-color: rgb(0, 0, 0);
+}
+
+.pause-button {
+    width: 30px;
+    height: 30px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-image: resource('UITextures/pause');
+    -unity-background-image-tint-color: rgb(0, 0, 0);
+}
+
+.return-button {
+    width: 50px;
+    height: 50px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-image: resource('UITextures/arrowLeft');
+    -unity-slice-scale: 1px;
+    -unity-background-scale-mode: stretch-to-fill;
+    opacity: 1;
+}
+
+.controls-button {
+    width: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    -unity-slice-left: 25;
+    -unity-slice-top: 25;
+    -unity-slice-right: 25;
+    -unity-slice-bottom: 25;
+    -unity-background-scale-mode: stretch-to-fill;
+    color: rgb(0, 0, 0);
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    font-size: 15px;
+}
+
+.speed-label {
+    position: relative;
+    left: -45%;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    font-size: 17px;
+}
+
+.title-label {
+    width: 100%;
+    -unity-text-align: upper-center;
+    font-size: 25px;
+    -unity-font-style: bold;
+}
+
+.panel-bg {
+    position: absolute;
+    width: 20%;
+    height: 50%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+    justify-content: flex-start;
+    top: 280px;
+    left: 158px;
+    display: flex;
+    opacity: 1;
+    background-image: resource('UITextures/panel-015');
+    -unity-slice-left: 10;
+    -unity-slice-top: 10;
+    -unity-slice-right: 10;
+    -unity-slice-bottom: 10;
+    -unity-background-image-tint-color: rgb(183, 183, 183);
+}
