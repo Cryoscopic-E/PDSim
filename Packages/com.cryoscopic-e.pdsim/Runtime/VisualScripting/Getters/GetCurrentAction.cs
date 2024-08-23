@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
-using PDSim.Protobuf;
+using PDSim.PlanningModel;
 
 namespace PDSim.VisualScripting.Getters
 {

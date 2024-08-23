@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using pbc = global::Google.Protobuf.Collections;
 
-namespace PDSim.Protobuf
+namespace PDSim.PlanningModel
 {
     [Serializable]
     public class PdSimTypesDeclaration : ISerializationCallbackReceiver

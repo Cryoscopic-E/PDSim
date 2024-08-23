@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using PDSim.Protobuf;
+using PDSim.PlanningModel;
 using PDSim.Simulation;
 using PDSim.Utils;
 using PDSim.VisualScripting.Events;
@@ -21,9 +21,9 @@ namespace PDSim.Editor.EditorUI
 
         private ScrollView _predicateAnimationAttributeList;
 
-        private FluentAnimation _context;
+        private PdSimFluentAnimation _context;
 
-        public static void ShowAsModal(PdSimFluent metadata, FluentAnimation context)
+        public static void ShowAsModal(PdSimFluent metadata, PdSimFluentAnimation context)
         {
             var wnd = GetWindow<CreateAnimationWindow>();
             wnd.titleContent = new GUIContent("Create New Animation");
@@ -177,12 +177,12 @@ namespace PDSim.Editor.EditorUI
             // For the value
             var val = new ValueInputDefinition();
 
-            if (valueType == ValueType.Boolean)
+            if (valueType == PdSimAtom.ValueType.Boolean)
             {
                 val.key = "Boolean";
                 val.type = typeof(bool);
             }
-            else if (valueType == ValueType.Real || valueType == ValueType.Int)
+            else if (valueType == PdSimAtom.ValueType.Real || valueType == PdSimAtom.ValueType.Int)
             {
                 val.key = "Number";
                 val.type = typeof(float);

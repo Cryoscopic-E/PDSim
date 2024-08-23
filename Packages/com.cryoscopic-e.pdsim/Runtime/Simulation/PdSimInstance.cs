@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PDSim.PlanningModel;
 
-namespace PDSim.Protobuf
+namespace PDSim.Simulation
 {
     /// <summary>
     /// A PdSim instance

@@ -1,4 +1,4 @@
-using PDSim.Protobuf;
+using PDSim.PlanningModel;
 using PDSim.Utils;
 using PDSim.VisualScripting.Events;
 using System.Collections;
@@ -76,7 +76,7 @@ namespace PDSim.Simulation
         private Dictionary<string, PdSimFluent> _predicates;
 
         // Map fluent effect names to animations
-        private Dictionary<string, FluentAnimation> _effectToAnimations;
+        private Dictionary<string, PdSimFluentAnimation> _effectToAnimations;
 
 
         // Simulation Data
@@ -202,9 +202,9 @@ namespace PDSim.Simulation
 
             // Effect Animation References
             var effectsAnimationsRootObject = GameObject.Find("Effects Animations");
-            var fluentAnimations = effectsAnimationsRootObject.GetComponents<FluentAnimation>();
+            var fluentAnimations = effectsAnimationsRootObject.GetComponents<PdSimFluentAnimation>();
 
-            _effectToAnimations = new Dictionary<string, FluentAnimation>();
+            _effectToAnimations = new Dictionary<string, PdSimFluentAnimation>();
             foreach (var fluentAnimation in fluentAnimations)
             {
                 // Effect needs to match the name of the predicate
@@ -273,9 +273,9 @@ namespace PDSim.Simulation
             switch (effect.effectKind)
             {
                 default:
-                case EffetKind.None:
+                case PdSimEffect.EffetKind.None:
                     break;
-                case EffetKind.Assignment:
+                case PdSimEffect.EffetKind.Assignment:
                     if (valueApplied.contentCase == Atom.ContentOneofCase.Symbol)
                     {
                         // check if the symbol is a parameter of the action
@@ -293,10 +293,10 @@ namespace PDSim.Simulation
 
                     }
                     break;
-                case EffetKind.Decrease:
+                case PdSimEffect.EffetKind.Decrease:
                     valueApplied.DecreaseValue(float.Parse(valueApplied.valueSymbol));
                     break;
-                case EffetKind.Increase:
+                case PdSimEffect.EffetKind.Increase:
                     valueApplied.IncreaseValue(float.Parse(valueApplied.valueSymbol));
                     break;
             }
@@ -597,9 +597,9 @@ namespace PDSim.Simulation
 
             foreach (var fluent in problemModel.fluents)
             {
-                var fluentAnimation = animationsRootObject.AddComponent<FluentAnimation>();
+                var fluentAnimation = animationsRootObject.AddComponent<PdSimFluentAnimation>();
                 fluentAnimation.metaData = fluent;
-                fluentAnimation.animationData = new List<FluentAnimationData>();
+                fluentAnimation.animationData = new List<PdSimAnimation.AnimationData>();
             }
         }
 

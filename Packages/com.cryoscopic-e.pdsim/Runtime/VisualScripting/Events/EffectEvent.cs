@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using PDSim.Protobuf;
+using PDSim.PlanningModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -53,10 +53,10 @@ namespace PDSim.VisualScripting.Events
 
         // Value Type of the effect
         [SerializeAs(nameof(EffectValueType))]
-        private ValueType _effectValueType;
+        private PdSimAtom.ValueType _effectValueType;
 
         [DoNotSerialize]
-        public ValueType EffectValueType
+        public PdSimAtom.ValueType EffectValueType
         {
             get => _effectValueType;
             set => _effectValueType = value;
@@ -79,11 +79,11 @@ namespace PDSim.VisualScripting.Events
                 ArgumentPorts.Add(ValueOutput<GameObject>(EffectArguments[i]));
             }
 
-            if (EffectValueType == ValueType.Boolean)
+            if (EffectValueType == PdSimAtom.ValueType.Boolean)
             {
                 Value = ValueOutput<bool>("Boolean");
             }
-            else if (EffectValueType == ValueType.Real || EffectValueType == ValueType.Int)
+            else if (EffectValueType == PdSimAtom.ValueType.Real || EffectValueType == PdSimAtom.ValueType.Int)
             {
                 Value = ValueOutput<float>("Number");
             }
