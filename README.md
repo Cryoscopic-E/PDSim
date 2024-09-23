@@ -10,6 +10,20 @@ PDSim use a back-end server to generate the Unity's components used for the simu
 ### I'm adding some visualisation projects you can download and drag and drop into Unity
 #### [Floor Tile Domain](https://drive.google.com/file/d/1HAVp2fcpbiiLN6teplYeGiQgZg5jDO2k/view?usp=sharing)
 
+# Assets for your Visualisation
+PDSim actively support the amazing work of [Kenney] (https://twitter.com/KenneyNL)
+
+You can find tons of CC0 2D and 3D assets for you visualisations here: https://kenney.nl/assets
+
+
+
+Additional resources:
+
+- https://itch.io/game-assets
+- https://polyhaven.com/models
+- https://www.blenderkit.com/
+
+
 # Project
 
 - PDDL `predicates` are used to define animation in Unity using the built-in visual scripting language.

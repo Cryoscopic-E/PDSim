@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Header" style="flex-direction: row; margin-top: 10px;">
+        <ui:Label text="Create Animation for:" display-tooltip-when-elided="true" style="-unity-font-style: bold;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="FluentOriginal">
+        <ui:Label text="(at ?x-object ?l-location)" display-tooltip-when-elided="true" name="Predicate" style="margin-top: 10px; padding-left: 10px; padding-right: 10px; align-items: center; justify-content: center; flex-direction: row; -unity-text-align: middle-center; font-size: 15px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="AttributesTypes" style="margin-top: 20px;">
+        <ui:Label text="Attributes Types" display-tooltip-when-elided="true" style="padding-left: 15px; padding-right: 10px; background-color: rgb(144, 87, 86);" />
+        <ui:ScrollView name="TypesList" style="margin-left: 20px; margin-right: 20px; padding-left: 0; padding-right: 0; margin-top: 10px;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Buttons" style="margin-top: 20px; flex-direction: row; justify-content: center; align-items: center;">
+        <ui:Button text="Create" display-tooltip-when-elided="true" name="CreateButton" />
+        <ui:Button text="Cancel" display-tooltip-when-elided="true" enable-rich-text="false" name="CancelButton" />
+    </ui:VisualElement>
+</ui:UXML>

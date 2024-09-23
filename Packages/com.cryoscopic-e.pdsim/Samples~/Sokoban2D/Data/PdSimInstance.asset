@@ -1,0 +1,2214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26bf7a6cc511a7944ae3d20c7320e177, type: 3}
+  m_Name: PdSimInstance
+  m_EditorClassIdentifier: 
+  objects:
+  - name: dir-down
+    type: direction
+  - name: dir-left
+    type: direction
+  - name: dir-right
+    type: direction
+  - name: dir-up
+    type: direction
+  - name: player-01
+    type: player
+  - name: pos-1-1
+    type: location
+  - name: pos-1-2
+    type: location
+  - name: pos-1-3
+    type: location
+  - name: pos-1-4
+    type: location
+  - name: pos-1-5
+    type: location
+  - name: pos-1-6
+    type: location
+  - name: pos-1-7
+    type: location
+  - name: pos-1-8
+    type: location
+  - name: pos-2-1
+    type: location
+  - name: pos-2-2
+    type: location
+  - name: pos-2-3
+    type: location
+  - name: pos-2-4
+    type: location
+  - name: pos-2-5
+    type: location
+  - name: pos-2-6
+    type: location
+  - name: pos-2-7
+    type: location
+  - name: pos-2-8
+    type: location
+  - name: pos-3-1
+    type: location
+  - name: pos-3-2
+    type: location
+  - name: pos-3-3
+    type: location
+  - name: pos-3-4
+    type: location
+  - name: pos-3-5
+    type: location
+  - name: pos-3-6
+    type: location
+  - name: pos-3-7
+    type: location
+  - name: pos-3-8
+    type: location
+  - name: pos-4-1
+    type: location
+  - name: pos-4-2
+    type: location
+  - name: pos-4-3
+    type: location
+  - name: pos-4-4
+    type: location
+  - name: pos-4-5
+    type: location
+  - name: pos-4-6
+    type: location
+  - name: pos-4-7
+    type: location
+  - name: pos-4-8
+    type: location
+  - name: pos-5-1
+    type: location
+  - name: pos-5-2
+    type: location
+  - name: pos-5-3
+    type: location
+  - name: pos-5-4
+    type: location
+  - name: pos-5-5
+    type: location
+  - name: pos-5-6
+    type: location
+  - name: pos-5-7
+    type: location
+  - name: pos-5-8
+    type: location
+  - name: pos-6-1
+    type: location
+  - name: pos-6-2
+    type: location
+  - name: pos-6-3
+    type: location
+  - name: pos-6-4
+    type: location
+  - name: pos-6-5
+    type: location
+  - name: pos-6-6
+    type: location
+  - name: pos-6-7
+    type: location
+  - name: pos-6-8
+    type: location
+  - name: pos-7-1
+    type: location
+  - name: pos-7-2
+    type: location
+  - name: pos-7-3
+    type: location
+  - name: pos-7-4
+    type: location
+  - name: pos-7-5
+    type: location
+  - name: pos-7-6
+    type: location
+  - name: pos-7-7
+    type: location
+  - name: pos-7-8
+    type: location
+  - name: pos-8-1
+    type: location
+  - name: pos-8-2
+    type: location
+  - name: pos-8-3
+    type: location
+  - name: pos-8-4
+    type: location
+  - name: pos-8-5
+    type: location
+  - name: pos-8-6
+    type: location
+  - name: pos-8-7
+    type: location
+  - name: pos-8-8
+    type: location
+  - name: pos-9-1
+    type: location
+  - name: pos-9-2
+    type: location
+  - name: pos-9-3
+    type: location
+  - name: pos-9-4
+    type: location
+  - name: pos-9-5
+    type: location
+  - name: pos-9-6
+    type: location
+  - name: pos-9-7
+    type: location
+  - name: pos-9-8
+    type: location
+  - name: stone-01
+    type: stone
+  - name: stone-02
+    type: stone
+  init:
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-1-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-2-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-3-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-4-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-5-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-6-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-7-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-8-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-nongoal
+    parameters:
+    - pos-9-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-5
+    - pos-1-6
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-6
+    - pos-1-5
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-6
+    - pos-1-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-6
+    - pos-2-6
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-7
+    - pos-1-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-7
+    - pos-1-8
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-7
+    - pos-2-7
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-8
+    - pos-1-7
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-1-8
+    - pos-2-8
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-2
+    - pos-2-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-2
+    - pos-3-2
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-3
+    - pos-2-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-3
+    - pos-3-3
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-6
+    - pos-1-6
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-6
+    - pos-2-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-7
+    - pos-1-7
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-7
+    - pos-2-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-7
+    - pos-2-8
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-8
+    - pos-1-8
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-2-8
+    - pos-2-7
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-2
+    - pos-2-2
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-2
+    - pos-3-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-2
+    - pos-4-2
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-3
+    - pos-2-3
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-3
+    - pos-3-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-3
+    - pos-3-4
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-3
+    - pos-4-3
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-4
+    - pos-3-3
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-3-4
+    - pos-4-4
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-2
+    - pos-3-2
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-2
+    - pos-4-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-3
+    - pos-3-3
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-3
+    - pos-4-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-3
+    - pos-4-4
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-3
+    - pos-5-3
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-4
+    - pos-3-4
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-4
+    - pos-4-3
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-4
+    - pos-5-4
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-6
+    - pos-4-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-6
+    - pos-5-6
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-7
+    - pos-4-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-4-7
+    - pos-5-7
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-3
+    - pos-4-3
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-3
+    - pos-5-4
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-4
+    - pos-4-4
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-4
+    - pos-5-3
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-4
+    - pos-5-5
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-5
+    - pos-5-4
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-5
+    - pos-5-6
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-5
+    - pos-6-5
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-6
+    - pos-4-6
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-6
+    - pos-5-5
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-6
+    - pos-5-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-6
+    - pos-6-6
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-7
+    - pos-4-7
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-7
+    - pos-5-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-5-7
+    - pos-6-7
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-1
+    - pos-7-1
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-5
+    - pos-5-5
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-5
+    - pos-6-6
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-5
+    - pos-7-5
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-6
+    - pos-5-6
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-6
+    - pos-6-5
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-6
+    - pos-6-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-7
+    - pos-5-7
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-7
+    - pos-6-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-6-7
+    - pos-7-7
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-1
+    - pos-6-1
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-1
+    - pos-7-2
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-1
+    - pos-8-1
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-2
+    - pos-7-1
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-2
+    - pos-7-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-2
+    - pos-8-2
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-3
+    - pos-7-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-3
+    - pos-8-3
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-5
+    - pos-6-5
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-5
+    - pos-8-5
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-7
+    - pos-6-7
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-7-7
+    - pos-8-7
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-1
+    - pos-7-1
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-1
+    - pos-8-2
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-1
+    - pos-9-1
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-2
+    - pos-7-2
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-2
+    - pos-8-1
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-2
+    - pos-8-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-2
+    - pos-9-2
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-3
+    - pos-7-3
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-3
+    - pos-8-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-3
+    - pos-9-3
+    - dir-right
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-5
+    - pos-7-5
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-5
+    - pos-8-6
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-6
+    - pos-8-5
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-6
+    - pos-8-7
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-7
+    - pos-7-7
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-8-7
+    - pos-8-6
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-1
+    - pos-8-1
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-1
+    - pos-9-2
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-2
+    - pos-8-2
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-2
+    - pos-9-1
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-2
+    - pos-9-3
+    - dir-down
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-3
+    - pos-8-3
+    - dir-left
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: move-dir
+    parameters:
+    - pos-9-3
+    - pos-9-2
+    - dir-up
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: at
+    parameters:
+    - player-01
+    - pos-5-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: at
+    parameters:
+    - stone-01
+    - pos-3-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: at
+    parameters:
+    - stone-02
+    - pos-4-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-1-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-1-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-1-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-1-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-2-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-2-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-2-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-2-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-2-8
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-3-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-3-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-4-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-4-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-4-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-4-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-5-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-5-4
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-5-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-5-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-6-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-6-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-6-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-6-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-7-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-7-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-7-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-7-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-7-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-5
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-8-7
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-9-1
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-9-2
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - pos-9-3
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-goal
+    parameters:
+    - pos-6-6
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: is-goal
+    parameters:
+    - pos-6-5
+  plan:
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-5
+    - pos-5-4
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-4
+    - pos-5-3
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-3
+    - pos-4-3
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-3
+    - pos-4-2
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-2
+    - pos-3-2
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-2
+    - pos-2-2
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-2-2
+    - pos-2-3
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-2-3
+    - pos-3-3
+    - pos-4-3
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-3
+    - pos-3-4
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-3-4
+    - pos-4-4
+    - pos-5-4
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-4
+    - pos-3-4
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-4
+    - pos-3-3
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-3
+    - pos-3-2
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-2
+    - pos-4-2
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-4-2
+    - pos-4-3
+    - pos-4-4
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-3
+    - pos-5-3
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-5-3
+    - pos-5-4
+    - pos-5-5
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-5-4
+    - pos-5-5
+    - pos-5-6
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-5
+    - pos-6-5
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-5
+    - pos-6-6
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-6
+    - pos-6-7
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-7
+    - pos-5-7
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-7
+    - pos-4-7
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-7
+    - pos-4-6
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-goal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-4-6
+    - pos-5-6
+    - pos-6-6
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-6
+    - pos-4-6
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-6
+    - pos-4-7
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-7
+    - pos-5-7
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-7
+    - pos-6-7
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-goal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-6-7
+    - pos-6-6
+    - pos-6-5
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-6
+    - pos-5-6
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-6
+    - pos-5-5
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-5-5
+    - pos-6-5
+    - pos-7-5
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-5
+    - pos-5-5
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-5
+    - pos-5-4
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-4
+    - pos-5-3
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-3
+    - pos-4-3
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-3
+    - pos-3-3
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-3-3
+    - pos-3-4
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-3-4
+    - pos-4-4
+    - pos-5-4
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-4
+    - pos-4-3
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-3
+    - pos-5-3
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-5-3
+    - pos-5-4
+    - pos-5-5
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-nongoal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-5-4
+    - pos-5-5
+    - pos-5-6
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-5
+    - pos-6-5
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-5
+    - pos-6-6
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-6
+    - pos-6-7
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-7
+    - pos-5-7
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-7
+    - pos-4-7
+    - dir-left
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-4-7
+    - pos-4-6
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-goal
+    parameters:
+    - player-01
+    - stone-01
+    - pos-4-6
+    - pos-5-6
+    - pos-6-6
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-6
+    - pos-5-7
+    - dir-down
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-5-7
+    - pos-6-7
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-6-7
+    - pos-7-7
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-7-7
+    - pos-8-7
+    - dir-right
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-8-7
+    - pos-8-6
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: move
+    parameters:
+    - player-01
+    - pos-8-6
+    - pos-8-5
+    - dir-up
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: push-to-goal
+    parameters:
+    - player-01
+    - stone-02
+    - pos-8-5
+    - pos-7-5
+    - pos-6-5
+    - dir-left
+    startTime: -1
+    endTime: -1

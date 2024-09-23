@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.cryoscopic-e.pdsim/Resources/SceneUI/SceneUSS.uss?fileID=7433441132597879392&amp;guid=7656c7d4ec4f0be4f93da81353d2631d&amp;type=3#SceneUSS" />
+    <ui:VisualElement name="Root" class="panel-bg" style="position: absolute; width: 20%; height: 351px; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; align-items: center; justify-content: flex-start; top: 614px; left: 1481px; display: flex;">
+        <ui:Label text="Name" display-tooltip-when-elided="true" name="ObjectName" class="title-label" style="width: 369px; -unity-text-align: upper-center; -unity-slice-left: 10; -unity-slice-top: 10; -unity-slice-right: 10; -unity-slice-bottom: 10; -unity-background-scale-mode: stretch-to-fill; background-color: rgba(0, 0, 0, 0); -unity-background-image-tint-color: rgb(231, 195, 151); height: 61px;" />
+        <ui:VisualElement name="ListContainer" style="width: 100%; height: 100%;">
+            <ui:ListView focusable="false" name="StateList" view-data-key="PlanList" fixed-item-height="40" picking-mode="Ignore" selection-type="None" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

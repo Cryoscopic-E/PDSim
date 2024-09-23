@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26bf7a6cc511a7944ae3d20c7320e177, type: 3}
+  m_Name: PdSimInstance
+  m_EditorClassIdentifier: 
+  objects:
+  - name: d
+    type: block
+  - name: b
+    type: block
+  - name: a
+    type: block
+  - name: c
+    type: block
+  init:
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - c
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - a
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - b
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: clear
+    parameters:
+    - d
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: ontable
+    parameters:
+    - c
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: ontable
+    parameters:
+    - a
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: ontable
+    parameters:
+    - b
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: ontable
+    parameters:
+    - d
+  - value:
+      contentCase: 4
+      valueSymbol: True
+    fluentName: handempty
+    parameters: []
+  plan:
+  - id: 
+    name: pick-up
+    parameters:
+    - b
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: stack
+    parameters:
+    - b
+    - a
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: pick-up
+    parameters:
+    - c
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: stack
+    parameters:
+    - c
+    - b
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: pick-up
+    parameters:
+    - d
+    startTime: -1
+    endTime: -1
+  - id: 
+    name: stack
+    parameters:
+    - d
+    - c
+    startTime: -1
+    endTime: -1

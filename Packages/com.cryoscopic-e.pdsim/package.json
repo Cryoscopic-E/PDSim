@@ -1,0 +1,33 @@
+{
+    "name": "com.cryoscopic-e.pdsim",
+    "version": "1.0.2",
+    "displayName": "PDSim: Planning Domain Simulation",
+    "description": "",
+    "unity": "2022.3",
+    "dependencies": {
+        "com.unity.2d.common": "8.0.3",
+        "com.unity.editorcoroutines": "1.0.0",
+        "com.unity.visualscripting": "1.9.4",
+        "com.unity.ai.navigation": "1.1.5",
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+    },
+    "keywords": [
+        "automate planning",
+        "robotics",
+        "simulation",
+        "planning",
+        "visualisation"
+    ],
+    "samples": [
+        {
+            "displayName": "Blocks World",
+            "description": "Contains a setup visualisation scene for the Blocks World problem.",
+            "path": "Samples~/BlocksWorld"
+        },
+        {
+            "displayName": "Sokoban2D",
+            "description": "Contains a setup visualisation scene for the Sokoban problem.",
+            "path": "Samples~/Sokoban2D"
+        }
+    ]
+}

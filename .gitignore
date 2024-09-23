@@ -1,5 +1,10 @@
 # This .gitignore file should be placed at the root of your Unity project directory
-#
+
+
+
+
+
+!/**/[Aa]ssets/**/*.meta
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 /[Ll]ibrary/
@@ -10,8 +15,6 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-# Never ignore Asset meta data
-!/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
@@ -63,3 +66,11 @@ crashlytics-build.properties
 
 #idea
 .idea/
+
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+Assets/Unity.VisualScripting.Generated.meta

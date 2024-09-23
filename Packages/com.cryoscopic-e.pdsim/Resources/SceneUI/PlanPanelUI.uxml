@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.cryoscopic-e.pdsim/Resources/SceneUI/SceneUSS.uss?fileID=7433441132597879392&amp;guid=7656c7d4ec4f0be4f93da81353d2631d&amp;type=3#SceneUSS" />
+    <ui:VisualElement name="Root" class="panel-bg" style="top: 154px; left: 18px; display: flex; background-color: rgba(0, 0, 0, 0.46); opacity: 1;">
+        <ui:Label text="&lt;u&gt;Plan Actions&lt;/u&gt;" display-tooltip-when-elided="true" class="title-label" />
+        <ui:VisualElement name="ListContainer" style="width: 100%; height: 100%; opacity: 1; background-color: rgb(183, 183, 183); color: rgba(27, 27, 27, 0);">
+            <ui:ListView focusable="false" name="PlanList" view-data-key="PlanList" fixed-item-height="40" picking-mode="Ignore" selection-type="None" style="background-color: rgb(183, 183, 183); opacity: 1; color: rgb(0, 0, 0);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
