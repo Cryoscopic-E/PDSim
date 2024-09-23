@@ -17,5 +17,17 @@
         "simulation",
         "planning",
         "visualisation"
+    ],
+    "samples": [
+        {
+            "displayName": "Blocks World",
+            "description": "Contains a setup visualisation scene for the Blocks World problem.",
+            "path": "Samples~/BlocksWorld"
+        },
+        {
+            "displayName": "Sokoban2D",
+            "description": "Contains a setup visualisation scene for the Sokoban problem.",
+            "path": "Samples~/Sokoban2D"
+        }
     ]
 }

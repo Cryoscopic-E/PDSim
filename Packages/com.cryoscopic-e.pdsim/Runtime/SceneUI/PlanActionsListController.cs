@@ -19,8 +19,6 @@ namespace PDSim.SceneUI
             actionsList = root.Q<ListView>("PlanList");
             FillActionsList();
 
-            // Register to get a callback when an item is selected
-            //actionsList.onSelectionChange += OnActionSelected;
         }
 
         private List<PdSimActionInstance> planActions;
@@ -62,14 +60,6 @@ namespace PDSim.SceneUI
 
             // Set the actual item's source list/array
             actionsList.itemsSource = planActions;
-        }
-
-        void OnActionSelected(IEnumerable<object> selectedItems)
-        {
-            foreach (var item in selectedItems)
-            {
-                Debug.Log("Selected item: " + (PdSimAction)item);
-            }
         }
     }
 }

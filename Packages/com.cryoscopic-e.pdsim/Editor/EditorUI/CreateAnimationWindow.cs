@@ -237,8 +237,6 @@ namespace PDSim.Editor.EditorUI
             }
 
 
-
-
             // Add the animation to the context
             if (!_context.AddAnimationData(instance.GetComponent<ScriptMachine>()))
             {

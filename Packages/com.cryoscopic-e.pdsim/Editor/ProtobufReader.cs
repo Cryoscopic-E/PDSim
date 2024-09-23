@@ -83,12 +83,15 @@ namespace PDSim.Editor
                 if (newFluent.value.contentCase == Atom.ContentOneofCase.Boolean)
                 {
                     if (newFluent.value.IsTrue())
+                    {
                         instance.init.Add(newFluent);
-                    else
                         continue;
+                    }
                 }
-                // default add symbolic and numeric fluents
-                instance.init.Add(newFluent);
+                else
+                {
+                    instance.init.Add(newFluent);
+                }
             }
 
             // PLAN
