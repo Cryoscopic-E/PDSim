@@ -225,20 +225,39 @@ namespace PDSim.Simulation
         {
             foreach (var fluent in groundedFluents)
             {
-                // Update object state
+                // TODO: Check to remove or not
+                // // Update object state
 
-                // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
-                // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
-                if (fluent.parameters.Count > 0)
-                {
-                    var objectName = fluent.parameters[0];
-                    var obj = _objects[objectName];
-                    obj.AddFluentAssignment(fluent);
-                }
+                // // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
+                // // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
+                // if (fluent.parameters.Count > 0)
+                // {
+                //     var objectName = fluent.parameters[0];
+                //     var obj = _objects[objectName];
+                //     obj.AddFluentAssignment(fluent);
+                // }
 
-                // Update world state
-                _state.AddOrUpdate(fluent);
+                // // Update world state
+                // _state.AddOrUpdate(fluent);
                 yield return fluent;
+            }
+        }
+
+        private void UpdateState(PdSimFluentAssignment fluent)
+        {
+            // Update world state
+            _state.AddOrUpdate(fluent);
+
+
+            // Update object state
+
+            // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
+            // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
+            if (fluent.parameters.Count > 0)
+            {
+                var objectName = fluent.parameters[0];
+                var obj = _objects[objectName];
+                obj.AddFluentAssignment(fluent);
             }
         }
 
@@ -532,7 +551,7 @@ namespace PDSim.Simulation
                         break;
                     case AnimationState.Ready:
                         var animation = animationQueue.Dequeue();
-                        // Log objects one line
+
                         var objectNames = fluentEnumerator.Current.parameters.Aggregate((a, b) => a + ", " + b);
                         var fluentString = fluentEnumerator.Current.fluentName + "(" + objectNames + ")";
                         OnSimulationStep(fluentString);
@@ -547,7 +566,11 @@ namespace PDSim.Simulation
                             _animationState = AnimationState.None;
                         else
                             _animationState = AnimationState.Ready;
+                        // Update the state after the animation finishes
+                        UpdateState(fluentEnumerator.Current);
+
                         break;
+
                     case AnimationState.Finished:
                     default:
                         yield return null;
@@ -603,7 +626,7 @@ namespace PDSim.Simulation
             }
         }
 
-        # if UNITY_EDITOR
+#if UNITY_EDITOR
         // Add the problem objects to the scene
         public void SetUpObjects()
         {
@@ -673,7 +696,7 @@ namespace PDSim.Simulation
                 instance.gameObject.name = obj.name;
             }
         }
-        # endif
+#endif
 
         // Helper Functions
         // ----------------

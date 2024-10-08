@@ -1,6 +1,6 @@
 {
     "name": "com.cryoscopic-e.pdsim",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "displayName": "PDSim: Planning Domain Simulation",
     "description": "",
     "unity": "2022.3",
@@ -28,6 +28,11 @@
             "displayName": "Sokoban2D",
             "description": "Contains a setup visualisation scene for the Sokoban problem.",
             "path": "Samples~/Sokoban2D"
+        },
+        {
+            "displayName": "Visual Scripting Samples",
+            "description": "Contains some examples of visual scripting nodes and graphs to interact with PDSim. Use it to copy and paste nodes and graphs to your own project.",
+            "path": "Samples~/VisualScriptingSamples"
         }
     ]
 }
