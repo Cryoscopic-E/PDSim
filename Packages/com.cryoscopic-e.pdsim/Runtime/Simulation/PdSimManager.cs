@@ -225,20 +225,6 @@ namespace PDSim.Simulation
         {
             foreach (var fluent in groundedFluents)
             {
-                // TODO: Check to remove or not
-                // // Update object state
-
-                // // IMPORTANT: Assumption that the first parameter is the object name (e.g. (at ?o ?l))
-                // // ?o is the object which state is being changed e.g. (at ?o ?l) -> ?o at ?l
-                // if (fluent.parameters.Count > 0)
-                // {
-                //     var objectName = fluent.parameters[0];
-                //     var obj = _objects[objectName];
-                //     obj.AddFluentAssignment(fluent);
-                // }
-
-                // // Update world state
-                // _state.AddOrUpdate(fluent);
                 yield return fluent;
             }
         }
