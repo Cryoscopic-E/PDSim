@@ -76,7 +76,7 @@ namespace PDSim.Simulation
         private Dictionary<string, PdSimFluent> _predicates;
 
         // Map fluent effect names to animations
-        private Dictionary<string, PdSimFluentAnimation> _effectToAnimations;
+        private Dictionary<string, PdSimVisualScriptingAnimation> _effectToAnimations;
 
 
         // Simulation Data
@@ -202,9 +202,9 @@ namespace PDSim.Simulation
 
             // Effect Animation References
             var effectsAnimationsRootObject = GameObject.Find("Effects Animations");
-            var fluentAnimations = effectsAnimationsRootObject.GetComponents<PdSimFluentAnimation>();
+            var fluentAnimations = effectsAnimationsRootObject.GetComponents<PdSimVisualScriptingAnimation>();
 
-            _effectToAnimations = new Dictionary<string, PdSimFluentAnimation>();
+            _effectToAnimations = new Dictionary<string, PdSimVisualScriptingAnimation>();
             foreach (var fluentAnimation in fluentAnimations)
             {
                 // Effect needs to match the name of the predicate
@@ -606,9 +606,9 @@ namespace PDSim.Simulation
 
             foreach (var fluent in problemModel.fluents)
             {
-                var fluentAnimation = animationsRootObject.AddComponent<PdSimFluentAnimation>();
+                var fluentAnimation = animationsRootObject.AddComponent<PdSimVisualScriptingAnimation>();
                 fluentAnimation.metaData = fluent;
-                fluentAnimation.animationData = new List<PdSimAnimation.AnimationData>();
+                fluentAnimation.animationData = new List<PdSimVisualScriptingAnimation.AnimationData>();
             }
         }
 

@@ -9,15 +9,15 @@ namespace PDSim.Editor.Inspector
     /// <summary>
     /// Custom inspector for the FluentAnimation class.
     /// </summary>
-    [CustomEditor(typeof(PdSimFluentAnimation))]
+    [CustomEditor(typeof(PdSimVisualScriptingAnimation))]
     public class FluentAnimationEditor : UnityEditor.Editor
     {
-        private PdSimFluentAnimation fluentAnimation;
+        private PdSimVisualScriptingAnimation fluentAnimation;
         private ReorderableList list;
 
         private void OnEnable()
         {
-            fluentAnimation = (PdSimFluentAnimation)target;
+            fluentAnimation = (PdSimVisualScriptingAnimation)target;
 
             list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
 

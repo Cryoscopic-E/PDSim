@@ -3,11 +3,12 @@ using UnityEngine.Windows;
 
 namespace PDSim.Utils
 {
-    # if UNITY_EDITOR
+#if UNITY_EDITOR
     public static class AssetUtils
     {
         private const string SimData = "Data/";
         private const string SimObjectsFolder = "Objects/";
+        private const string AnimatonScriptsFolder = "Animations/";
 
         private static void CreateFolderIfDontExist(string path)
         {
@@ -62,6 +63,8 @@ namespace PDSim.Utils
             CreateFolderIfDontExist(simulationPath + SimObjectsFolder);
             // Folder for data
             CreateFolderIfDontExist(simulationPath + SimData);
+            // Folder for animations scripts
+            CreateFolderIfDontExist(simulationPath + AnimatonScriptsFolder);
         }
 
         public static string GetSimulationDataPath(string sceneName)
@@ -73,6 +76,12 @@ namespace PDSim.Utils
         public static string GetSimulationObjectsPath(string sceneName)
         {
             var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/" + SimObjectsFolder;
+            return simulationPath;
+        }
+
+        public static string GetSimulationAnimationsPath(string sceneName)
+        {
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/" + AnimatonScriptsFolder;
             return simulationPath;
         }
 
@@ -111,5 +120,5 @@ namespace PDSim.Utils
         //    EditorSceneManager.SaveScene(result.scene, newScenePath);
         //}
     }
-    #endif
+#endif
 }

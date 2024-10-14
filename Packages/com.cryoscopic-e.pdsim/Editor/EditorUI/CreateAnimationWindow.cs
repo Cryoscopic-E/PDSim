@@ -21,9 +21,9 @@ namespace PDSim.Editor.EditorUI
 
         private ScrollView _predicateAnimationAttributeList;
 
-        private PdSimFluentAnimation _context;
+        private PdSimVisualScriptingAnimation _context;
 
-        public static void ShowAsModal(PdSimFluent metadata, PdSimFluentAnimation context)
+        public static void ShowAsModal(PdSimFluent metadata, PdSimVisualScriptingAnimation context)
         {
             var wnd = GetWindow<CreateAnimationWindow>();
             wnd.titleContent = new GUIContent("Create New Animation");
