@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updated unity version
-
+- Object state is changed after the animation finishes executing
 
 ### Removed
 - Unused packages
