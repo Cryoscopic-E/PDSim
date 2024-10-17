@@ -603,7 +603,7 @@ namespace PDSim.Simulation
             }
         }
 
-        # if UNITY_EDITOR
+#if UNITY_EDITOR
         // Add the problem objects to the scene
         public void SetUpObjects()
         {
@@ -673,7 +673,7 @@ namespace PDSim.Simulation
                 instance.gameObject.name = obj.name;
             }
         }
-        # endif
+#endif
 
         // Helper Functions
         // ----------------
