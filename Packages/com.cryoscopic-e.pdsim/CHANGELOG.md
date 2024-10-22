@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.5] - 2024-10-22
+
+### Fixed
+- Some objects not getting properly called in the animations
+- Animation metadata not keeping track of the effects parameters
+
 ## [1.0.4] - 2024-10-17
 
 ### Fixed

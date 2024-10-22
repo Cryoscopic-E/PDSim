@@ -6,7 +6,7 @@ public abstract class PdSimAnimation : MonoBehaviour
 {
     public List<AnimationData> animationData;
 
-    public bool AddAnimationData(ScriptMachine machine, int order = 0)
+    public bool AddAnimationData(string animationName, List<string> attributes, ScriptMachine machine, int order = 0)
     {
          foreach (var data in animationData)
             {
@@ -19,7 +19,8 @@ public abstract class PdSimAnimation : MonoBehaviour
 
             animationData.Add(new AnimationData()
             {
-                name = machine.name,
+                name = animationName,
+                parameters = attributes,
                 machine = machine
             });
             return true;
@@ -30,6 +31,7 @@ public abstract class PdSimAnimation : MonoBehaviour
     public class AnimationData
     {
         public string name;
+        public List<string> parameters;
         public ScriptMachine machine;
     }
 }

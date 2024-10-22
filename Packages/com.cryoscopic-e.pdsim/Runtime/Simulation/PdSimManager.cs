@@ -469,33 +469,37 @@ namespace PDSim.Simulation
 
                 if (fluent.value.IsEmpty())
                     continue;
-
-                var inputObjects = fluent.parameters.Select(p => _objects[p]).ToArray();
-
-                var attributes = fluent.parameters;
-                var fluentParam = _effectToAnimations[fluent.fluentName].metaData.parameters;
-                var attributeTypes = attributes.Select(attribute => _objects[attribute].objectType).ToList();
                 var typeTree = problemModel.typesDeclaration;
 
-                if (fluentParam.Count != attributeTypes.Count)
+                var attributes = fluent.parameters; // attributes passed to the effect (grounded)
+                var attributeTypes = attributes.Select(attribute => _objects[attribute].objectType).ToList(); // types of the attributes
+                
+                var fluentParams = _effectToAnimations[fluent.fluentName].metaData.parameters; // fluent parameters as defined in the model
+               
+
+                var animationParams = animationData.parameters;
+
+                if (fluentParams.Count != attributeTypes.Count)
                     continue;
-                else
+                
+                var match = true;
+                for (var i = 0; i < fluentParams.Count; i++)
                 {
-                    var match = true;
-                    for (var i = 0; i < fluentParam.Count; i++)
+                    var fluentDefinitionType = fluentParams[i].type;
+                    var attributeType = attributeTypes[i];
+                    var animationParamType = animationParams[i];
+                    
+                    if (animationParamType != attributeType && !typeTree.IsChildOf(attributeType, animationParamType))
                     {
-                        var fluentDefinitionType = fluentParam[i].type;
-                        var objectType = attributeTypes[i];
-                        //Debug.Log("Type: " + fluentDefinitionType + " " + objectType);
-                        if (fluentDefinitionType != objectType && !typeTree.IsChildOf(objectType, fluentDefinitionType))
-                        {
-                            match = false;
-                            break;
-                        }
+                        match = false;
+                        break;
                     }
-                    if (!match)
-                        continue;
+
+
                 }
+                if (!match)
+                    continue;
+                
 
                 animationQueue.Enqueue(new AnimationQueueElement()
                 {
