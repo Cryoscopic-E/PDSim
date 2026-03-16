@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UIElements;
 using PDSim.Components;
 
@@ -37,6 +38,8 @@ namespace PDSim.Utils.Animation
     {
         ITransformationBuilder To(Vector3 position);
         ITransformationBuilder To(GameObject target);
+        /// <summary>Move to a named anchor on the destination object (resolved via PDSimMetadata).</summary>
+        ITransformationBuilder To(GameObject target, string anchorTag);
         ITransformationBuilder By(Vector3 axis);
         ITransformationBuilder To(Quaternion rotation);
         ITransformationBuilder Duration(float seconds);
@@ -112,6 +115,7 @@ namespace PDSim.Utils.Animation
         // --- Transformation Methods ---
         public ITransformationBuilder To(Vector3 position) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(position); return this; }
         public ITransformationBuilder To(GameObject target) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(target); return this; }
+        public ITransformationBuilder To(GameObject target, string anchorTag) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTargetWithTag(target, anchorTag); return this; }
         public ITransformationBuilder By(Vector3 axis) { (Actions[Actions.Count - 1] as ITweenAction)?.SetDelta(axis); return this; }
         public ITransformationBuilder To(Quaternion rotation) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(rotation); return this; }
         public ITransformationBuilder Duration(float seconds) { (Actions[Actions.Count - 1] as ITweenAction)?.SetDuration(seconds); return this; }
@@ -123,6 +127,7 @@ namespace PDSim.Utils.Animation
     {
         void SetTarget(Vector3 pos);
         void SetTarget(GameObject target);
+        void SetTargetWithTag(GameObject target, string anchorTag);
         void SetTarget(Quaternion rot);
         void SetDelta(Vector3 delta);
         void SetDuration(float duration);
@@ -143,8 +148,8 @@ namespace PDSim.Utils.Animation
     {
         private readonly float _seconds;
         public WaitAction(float seconds) => _seconds = seconds;
-        public IEnumerator Execute() 
-        { 
+        public IEnumerator Execute()
+        {
             float elapsed = 0;
             while (elapsed < _seconds)
             {
@@ -176,6 +181,7 @@ namespace PDSim.Utils.Animation
 
         public virtual void SetTarget(Vector3 pos) { }
         public virtual void SetTarget(GameObject target) { }
+        public virtual void SetTargetWithTag(GameObject target, string anchorTag) { }
         public virtual void SetTarget(Quaternion rot) { }
         public virtual void SetDelta(Vector3 delta) { }
         public void SetDuration(float duration) => TimeSeconds = duration;
@@ -229,25 +235,114 @@ namespace PDSim.Utils.Animation
         private Vector3 _start;
         private Vector3 _end;
         private GameObject _endTarget;
+        private string _endTargetTag;
 
         public MoveAction(GameObject target, string tag = null) : base(target, tag) { }
+
         public override void SetTarget(Vector3 pos) => _end = pos;
         public override void SetTarget(GameObject target) => _endTarget = target;
+        public override void SetTargetWithTag(GameObject target, string anchorTag)
+        {
+            _endTarget    = target;
+            _endTargetTag = anchorTag;
+        }
+
+        // Resolves the world-space destination, including optional anchor tag on the destination.
+        private Vector3 ResolveEndPosition()
+        {
+            if (_endTarget == null) return _end;
+
+            if (!string.IsNullOrEmpty(_endTargetTag))
+            {
+                var meta   = _endTarget.GetComponent<PDSimMetadata>();
+                var anchor = meta?.GetAnchor(_endTargetTag);
+                if (anchor != null) return anchor.position;
+                Debug.LogWarning($"[PDSim] Destination tag '{_endTargetTag}' not found on '{_endTarget.name}'. Using root.");
+            }
+
+            return _endTarget.transform.position;
+        }
 
         public override IEnumerator Execute()
         {
-            var resolvedTarget = ResolveTarget();
-            if (resolvedTarget == null) yield break;
+            var resolvedSource = ResolveTarget();
+            if (resolvedSource == null) yield break;
 
-            _start = IsLocal ? resolvedTarget.localPosition : resolvedTarget.position;
-            
-            yield return DoTween(t => {
-                if (resolvedTarget == null) return;
-                if (_endTarget != null) _end = _endTarget.transform.position;
+            // If the moving object is marked for NavMesh movement, use the agent.
+            var visObj = Target.GetComponent<VisualisationObject>();
+            if (visObj != null && visObj.useNavMeshAgent)
+                yield return ExecuteNavMesh(resolvedSource, visObj);
+            else
+                yield return ExecuteLerp(resolvedSource);
+        }
+
+        private IEnumerator ExecuteLerp(Transform resolvedSource)
+        {
+            _start = IsLocal ? resolvedSource.localPosition : resolvedSource.position;
+            _end   = ResolveEndPosition();
+
+            yield return DoTween(t =>
+            {
+                if (resolvedSource == null) return;
+                // Re-resolve every tick so the destination can move dynamically.
+                _end = ResolveEndPosition();
                 var val = Vector3.Lerp(_start, _end, t);
-                if (IsLocal) resolvedTarget.localPosition = val;
-                else resolvedTarget.position = val;
+                if (IsLocal) resolvedSource.localPosition = val;
+                else         resolvedSource.position      = val;
             });
+        }
+
+        private IEnumerator ExecuteNavMesh(Transform resolvedSource, VisualisationObject visObj)
+        {
+            var agent = Target.GetComponent<NavMeshAgent>();
+            if (agent == null)
+            {
+                // NavMesh agent unexpectedly missing — fall back to lerp.
+                Debug.LogWarning($"[PDSim] '{Target.name}' has useNavMeshAgent=true but no NavMeshAgent component. Falling back to lerp.");
+                yield return ExecuteLerp(resolvedSource);
+                yield break;
+            }
+
+            // Apply movement settings (or defaults).
+            var s = visObj.movementSettings;
+            float baseSpeed       = s != null ? s.speed           : 1f;
+            float angularSpeed    = s != null ? s.angularSpeed    : 120f;
+            float acceleration    = s != null ? s.acceleration    : 8f;
+            float stoppingDist    = s != null ? s.stoppingDistance : 0.1f;
+
+            agent.angularSpeed    = angularSpeed;
+            agent.acceleration    = acceleration;
+            agent.stoppingDistance = stoppingDist;
+            agent.isStopped       = false;
+            agent.SetDestination(ResolveEndPosition());
+
+            // Wait for the path to be computed.
+            while (agent.pathPending)
+                yield return null;
+
+            // Drive toward destination, respecting pause and animation speed.
+            while (agent.remainingDistance > agent.stoppingDistance)
+            {
+                // Update destination each frame in case the target is moving.
+                if (_endTarget != null)
+                    agent.SetDestination(ResolveEndPosition());
+
+                if (Controller.Instance != null && Controller.Instance.IsPaused)
+                {
+                    agent.isStopped = true;
+                    yield return null;
+                    continue;
+                }
+
+                agent.isStopped = false;
+                float speedScale = Controller.Instance != null ? Controller.Instance.animationSpeed : 1f;
+                agent.speed = baseSpeed * speedScale;
+                yield return null;
+            }
+
+            agent.isStopped = false;
+            // Snap to exact destination so floating-point drift doesn't accumulate.
+            resolvedSource.position = ResolveEndPosition();
         }
     }
 
@@ -313,13 +408,13 @@ namespace PDSim.Utils.Animation
         public override IEnumerator Execute()
         {
             if (Target == null) yield break;
-            
+
             if (!string.IsNullOrEmpty(Tag))
             {
                 var metadata = Target.GetComponent<PDSimMetadata>();
                 _renderer = metadata?.GetRender(Tag);
             }
-            
+
             if (_renderer == null) _renderer = Target.GetComponent<Renderer>();
             if (_renderer == null) { yield break; }
 
@@ -389,15 +484,11 @@ namespace PDSim.Utils.Animation
                 yield break;
             }
 
-            // Support TMP_Text via reflection to avoid hard dependency in base package if possible, 
-            // but since we have it in asmdef, we can use it.
-            // Actually, let's use GetComponent by string to be safe.
             var tmp = display.GetComponent("TMPro.TMP_Text");
             if (tmp != null)
             {
                 tmp.GetType().GetProperty("text")?.SetValue(tmp, _text);
             }
-            // Support UI Toolkit Label/Button/etc via UIDocument
             else if (display is UnityEngine.UIElements.UIDocument uiDoc)
             {
                 var element = uiDoc.rootVisualElement.Q<UnityEngine.UIElements.TextElement>(_tag);

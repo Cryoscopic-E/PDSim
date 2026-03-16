@@ -117,17 +117,22 @@ namespace PDSim.Editor
 
             // --- C# SCRIPT GENERATION ---
             // Everything should be handled in the DLL library
-            string folderPath = AssetUtils.GetSimulationScriptsPath(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
+            var namespaceName = $"PDSim.Generated.Animations.{sanitizedSceneName}";
+
+            string folderPath = AssetUtils.GetSimulationAnimationsPath(sceneName);
             if (!System.IO.Directory.Exists(folderPath))
             {
                 System.IO.Directory.CreateDirectory(folderPath);
             }
 
             string className = PDSimAPI.Generators.FluentScriptGenerator.GetVisualizerClassName(predicateName, attributeTypes);
+            string fullTypeName = $"{namespaceName}.{className}";
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
 
             // Convert Metadata to GeTFluent
-            var parameters = new System.Collections.Generic.List<GeTParameter>();
+            var parameters = new List<GeTParameter>();
             if (_metadata.ParametersNames != null)
             {
                 for (int i = 0; i < _metadata.ParametersNames.Count; i++)
@@ -142,15 +147,15 @@ namespace PDSim.Editor
             // Only generate if it doesn't exist yet
             if (!System.IO.File.Exists(filePath))
             {
-                string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className);
+                string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className, namespaceName);
                 System.IO.File.WriteAllText(filePath, code);
                 AssetDatabase.Refresh();
                 Debug.Log($"[PDSim] Generated C# Script: {filePath}");
             }
 
             // Add the animation to the context (FluentAnimation component)
-            // This will track the instance and try to find the visualizer script
-            if (!_context.AddAnimationData(animationName, attributeTypes, instance, className))
+            // scriptClassName stores the fully-qualified type name for direct assembly lookup.
+            if (!_context.AddAnimationData(animationName, attributeTypes, instance, fullTypeName))
             {
                 EditorUtility.DisplayDialog("Error", $"Animation '{animationName}' already exists for fluent '{predicateName}'.", "Ok");
                 DestroyImmediate(instance);

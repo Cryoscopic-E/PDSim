@@ -3,7 +3,7 @@ using UnityEngine.Windows;
 
 namespace PDSim.Utils
 {
-    # if UNITY_EDITOR
+#if UNITY_EDITOR
     public static class AssetUtils
     {
         private const string SimData = "Data/";
@@ -90,6 +90,12 @@ namespace PDSim.Utils
             return GetSimulationScriptsPath(sceneName) + "/Behaviors";
         }
 
+        public static string GetSimulationAnimationsPath(string sceneName)
+        {
+            return GetSimulationScriptsPath(sceneName) + "/Animations";
+        }
+
+
         public static T GetAsset<T>(string path) where T : UnityEngine.Object
         {
             return AssetDatabase.LoadAssetAtPath<T>(path);
@@ -125,5 +131,5 @@ namespace PDSim.Utils
         //    EditorSceneManager.SaveScene(result.scene, newScenePath);
         //}
     }
-    #endif
+#endif
 }

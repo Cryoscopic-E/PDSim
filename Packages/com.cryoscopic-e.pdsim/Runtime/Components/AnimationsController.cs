@@ -52,6 +52,9 @@ namespace PDSim.Components
 
         private bool stop = false;
 
+        // Single tracked coroutine — never accumulate multiple AnimationsLoop instances.
+        private Coroutine _loopCoroutine;
+
         private void Awake()
         {
             _animations = Animations.Instance;
@@ -59,35 +62,46 @@ namespace PDSim.Components
             _animationsActive = new Dictionary<string, AnimationRoutine>();
         }
 
+        private void RestartLoop()
+        {
+            if (_loopCoroutine != null)
+                StopCoroutine(_loopCoroutine);
+            _loopCoroutine = StartCoroutine(AnimationsLoop());
+        }
+
         private void Start()
         {
             Controller.Instance.OnVisualiseInitBlock += () =>
             {
                 stop = false;
-                StartCoroutine(AnimationsLoop());
+                RestartLoop();
             };
 
             Controller.Instance.OnVisualisationActionBlock += (block, i) =>
             {
-                StartCoroutine(AnimationsLoop());
+                RestartLoop();
             };
 
             Controller.Instance.OnVisualisationFinished += () =>
             {
                 stop = true;
             };
-            // Constantly check if the animationActive dictionary contains any queues
-
         }
 
         private IEnumerator AnimationsLoop()
         {
+            // Always yield at least one frame before the first check.
+            // StartCoroutine() executes synchronously up to the first yield, so
+            // without this guard OnTimePointAnimationEnd would fire in the same
+            // frame the loop is started (before the screen has rendered once).
+            yield return null;
+
             while (!stop)
             {
                 // Check if the dictionary is empty
                 if (_animationsActive.Count == 0)
                 {
-                    OnTimePointAnimationEnd?.Invoke(); // Added safe invoke
+                    OnTimePointAnimationEnd?.Invoke();
                     yield return null;
                 }
 
@@ -224,7 +238,10 @@ namespace PDSim.Components
                 System.Type type = null;
                 foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    type = assembly.GetType("GeneratedVisualizers." + animationElement.scriptClassName);
+                    // scriptClassName is stored as the fully-qualified type name for new animations.
+                    // Fall back to the legacy "GeneratedVisualizers." prefix for older scenes.
+                    type = assembly.GetType(animationElement.scriptClassName)
+                        ?? assembly.GetType("GeneratedVisualizers." + animationElement.scriptClassName);
                     if (type != null) break;
                 }
                 if (type != null)

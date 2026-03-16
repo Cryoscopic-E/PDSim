@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using TMPro;
 
-namespace PDSim.Helpers.UI
+namespace PDSim.Helpers
 {
     [ExecuteAlways]
-    public class Tooltip : MonoBehaviour
+    public class Helper_Tooltip : MonoBehaviour
     {
         [SerializeField] Transform canvas;
         [SerializeField] Transform point;

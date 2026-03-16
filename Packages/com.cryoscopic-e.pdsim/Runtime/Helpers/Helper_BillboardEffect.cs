@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace PDSim.Helpers.UI
+namespace PDSim.Helpers
 {
-    public class BillboardEffect : MonoBehaviour
+    public class Helper_BillboardEffect : MonoBehaviour
     {
         public Canvas canvas;
         private void Start()

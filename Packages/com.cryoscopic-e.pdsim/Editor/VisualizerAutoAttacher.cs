@@ -65,7 +65,10 @@ namespace PDSim.Editor
 
         private static bool TryAttachFluent(FluentAnimation context, FluentAnimation.AnimationData data)
         {
-            var type = ResolveType("GeneratedVisualizers." + data.scriptClassName);
+            // scriptClassName is now stored as the fully-qualified type name for new animations.
+            // Fall back to the legacy "GeneratedVisualizers." prefix for older scenes.
+            var type = ResolveType(data.scriptClassName)
+                ?? ResolveType("GeneratedVisualizers." + data.scriptClassName);
             if (type != null)
             {
                 var component = data.sceneObjectReference.GetComponent(type) as MonoBehaviour;

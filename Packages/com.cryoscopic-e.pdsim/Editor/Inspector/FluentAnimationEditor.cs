@@ -100,9 +100,18 @@ namespace PDSim.Editor.Inspector
             var data = fluentAnimation.animationData[index];
             var predicateName = fluentAnimation.metaData.Name;
             var attributeTypes = data.parameters;
-            var className = data.scriptClassName;
 
-            string folderPath = PDSim.Utils.AssetUtils.GetSimulationScriptsPath(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            // scriptClassName may be fully-qualified (new) or a bare class name (legacy).
+            var fullTypeName = data.scriptClassName;
+            var className = fullTypeName.Contains(".")
+                ? fullTypeName.Substring(fullTypeName.LastIndexOf('.') + 1)
+                : fullTypeName;
+
+            var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
+            var namespaceName = $"PDSim.Generated.Animations.{sanitizedSceneName}";
+
+            string folderPath = PDSim.Utils.AssetUtils.GetSimulationScriptsPath(sceneName);
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
 
             // Convert Metadata to GeTFluent
@@ -115,7 +124,7 @@ namespace PDSim.Editor.Inspector
             }
             var fluent = new GeTFluent(predicateName, fluentAnimation.metaData.FluentValueType, parameters);
 
-            string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className);
+            string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className, namespaceName);
             System.IO.File.WriteAllText(filePath, code);
             AssetDatabase.Refresh();
             Debug.Log($"[PDSim] Regenerated C# Script: {filePath}");
