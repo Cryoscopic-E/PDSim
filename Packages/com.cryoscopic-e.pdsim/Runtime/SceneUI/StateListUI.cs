@@ -1,4 +1,4 @@
-using PDSim.Simulation;
+using PDSim.Components;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -28,7 +28,7 @@ namespace PDSim.SceneUI
             objectName = _root.Q<Label>("ObjectName");
         }
 
-        public StateListController InitializeList(PdSimSimulationObject simObject)
+        public StateListController InitializeList(VisualisationObject simObject)
         {
             objectName.text = simObject.name;
             _stateListController.InitializeStateList(_root, itemTemplate);

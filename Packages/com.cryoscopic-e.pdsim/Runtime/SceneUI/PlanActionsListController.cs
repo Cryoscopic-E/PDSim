@@ -1,6 +1,5 @@
-﻿using PDSim.PlanningModel;
+﻿using GeTModel;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -21,9 +20,9 @@ namespace PDSim.SceneUI
 
         }
 
-        private List<PdSimActionInstance> planActions;
+        private List<GeTActionInstance> planActions;
 
-        public void SetPlanActions(List<PdSimActionInstance> actions)
+        public void SetPlanActions(List<GeTActionInstance> actions)
         {
             planActions = actions;
         }

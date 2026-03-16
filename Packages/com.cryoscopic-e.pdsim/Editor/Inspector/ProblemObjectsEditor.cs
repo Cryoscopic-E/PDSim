@@ -1,4 +1,4 @@
-using PDSim.Simulation;
+using PDSim.Components;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,6 +19,8 @@ namespace PDSim.Editor.Inspector
         public override void OnInspectorGUI()
         {
             GUILayout.Label("Problem Objects Customisation", EditorStyles.largeLabel);
+            if (problemObjects.prefabs == null)
+                return;
             for (var i = 0; i < problemObjects.prefabs.Count; ++i)
             {
                 DrawModel(i);
@@ -35,7 +37,7 @@ namespace PDSim.Editor.Inspector
             EditorGUILayout.LabelField(problemObjects.prefabs[index].name, EditorStyles.boldLabel);
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.ObjectField(problemObjects.prefabs[index], typeof(PdSimSimulationObject), false);
+            EditorGUILayout.ObjectField(problemObjects.prefabs[index], typeof(VisualisationObject), false);
             // EDIT PREFAB BUTTON
             if (GUILayout.Button("Edit", GUILayout.ExpandWidth(false)))
             {

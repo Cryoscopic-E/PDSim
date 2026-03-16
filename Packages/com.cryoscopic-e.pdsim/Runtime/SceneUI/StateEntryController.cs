@@ -1,4 +1,4 @@
-﻿using PDSim.PlanningModel;
+﻿using GeTModel;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -14,7 +14,7 @@ namespace PDSim.SceneUI
         }
 
 
-        public void SetData(PdSimFluentAssignment data)
+        public void SetData(GeTStateVariable data)
         {
             label.text = data.ToString();
         }

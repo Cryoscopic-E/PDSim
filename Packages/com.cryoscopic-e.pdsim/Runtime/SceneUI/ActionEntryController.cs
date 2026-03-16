@@ -1,4 +1,4 @@
-﻿using PDSim.PlanningModel;
+﻿using GeTModel;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -13,7 +13,7 @@ namespace PDSim.SceneUI
         }
 
 
-        public void SetActionData(PdSimActionInstance data)
+        public void SetActionData(GeTActionInstance data)
         {
             label.text = data.ToString();
         }

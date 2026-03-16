@@ -11,6 +11,9 @@ namespace PDSim.Editor.Inspector
         {
             Handles.color = Color.yellow;
             AreaPointSelect myObj = (AreaPointSelect)target;
+
+            Handles.color = Color.black;
+            Handles.Label(myObj.transform.position + myObj.offset, "Area Point Select");
             Handles.DrawWireCube(myObj.transform.position + myObj.offset, myObj.size);
         }
     }

@@ -13,7 +13,8 @@ namespace PDSim.SceneUI
 
         public void ResetPosition()
         {
-            target.transform.position = Vector2.zero;
+            var translate = new Translate(0, 0);
+            target.style.translate = new StyleTranslate(translate);
         }
         protected override void RegisterCallbacksOnTarget()
         {
@@ -38,7 +39,7 @@ namespace PDSim.SceneUI
 
         private void OnMouseDown(PointerDownEvent evt)
         {
-            targetStartPosition = target.transform.position;
+            targetStartPosition = target.resolvedStyle.translate;
             pointerStartPosition = evt.position;
             target.CapturePointer(evt.pointerId);
             enabled = true;
@@ -50,7 +51,7 @@ namespace PDSim.SceneUI
             {
                 Vector3 pointerDelta = evt.position - pointerStartPosition;
 
-                target.transform.position = new Vector2(
+                var newPosition = new Vector2(
                     Mathf.Clamp(targetStartPosition.x + pointerDelta.x, 0, target.panel.visualTree.worldBound.width),
                     Mathf.Clamp(targetStartPosition.y + pointerDelta.y, 0, target.panel.visualTree.worldBound.height));
             }

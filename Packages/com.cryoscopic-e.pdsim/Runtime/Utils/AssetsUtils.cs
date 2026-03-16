@@ -8,6 +8,7 @@ namespace PDSim.Utils
     {
         private const string SimData = "Data/";
         private const string SimObjectsFolder = "Objects/";
+        private const string SimScriptsFolder = "Scripts/";
 
         private static void CreateFolderIfDontExist(string path)
         {
@@ -62,6 +63,8 @@ namespace PDSim.Utils
             CreateFolderIfDontExist(simulationPath + SimObjectsFolder);
             // Folder for data
             CreateFolderIfDontExist(simulationPath + SimData);
+            // Folder for scripts
+            CreateFolderIfDontExist(simulationPath + SimScriptsFolder);
         }
 
         public static string GetSimulationDataPath(string sceneName)
@@ -76,13 +79,24 @@ namespace PDSim.Utils
             return simulationPath;
         }
 
+        public static string GetSimulationScriptsPath(string sceneName)
+        {
+            var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/" + SimScriptsFolder;
+            return simulationPath;
+        }
+
+        public static string GetSimulationBehaviorsPath(string sceneName)
+        {
+            return GetSimulationScriptsPath(sceneName) + "/Behaviors";
+        }
+
         public static T GetAsset<T>(string path) where T : UnityEngine.Object
         {
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
 
-        public static string GetCurrentSimulationScenePath(string sceneName)
+        public static string CreateScenePath(string sceneName)
         {
             var simulationPath = CommonPaths.SIMULATIONS_ROOT_FOLDER + sceneName + "/";
 

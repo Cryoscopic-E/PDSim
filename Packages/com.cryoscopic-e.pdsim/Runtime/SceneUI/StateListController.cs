@@ -1,4 +1,4 @@
-﻿using PDSim.PlanningModel;
+﻿using GeTModel;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -20,7 +20,7 @@ namespace PDSim.SceneUI
             SetupList();
         }
 
-        public void SetState(List<PdSimFluentAssignment> fluents)
+        public void SetState(List<GeTStateVariable> fluents)
         {
             _state = fluents;
             stateList.itemsSource = _state;
@@ -34,7 +34,7 @@ namespace PDSim.SceneUI
             stateList.Rebuild();
         }
 
-        private List<PdSimFluentAssignment> _state = new();
+        private List<GeTStateVariable> _state = new();
 
         void SetupList()
         {

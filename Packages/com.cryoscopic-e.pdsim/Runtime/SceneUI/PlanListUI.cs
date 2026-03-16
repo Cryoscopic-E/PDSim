@@ -1,4 +1,4 @@
-using PDSim.PlanningModel;
+using GeTModel;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -26,7 +26,7 @@ namespace PDSim.SceneUI
             _root.style.display = DisplayStyle.None;
         }
 
-        public PlanActionsListController InitializePlanList(List<PdSimActionInstance> list)
+        public PlanActionsListController InitializePlanList(List<GeTActionInstance> list)
         {
             _actionListController = new PlanActionsListController();
             _actionListController.SetPlanActions(list);

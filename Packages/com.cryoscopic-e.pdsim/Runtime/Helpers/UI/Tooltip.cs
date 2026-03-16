@@ -15,7 +15,7 @@ namespace PDSim.Helpers.UI
         {
             line.positionCount = 2;
         }
-        // Update is called once per frame
+        // RefreshAnimations is called once per frame
         void Update()
         {
             Vector3[] points = new Vector3[line.positionCount];
