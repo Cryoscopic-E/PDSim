@@ -1,4 +1,4 @@
-﻿using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -6,21 +6,14 @@ namespace PDSim.SceneUI
 {
     public class PlanActionsListController
     {
-        VisualTreeAsset actionItemTemplate;
-
         ListView actionsList;
+        private List<GroundedAction> planActions;
 
-
-        public void InitializeActionList(VisualElement root, VisualTreeAsset labelTemplate)
+        public void InitializeActionList(VisualElement root)
         {
-            actionItemTemplate = labelTemplate;
-
             actionsList = root.Q<ListView>("PlanList");
             FillActionsList();
-
         }
-
-        private List<GroundedAction> planActions;
 
         public void SetPlanActions(List<GroundedAction> actions)
         {
@@ -29,35 +22,24 @@ namespace PDSim.SceneUI
 
         void FillActionsList()
         {
-            // Set up a make item function for a list entry
             actionsList.makeItem = () =>
             {
-                // Instantiate the UXML template for the entry
-                var newListEntry = actionItemTemplate.Instantiate();
+                var label = new Label { name = "Item" };
+                label.AddToClassList("list-item");
 
-                // Instantiate a controller for the data
                 var actionEntry = new ActionEntryController();
+                label.userData = actionEntry;
+                actionEntry.SetVisualElement(label);
 
-                // Assign the controller script to the visual element
-                newListEntry.userData = actionEntry;
-
-                // Initialize the controller script
-                actionEntry.SetVisualElement(newListEntry);
-
-                // Return the root of the instantiated visual tree
-                return newListEntry;
+                return label;
             };
 
-            // Set up bind function for a specific list entry
             actionsList.bindItem = (item, index) =>
             {
                 (item.userData as ActionEntryController).SetActionData(planActions[index]);
             };
 
-            // Set a fixed item height
             actionsList.fixedItemHeight = 45;
-
-            // Set the actual item's source list/array
             actionsList.itemsSource = planActions;
         }
     }

@@ -22,20 +22,29 @@ namespace PDSim.Runtime.SceneUI
         private void OnEnable()
         {
             _uiDocument = GetComponent<UIDocument>();
-            
-            if (_uiDocument.visualTreeAsset == null)
-            {
-                _uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/InteractiveDashboard");
-            }
+            _uiDocument.visualTreeAsset = null;
 
             var root = _uiDocument.rootVisualElement;
 
-            _fluentList = root.Q<ScrollView>("FluentList");
-            _goalInput = root.Q<TextField>("GoalInput");
-            _solveButton = root.Q<Button>("SolveButton");
+            // Build UI programmatically
+            var container = new VisualElement { name = "DashboardRoot" };
+            container.style.flexGrow = 1;
+            container.style.paddingLeft = container.style.paddingRight = container.style.paddingTop = container.style.paddingBottom = 10;
+            root.Add(container);
 
-            if (_solveButton != null)
-                _solveButton.clicked += OnSolveClicked;
+            _fluentList = new ScrollView { name = "FluentList" };
+            _fluentList.style.flexGrow = 1;
+            _fluentList.style.marginBottom = 10;
+            container.Add(_fluentList);
+
+            _goalInput = new TextField("Goal") { name = "GoalInput" };
+            _goalInput.style.marginBottom = 10;
+            container.Add(_goalInput);
+
+            _solveButton = new Button { name = "SolveButton", text = "Solve" };
+            container.Add(_solveButton);
+
+            _solveButton.clicked += OnSolveClicked;
 
             if (PDSimWorldObserver.Instance != null)
                 PDSimWorldObserver.Instance.OnStateChanged += UpdateFluentList;
@@ -83,7 +92,7 @@ namespace PDSim.Runtime.SceneUI
             if (result.Status == PlanGenStatus.SolvedSatisficing || result.Status == PlanGenStatus.SolvedOptimally)
             {
                 Debug.Log($"[PDSim] Plan Found! Actions: {result.Plan.Actions.Count}");
-                
+
                 // 4. Handoff to Controller for animation
                 var controller = Controller.Instance;
                 if (controller != null)

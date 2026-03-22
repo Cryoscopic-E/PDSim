@@ -1,4 +1,4 @@
-﻿using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -6,17 +6,12 @@ namespace PDSim.SceneUI
 {
     public class StateListController
     {
-        VisualTreeAsset itemTemplate;
-
         ListView stateList;
+        private List<(FluentExpression Fluent, object Value)> _state = new();
 
-
-        public void InitializeStateList(VisualElement root, VisualTreeAsset labelTemplate)
+        public void InitializeStateList(VisualElement root)
         {
-            itemTemplate = labelTemplate;
-
             stateList = root.Q<ListView>("StateList");
-
             SetupList();
         }
 
@@ -34,40 +29,26 @@ namespace PDSim.SceneUI
             stateList.Rebuild();
         }
 
-        private List<(FluentExpression Fluent, object Value)> _state = new();
-
         void SetupList()
         {
-            // Set up a make item function for a list entry
             stateList.makeItem = () =>
             {
-                // Instantiate the UXML template for the entry
-                var newListEntry = itemTemplate.Instantiate();
+                var label = new Label { name = "Item" };
+                label.AddToClassList("list-item");
 
-                // Instantiate a controller for the data
                 var entry = new StateEntryController();
+                label.userData = entry;
+                entry.SetVisualElement(label);
 
-                // Assign the controller script to the visual element
-                newListEntry.userData = entry;
-
-                // Initialize the controller script
-                entry.SetVisualElement(newListEntry);
-
-                // Return the root of the instantiated visual tree
-                return newListEntry;
+                return label;
             };
 
-            // Set up bind function for a specific list entry
             stateList.bindItem = (item, index) =>
             {
                 (item.userData as StateEntryController).SetData(_state[index]);
             };
 
-            // Set a fixed item height
             stateList.fixedItemHeight = 45;
         }
-
-
     }
-
 }

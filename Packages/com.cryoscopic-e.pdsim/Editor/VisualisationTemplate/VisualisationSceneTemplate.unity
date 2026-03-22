@@ -255,7 +255,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 257953156}
-  - component: {fileID: 257953155}
+  - component: {fileID: 257953157}
   - component: {fileID: 257953154}
   m_Layer: 5
   m_Name: PlanPanelUI
@@ -276,30 +276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad2e0c616e0a681419ae187e3e7d54bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionItemTemplate: {fileID: 9197481963319205126, guid: 7569dd74ac6b94e4db865bb69213b7c6, type: 3}
---- !u!114 &257953155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 257953153}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 592195bc5b4fc8eceb619d1fedbaa487, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 06351c0dd87a44a458ed40e35f996078, type: 3}
-  m_SortingOrder: 1
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
 --- !u!4 &257953156
 Transform:
   m_ObjectHideFlags: 0
@@ -315,6 +291,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1599829436}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &257953157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257953153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 592195bc5b4fc8eceb619d1fedbaa487, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &439415608
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +344,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90487d658f6cfcf48bbf2cb169a9a78f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemTemplate: {fileID: 9197481963319205126, guid: 7569dd74ac6b94e4db865bb69213b7c6, type: 3}
 --- !u!114 &439415610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 592195bc5b4fc8eceb619d1fedbaa487, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: b633e91b6458a1447b7b07ab09ed5dec, type: 3}
+  sourceAsset: {fileID: 0}
   m_SortingOrder: 1
   m_Position: 0
   m_WorldSpaceSizeMode: 1
@@ -438,7 +436,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 958859643}
-  - component: {fileID: 958859642}
+  - component: {fileID: 958859644}
   - component: {fileID: 958859641}
   m_Layer: 5
   m_Name: MainUI
@@ -461,29 +459,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlanListUI: {fileID: 257953154}
   StateListUI: {fileID: 439415609}
---- !u!114 &958859642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 958859640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 592195bc5b4fc8eceb619d1fedbaa487, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 3def19a19aefda3429770c0ee91adbed, type: 3}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
 --- !u!4 &958859643
 Transform:
   m_ObjectHideFlags: 0
@@ -499,6 +474,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1599829436}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &958859644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958859640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 592195bc5b4fc8eceb619d1fedbaa487, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &961739749
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,8 +647,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfadb5835ac9b1d459005bbe0384b1e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookSensitivity: 0.15
+  pitchMin: -89
+  pitchMax: 89
   moveSpeed: 3.5
-  lookSpeed: 2
+  sprintMultiplier: 2.5
+  verticalSpeed: 6
+  movementSmoothing: 0.1
 --- !u!1 &1160234425
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,7 +896,6 @@ MonoBehaviour:
   problem: {fileID: 0}
   planGeneration: {fileID: 0}
   animationSpeed: 1
-  autoAdvance: 1
 --- !u!114 &2017000300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,7 +938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 799aeac8a6cd3f74a858ff9e92fb9570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkInterval: 0.1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

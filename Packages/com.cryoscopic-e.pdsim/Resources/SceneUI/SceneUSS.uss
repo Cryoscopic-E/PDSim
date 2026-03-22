@@ -1,104 +1,449 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PDSim Scene UI — Modern Dark Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+
 VisualElement {
 }
 
-.play-button {
-    width: 30px;
-    height: 30px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-left: 5px;
-    margin-right: 4px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    -unity-background-scale-mode: stretch-to-fill;
-    background-image: resource('UITextures/forward');
-    -unity-background-image-tint-color: rgb(0, 0, 0);
+/* ── Layout Containers ─────────────────────────────────────────────────── */
+
+.root-container {
+    flex-basis: 100%;
+    justify-content: space-between;
+    align-items: stretch;
 }
 
-.pause-button {
-    width: 30px;
-    height: 30px;
+.header {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-left: 5px;
-    margin-right: 4px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    background-image: resource('UITextures/pause');
-    -unity-background-image-tint-color: rgb(0, 0, 0);
 }
 
-.return-button {
-    width: 50px;
-    height: 50px;
-    flex-direction: column;
+.top-bar {
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    margin-left: 6px;
-    margin-right: 6px;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    -unity-background-image-tint-color: rgb(255, 255, 255);
-    background-image: resource('UITextures/arrowLeft');
-    -unity-slice-scale: 1px;
-    -unity-background-scale-mode: stretch-to-fill;
-    opacity: 1;
-}
-
-.controls-button {
-    width: auto;
+    width: 100%;
     padding-left: 20px;
     padding-right: 20px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    -unity-slice-left: 25;
-    -unity-slice-top: 25;
-    -unity-slice-right: 25;
-    -unity-slice-bottom: 25;
-    -unity-background-scale-mode: stretch-to-fill;
-    color: rgb(0, 0, 0);
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(18, 18, 22, 0.95);
+}
+
+.controls-bar {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: rgba(18, 18, 22, 0.95);
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.footer {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.toolbox {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons-holder {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background-color: rgba(18, 18, 22, 0.95);
+}
+
+/* ── Buttons — Base ────────────────────────────────────────────────────── */
+
+.btn {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.btn:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.btn:active {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.btn:focus {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ── Buttons — Icon (controls bar) ─────────────────────────────────────── */
+
+.btn-icon {
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 6px;
+    transition-property: background-color;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+}
+
+.btn-icon:hover {
+    background-color: rgba(55, 55, 65, 1);
+}
+
+.btn-icon:active {
+    background-color: rgba(70, 70, 82, 1);
+}
+
+.btn-icon:focus {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.btn-icon:disabled {
+    opacity: 0.35;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ── Buttons — Text (toolbox toggle buttons) ───────────────────────────── */
+
+.btn-text {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    background-color: rgba(28, 28, 34, 0.92);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(60, 60, 72, 0.6);
+    border-right-color: rgba(60, 60, 72, 0.6);
+    border-top-color: rgba(60, 60, 72, 0.6);
+    border-bottom-color: rgba(60, 60, 72, 0.6);
+    transition-property: background-color, color, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+}
+
+.btn-text:hover {
+    background-color: rgba(55, 55, 65, 1);
+    color: rgba(230, 230, 240, 1);
+    border-left-color: rgba(99, 140, 255, 0.4);
+    border-right-color: rgba(99, 140, 255, 0.4);
+    border-top-color: rgba(99, 140, 255, 0.4);
+    border-bottom-color: rgba(99, 140, 255, 0.4);
+}
+
+.btn-text:active {
+    background-color: rgba(70, 70, 82, 1);
+}
+
+.btn-text:disabled {
+    opacity: 0.4;
+    color: rgba(90, 90, 100, 1);
+}
+
+/* ── Icons ──────────────────────────────────────────────────────────────── */
+
+.icon {
+    width: 30px;
+    height: 30px;
+    -unity-background-scale-mode: scale-to-fit;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: rgb(230, 220, 220);
+}
+
+.icon--back {
+    width: 40px;
+    height: 40px;
+    background-image: resource('UITextures/arrowLeft');
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.icon--restart {
+    background-image: resource('UITextures/restart');
+}
+
+.icon--play {
+    background-image: resource('UITextures/play');
+}
+
+.icon--next {
+    background-image: resource('UITextures/next');
+}
+
+.icon--pause {
+    background-image: resource('UITextures/pause');
+}
+
+.icon--skip {
+    background-image: resource('UITextures/skip');
+}
+
+/* ── Branding / Header Labels ──────────────────────────────────────────── */
+
+.sim-name {
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    font-size: 28px;
+    -unity-text-align: middle-center;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     margin-left: 10px;
-    font-size: 15px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.brand-label {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgba(160, 160, 175, 1);
+}
+
+/* ── Speed Bar ─────────────────────────────────────────────────────────── */
+
+.speed-bar {
+    width: 100%;
+    background-color: rgba(18, 18, 22, 0.95);
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.speed-slider {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.speed-labels-row {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .speed-label {
-    position: relative;
-    left: -45%;
     -unity-font-style: bold;
-    color: rgb(255, 255, 255);
-    font-size: 17px;
+    color: rgba(160, 160, 175, 1);
+    font-size: 15px;
+    -unity-text-align: middle-center;
 }
 
-.title-label {
-    width: 100%;
-    -unity-text-align: upper-center;
-    font-size: 25px;
-    -unity-font-style: bold;
-}
+/* ── Panels (Plan List, State List) ────────────────────────────────────── */
 
-.panel-bg {
+.panel {
     position: absolute;
+    background-color: rgba(28, 28, 34, 0.92);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(60, 60, 72, 0.6);
+    border-right-color: rgba(60, 60, 72, 0.6);
+    border-top-color: rgba(60, 60, 72, 0.6);
+    border-bottom-color: rgba(60, 60, 72, 0.6);
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+}
+
+.panel--plan {
+    top: 12%;
+    left: 1.5%;
     width: 20%;
     height: 50%;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    align-items: center;
-    justify-content: flex-start;
-    top: 280px;
-    left: 158px;
-    display: flex;
+}
+
+.panel--state {
+    bottom: 5%;
+    right: 1.5%;
+    width: 20%;
+    max-height: 40%;
+}
+
+.panel--visible {
     opacity: 1;
-    background-image: resource('UITextures/panel-015');
-    -unity-slice-left: 10;
-    -unity-slice-top: 10;
-    -unity-slice-right: 10;
-    -unity-slice-bottom: 10;
-    -unity-background-image-tint-color: rgb(183, 183, 183);
+}
+
+.panel-title {
+    width: 100%;
+    -unity-text-align: upper-center;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgba(230, 230, 240, 1);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(60, 60, 72, 0.6);
+}
+
+.panel-list-container {
+    width: 100%;
+    flex-grow: 1;
+}
+
+.panel-listview {
+    background-color: rgba(0, 0, 0, 0);
+    flex-grow: 1;
+}
+
+/* ── List Items ────────────────────────────────────────────────────────── */
+
+.list-item {
+    font-size: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    -unity-font-style: normal;
+    color: rgba(200, 200, 210, 1);
+    -unity-text-align: middle-left;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(60, 60, 72, 0.3);
+    transition-property: background-color;
+    transition-duration: 100ms;
+    transition-timing-function: ease;
+}
+
+.list-item:hover {
+    background-color: rgba(55, 55, 65, 1);
+}
+
+.list-item--active {
+    background-color: rgba(99, 140, 255, 0.2);
+    color: rgba(99, 140, 255, 1);
+    -unity-font-style: bold;
+}
+
+/* ── Action Info Panel ─────────────────────────────────────────────────── */
+
+.action-info {
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background-color: rgba(28, 28, 34, 0.92);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 40%;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.action-info__title {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgba(230, 230, 240, 1);
+    -unity-text-align: upper-center;
+    margin-top: 2px;
+}
+
+.action-info__subtitle {
+    font-size: 18px;
+    -unity-font-style: bold-and-italic;
+    color: rgba(160, 160, 175, 1);
+    -unity-text-align: upper-center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* ── Timeline Progress Bar ─────────────────────────────────────────────── */
+
+.timeline-bar {
+    width: 100%;
+    font-size: 18px;
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    color: rgba(230, 230, 240, 1);
+    border-top-width: 0;
+}
+
+.timeline-bar .unity-progress-bar__background {
+    background-color: rgba(38, 38, 46, 1);
+    border-radius: 3px;
+}
+
+.timeline-bar .unity-progress-bar__progress {
+    background-color: rgba(99, 140, 255, 1);
+    border-radius: 3px;
+}
+
+/* ── Camera Hints Overlay ──────────────────────────────────────────────── */
+
+.camera-hints {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.camera-hints__text {
+    font-size: 48px;
+    color: rgba(230, 230, 240, 0.7);
+    -unity-text-align: middle-center;
 }

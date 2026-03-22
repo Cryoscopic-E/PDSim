@@ -54,6 +54,8 @@ namespace PDSim.SceneUI
                 var newPosition = new Vector2(
                     Mathf.Clamp(targetStartPosition.x + pointerDelta.x, 0, target.panel.visualTree.worldBound.width),
                     Mathf.Clamp(targetStartPosition.y + pointerDelta.y, 0, target.panel.visualTree.worldBound.height));
+
+                target.style.translate = new StyleTranslate(new Translate(newPosition.x, newPosition.y));
             }
         }
 

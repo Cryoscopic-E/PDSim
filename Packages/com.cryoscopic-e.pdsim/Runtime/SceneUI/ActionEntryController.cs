@@ -1,4 +1,4 @@
-﻿using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -7,11 +7,10 @@ namespace PDSim.SceneUI
     {
         Label label;
 
-        public void SetVisualElement(VisualElement visualElement)
+        public void SetVisualElement(Label element)
         {
-            label = visualElement.Q<Label>("Item");
+            label = element;
         }
-
 
         public void SetActionData(GroundedAction data)
         {

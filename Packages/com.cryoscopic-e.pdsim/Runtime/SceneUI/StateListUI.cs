@@ -6,38 +6,55 @@ namespace PDSim.SceneUI
 {
     public class StateListUI : MonoBehaviour
     {
-        [SerializeField]
-        VisualTreeAsset itemTemplate;
-
         private Label objectName;
         private ListView _stateList;
         private StateListController _stateListController;
         private VisualElement _root;
+        private bool _visible;
 
         private void OnEnable()
         {
             var uiDocument = GetComponent<UIDocument>();
-            if (uiDocument.visualTreeAsset == null)
-            {
-                uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/ObjectStatePanelUI");
-            }
+            var docRoot = uiDocument.rootVisualElement;
+            docRoot.styleSheets.Add(Resources.Load<StyleSheet>("SceneUI/SceneUSS"));
 
-            _root = uiDocument.rootVisualElement;
-
+            // Root panel — responsive positioning via USS (bottom-right anchor)
+            _root = new VisualElement { name = "Root" };
+            _root.AddToClassList("panel");
+            _root.AddToClassList("panel--state");
             _root.style.display = DisplayStyle.None;
+            docRoot.Add(_root);
+
+            // Object name label
+            objectName = new Label { name = "ObjectName" };
+            objectName.AddToClassList("panel-title");
+            _root.Add(objectName);
+
+            // List container
+            var listContainer = new VisualElement { name = "ListContainer" };
+            listContainer.AddToClassList("panel-list-container");
+            _root.Add(listContainer);
+
+            // ListView
+            _stateList = new ListView
+            {
+                name = "StateList",
+                viewDataKey = "StateList",
+                fixedItemHeight = 40,
+                pickingMode = PickingMode.Ignore,
+                selectionType = SelectionType.None,
+                focusable = false
+            };
+            _stateList.AddToClassList("panel-listview");
+            listContainer.Add(_stateList);
 
             _stateListController = new StateListController();
-
-
-            _stateList = _root.Q<ListView>("StateList");
-
-            objectName = _root.Q<Label>("ObjectName");
         }
 
         public StateListController InitializeList(VisualisationObject simObject)
         {
             objectName.text = simObject.name;
-            _stateListController.InitializeStateList(_root, itemTemplate);
+            _stateListController.InitializeStateList(_root);
             _stateListController.SetState(simObject.GetObjectState());
             return _stateListController;
         }
@@ -50,9 +67,17 @@ namespace PDSim.SceneUI
 
         public void ToggleVisibility()
         {
-            _root.style.display = _root.style.display == DisplayStyle.None ? DisplayStyle.Flex : DisplayStyle.None;
+            _visible = !_visible;
+            if (_visible)
+            {
+                _root.style.display = DisplayStyle.Flex;
+                _root.schedule.Execute(() => _root.AddToClassList("panel--visible"));
+            }
+            else
+            {
+                _root.RemoveFromClassList("panel--visible");
+                _root.schedule.Execute(() => _root.style.display = DisplayStyle.None).StartingIn(200);
+            }
         }
-
     }
 }
-

@@ -28,8 +28,8 @@ namespace PDSim.SceneUI
         Button playButton;
         Button pauseButton;
         Button reloadButton;
-        Button nextStepButton;      // was "SkipButton"
-        Button forwardAllButton;    // was "PlayContButton"
+        Button nextStepButton;
+        Button forwardAllButton;
 
         Button planPanelButton;
         Button actionTabButton;
@@ -64,22 +64,15 @@ namespace PDSim.SceneUI
             if (_controller == null) Debug.LogError("[PDSim] Controller.Instance is null!");
             if (_problemObjects == null) Debug.LogError("[PDSim] ProblemObjects.Instance is null!");
             if (_animationsController == null) Debug.LogError("[PDSim] AnimationsController.Instance is null!");
+        }
 
+        private void OnEnable()
+        {
             var uiDocument = GetComponent<UIDocument>();
             if (uiDocument == null)
             {
                 Debug.LogError("[PDSim] UIDocument component not found on MainUI GameObject!");
                 return;
-            }
-
-            if (uiDocument.visualTreeAsset == null)
-            {
-                Debug.Log("[PDSim] visualTreeAsset is null, attempting to load from Resources...");
-                uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/VisualisationUI");
-                if (uiDocument.visualTreeAsset == null)
-                {
-                    Debug.LogError("[PDSim] Failed to load VisualisationUI from Resources/SceneUI/VisualisationUI");
-                }
             }
 
             var root = uiDocument.rootVisualElement;
@@ -89,84 +82,28 @@ namespace PDSim.SceneUI
                 return;
             }
 
-            backButton         = root.Q<Button>("BackButton");
-            playButton         = root.Q<Button>("PlayButton");
-            pauseButton        = root.Q<Button>("PauseButton");
-            reloadButton       = root.Q<Button>("ReloadButton");
-            nextStepButton     = root.Q<Button>("SkipButton");
-            forwardAllButton   = root.Q<Button>("PlayContButton");
-
-            planPanelButton              = root.Q<Button>("PlanPanelButton");
-            actionTabButton              = root.Q<Button>("ActionTabButton");
-            objectInfoButton             = root.Q<Button>("ObjectInfoButton");
-            cameraControlsButton         = root.Q<Button>("CameraControlsButton");
-            simulationSpeedControlsButton = root.Q<Button>("SpeedControlButton");
-
-            simulationSpeedSlider = root.Q<Slider>("SpeedSlider");
-            timelineBar           = root.Q<ProgressBar>("TimeLine");
-
-            actionInfo = root.Q<VisualElement>("ActionInfo");
-            cameraHints = root.Q<VisualElement>("CameraHints");
-            speedBar = root.Q<VisualElement>("SpeedBar");
-
-            // Log missing elements
-            if (backButton == null) Debug.LogError("[PDSim] Missing UI Element: BackButton");
-            if (playButton == null) Debug.LogError("[PDSim] Missing UI Element: PlayButton");
-            if (pauseButton == null) Debug.LogError("[PDSim] Missing UI Element: PauseButton");
-            if (reloadButton == null) Debug.LogError("[PDSim] Missing UI Element: ReloadButton");
-            if (nextStepButton == null) Debug.LogError("[PDSim] Missing UI Element: SkipButton");
-            if (forwardAllButton == null) Debug.LogError("[PDSim] Missing UI Element: PlayContButton");
-            if (planPanelButton == null) Debug.LogError("[PDSim] Missing UI Element: PlanPanelButton");
-            if (actionTabButton == null) Debug.LogError("[PDSim] Missing UI Element: ActionTabButton");
-            if (objectInfoButton == null) Debug.LogError("[PDSim] Missing UI Element: ObjectInfoButton");
-            if (cameraControlsButton == null) Debug.LogError("[PDSim] Missing UI Element: CameraControlsButton");
-            if (simulationSpeedControlsButton == null) Debug.LogError("[PDSim] Missing UI Element: SpeedControlButton");
-            if (simulationSpeedSlider == null) Debug.LogError("[PDSim] Missing UI Element: SpeedSlider");
-            if (timelineBar == null) Debug.LogError("[PDSim] Missing UI Element: TimeLine");
-            if (actionInfo == null) Debug.LogError("[PDSim] Missing UI Element: ActionInfo");
-            if (cameraHints == null) Debug.LogError("[PDSim] Missing UI Element: CameraHints");
-            if (speedBar == null) Debug.LogError("[PDSim] Missing UI Element: SpeedBar");
-
-            // Scene name label
-            var simulationNameLabel = root.Q<Label>("SimulationName");
-            if (simulationNameLabel == null) Debug.LogError("[PDSim] Missing UI Element: SimulationName");
-            var sceneName = SceneManager.GetActiveScene().name;
-            if (simulationNameLabel != null)
-                simulationNameLabel.text = char.ToUpper(sceneName[0]) + sceneName.Substring(1);
-
-            actionStatus       = root.Q<Label>("Action");
-            predicateAnimated  = root.Q<Label>("Predicate");
-            if (actionStatus == null) Debug.LogError("[PDSim] Missing UI Element: Action (Label)");
-            if (predicateAnimated == null) Debug.LogError("[PDSim] Missing UI Element: Predicate (Label)");
+            root.styleSheets.Add(Resources.Load<StyleSheet>("SceneUI/SceneUSS"));
+            BuildUI(root);
 
             // ── Wire up buttons ─────────────────────────────────────────────────
-            if (backButton != null) backButton.clicked   += BackButtonClicked;
-            if (playButton != null) playButton.clicked   += PlayButtonClicked;
-            if (pauseButton != null) pauseButton.clicked  += PauseButtonClicked;
-            if (reloadButton != null) reloadButton.clicked += ReloadButtonClicked;
-            if (nextStepButton != null) nextStepButton.clicked   += NextStepButtonClicked;
-            if (forwardAllButton != null) forwardAllButton.clicked += ForwardAllButtonClicked;
+            playButton.clicked   += PlayButtonClicked;
+            pauseButton.clicked  += PauseButtonClicked;
+            reloadButton.clicked += ReloadButtonClicked;
+            nextStepButton.clicked   += NextStepButtonClicked;
+            forwardAllButton.clicked += ForwardAllButtonClicked;
 
-            if (planPanelButton != null) planPanelButton.clicked   += PlanPanelButtonClicked;
-            if (actionTabButton != null) actionTabButton.clicked   += ActionTabButtonClicked;
-            if (objectInfoButton != null) objectInfoButton.clicked  += ObjectInfoButtonClicked;
-            if (cameraControlsButton != null) cameraControlsButton.clicked += CameraControlsButtonClicked;
+            planPanelButton.clicked   += PlanPanelButtonClicked;
+            actionTabButton.clicked   += ActionTabButtonClicked;
+            objectInfoButton.clicked  += ObjectInfoButtonClicked;
+            cameraControlsButton.clicked += CameraControlsButtonClicked;
 
-            if (simulationSpeedControlsButton != null)
-            {
-                simulationSpeedControlsButton.clicked += () =>
-                    speedBar.style.display = speedBar.style.display == DisplayStyle.None
-                        ? DisplayStyle.Flex : DisplayStyle.None;
-            }
+            simulationSpeedControlsButton.clicked += () =>
+                speedBar.style.display = speedBar.style.display == DisplayStyle.None
+                    ? DisplayStyle.Flex : DisplayStyle.None;
 
-            // Speed slider controls animation speed, not Time.timeScale, so it
-            // doesn't interfere with the pause mechanism.
-            if (simulationSpeedSlider != null)
-            {
-                simulationSpeedSlider.SetValueWithoutNotify(1f);
-                simulationSpeedSlider.RegisterValueChangedCallback(evt =>
-                    _controller.animationSpeed = evt.newValue);
-            }
+            simulationSpeedSlider.SetValueWithoutNotify(1f);
+            simulationSpeedSlider.RegisterValueChangedCallback(evt =>
+                _controller.animationSpeed = evt.newValue);
 
             // ── Subscribe to Controller events ──────────────────────────────────
             _controller.OnVisualisationReady       += VisualisationReady;
@@ -182,13 +119,155 @@ namespace PDSim.SceneUI
             _problemObjects.OnVisualisationObjectHovered   += VisualisationObjectHovered;
             _problemObjects.OnVisualisationObjectUnhovered += VisualisationObjectUnhovered;
 
-            // Start in Idle state
             SetIdleState();
+        }
+
+        private void BuildUI(VisualElement root)
+        {
+            // ── Root container ──────────────────────────────────────────────────
+            var rootContainer = new VisualElement { name = "Root" };
+            rootContainer.AddToClassList("root-container");
+            root.Add(rootContainer);
+
+            // ── Header ──────────────────────────────────────────────────────────
+            var header = new VisualElement { name = "Header" };
+            header.AddToClassList("header");
+            rootContainer.Add(header);
+
+            // Top bar
+            var topBar = new VisualElement { name = "TopBar" };
+            topBar.AddToClassList("top-bar");
+            header.Add(topBar);
+
+            // Back button (not implemented — disabled)
+            backButton = new Button { name = "BackButton" };
+            backButton.AddToClassList("btn");
+            backButton.AddToClassList("btn-icon");
+            backButton.SetEnabled(false);
+            var backIcon = new VisualElement();
+            backIcon.AddToClassList("icon");
+            backIcon.AddToClassList("icon--back");
+            backButton.Add(backIcon);
+            topBar.Add(backButton);
+
+            // Simulation name
+            var sceneName = SceneManager.GetActiveScene().name;
+            var simulationNameLabel = new Label(char.ToUpper(sceneName[0]) + sceneName.Substring(1)) { name = "SimulationName" };
+            simulationNameLabel.AddToClassList("sim-name");
+            topBar.Add(simulationNameLabel);
+
+            // PDSim branding
+            var brandLabel = new Label("PDSim");
+            brandLabel.AddToClassList("brand-label");
+            topBar.Add(brandLabel);
+
+            // ── Speed bar ───────────────────────────────────────────────────────
+            speedBar = new VisualElement { name = "SpeedBar" };
+            speedBar.AddToClassList("speed-bar");
+            speedBar.style.display = DisplayStyle.Flex;
+            header.Add(speedBar);
+
+            simulationSpeedSlider = new Slider(0, 2) { name = "SpeedSlider", value = 1, focusable = false, showInputField = false };
+            simulationSpeedSlider.AddToClassList("speed-slider");
+            speedBar.Add(simulationSpeedSlider);
+
+            var speedLabelsRow = new VisualElement { name = "SpeedLabels" };
+            speedLabelsRow.AddToClassList("speed-labels-row");
+            speedBar.Add(speedLabelsRow);
+
+            speedLabelsRow.Add(new Label("0x") { name = "0x" }.WithClass("speed-label"));
+            speedLabelsRow.Add(new Label("1x") { name = "1x" }.WithClass("speed-label"));
+            speedLabelsRow.Add(new Label("2x") { name = "2x" }.WithClass("speed-label"));
+
+            // ── Controls toolbar ────────────────────────────────────────────────
+            var controls = new VisualElement { name = "Controls" };
+            controls.AddToClassList("controls-bar");
+            header.Add(controls);
+
+            reloadButton    = AddIconButton(controls, "ReloadButton", "icon--restart");
+            playButton      = AddIconButton(controls, "PlayButton", "icon--play");
+            forwardAllButton = AddIconButton(controls, "PlayContButton", "icon--next");
+            pauseButton     = AddIconButton(controls, "PauseButton", "icon--pause");
+            nextStepButton  = AddIconButton(controls, "SkipButton", "icon--skip");
+
+            // ── Footer (toolbox + timeline, pinned to bottom) ──────────────────
+            var footer = new VisualElement { name = "Footer" };
+            footer.AddToClassList("footer");
+            rootContainer.Add(footer);
+
+            // ── ToolBox ─────────────────────────────────────────────────────────
+            var toolBox = new VisualElement { name = "ToolBox" };
+            toolBox.AddToClassList("toolbox");
+            footer.Add(toolBox);
+
+            // Action info panel
+            actionInfo = new VisualElement { name = "ActionInfo" };
+            actionInfo.AddToClassList("action-info");
+            actionInfo.style.display = DisplayStyle.None;
+            toolBox.Add(actionInfo);
+
+            actionStatus = new Label("Executing Action") { name = "Action" };
+            actionStatus.AddToClassList("action-info__title");
+            actionInfo.Add(actionStatus);
+
+            predicateAnimated = new Label { name = "Predicate" };
+            predicateAnimated.AddToClassList("action-info__subtitle");
+            actionInfo.Add(predicateAnimated);
+
+            // Buttons holder
+            var buttonsHolder = new VisualElement { name = "ButtonsHolder" };
+            buttonsHolder.AddToClassList("buttons-holder");
+            toolBox.Add(buttonsHolder);
+
+            planPanelButton = AddTextButton(buttonsHolder, "PlanPanelButton", "Plan Panel");
+            actionTabButton = AddTextButton(buttonsHolder, "ActionTabButton", "Action Tab");
+            simulationSpeedControlsButton = AddTextButton(buttonsHolder, "SpeedControlButton", "Speed Controls");
+            objectInfoButton = AddTextButton(buttonsHolder, "ObjectInfoButton", "Object Info Panel");
+            cameraControlsButton = AddTextButton(buttonsHolder, "CameraControlsButton", "Camera Controls");
+
+            // Timeline progress bar
+            timelineBar = new ProgressBar { name = "TimeLine", title = "Time Point: 0", value = 0 };
+            timelineBar.AddToClassList("timeline-bar");
+            footer.Add(timelineBar);
+
+            // ── Camera hints overlay ────────────────────────────────────────────
+            cameraHints = new VisualElement { name = "CameraHints" };
+            cameraHints.AddToClassList("camera-hints");
+            cameraHints.style.display = DisplayStyle.None;
+            rootContainer.Add(cameraHints);
+
+            var cameraHintsLabel = new Label("Press C to Control the Camera\n\nUse W,A,S,D to Move\nUse the Mouse to Rotate");
+            cameraHintsLabel.AddToClassList("camera-hints__text");
+            cameraHints.Add(cameraHintsLabel);
+        }
+
+        // ── UI builder helpers ──────────────────────────────────────────────────
+
+        private Button AddIconButton(VisualElement parent, string name, string iconClass)
+        {
+            var button = new Button { name = name };
+            button.AddToClassList("btn");
+            button.AddToClassList("btn-icon");
+
+            var icon = new VisualElement();
+            icon.AddToClassList("icon");
+            icon.AddToClassList(iconClass);
+            button.Add(icon);
+
+            parent.Add(button);
+            return button;
+        }
+
+        private Button AddTextButton(VisualElement parent, string name, string text)
+        {
+            var button = new Button { name = name, text = text, focusable = false };
+            button.AddToClassList("btn-text");
+            parent.Add(button);
+            return button;
         }
 
         private void OnDisable()
         {
-            backButton.clicked   -= BackButtonClicked;
             playButton.clicked   -= PlayButtonClicked;
             pauseButton.clicked  -= PauseButtonClicked;
             reloadButton.clicked -= ReloadButtonClicked;
@@ -200,12 +279,22 @@ namespace PDSim.SceneUI
             objectInfoButton.clicked  -= ObjectInfoButtonClicked;
             cameraControlsButton.clicked -= CameraControlsButtonClicked;
 
-            _controller.OnInitFluentStarted -= InitFluentStarted;
+            _controller.OnVisualisationReady       -= VisualisationReady;
+            _controller.OnVisualiseInitBlock        -= VisualisationInitBlock;
+            _controller.OnInitFluentStarted         -= InitFluentStarted;
+            _controller.OnVisualisationActionBlock  -= VisualisationActionBlock;
+            _controller.OnStepAnimationsComplete    -= StepAnimationsComplete;
+            _controller.OnVisualisationFinished     -= VisualisationFinished;
+            _controller.OnTimeLineAdvanced          -= TimelineAdvance;
+
+            _animationsController.OnVisualisationStep -= VisualisationStep;
+
+            _problemObjects.OnVisualisationObjectHovered   -= VisualisationObjectHovered;
+            _problemObjects.OnVisualisationObjectUnhovered -= VisualisationObjectUnhovered;
         }
 
         // ── Button state machine ─────────────────────────────────────────────────
 
-        /// <summary>Before Play is pressed.</summary>
         private void SetIdleState()
         {
             playButton.SetEnabled(true);
@@ -214,7 +303,6 @@ namespace PDSim.SceneUI
             forwardAllButton.SetEnabled(false);
         }
 
-        /// <summary>Animations are playing (init block or a single step).</summary>
         private void SetAnimatingState()
         {
             playButton.SetEnabled(false);
@@ -223,7 +311,6 @@ namespace PDSim.SceneUI
             forwardAllButton.SetEnabled(false);
         }
 
-        /// <summary>A step finished; waiting for the user to choose next action.</summary>
         private void SetWaitingStepState()
         {
             playButton.SetEnabled(false);
@@ -232,7 +319,6 @@ namespace PDSim.SceneUI
             forwardAllButton.SetEnabled(true);
         }
 
-        /// <summary>Auto-advancing through all remaining steps.</summary>
         private void SetContinuousState()
         {
             playButton.SetEnabled(false);
@@ -241,7 +327,6 @@ namespace PDSim.SceneUI
             forwardAllButton.SetEnabled(false);
         }
 
-        /// <summary>Plan fully visualised.</summary>
         private void SetFinishedState()
         {
             playButton.SetEnabled(false);
@@ -260,11 +345,8 @@ namespace PDSim.SceneUI
 
         private void PauseButtonClicked()
         {
-            // Stop continuous mode; current animation step plays to completion,
-            // then OnStepAnimationsComplete will move us to WaitingStep.
             _controller.SetContinuousMode(false);
             _controller.Pause();
-            // Disable Pause immediately so the user gets feedback.
             pauseButton.SetEnabled(false);
         }
 
@@ -285,11 +367,6 @@ namespace PDSim.SceneUI
         private void ReloadButtonClicked()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-
-        private void BackButtonClicked()
-        {
-            throw new System.NotImplementedException("Back to Menu");
         }
 
         // ── Controller event handlers ────────────────────────────────────────────
@@ -324,10 +401,6 @@ namespace PDSim.SceneUI
             predicateAnimated.text = fluent;
         }
 
-        /// <summary>
-        /// Called once per completed step when not in continuous mode.
-        /// Moves to WaitingStep so the user can choose what to do next.
-        /// </summary>
         private void StepAnimationsComplete()
         {
             SetWaitingStepState();
@@ -372,6 +445,16 @@ namespace PDSim.SceneUI
             cameraHints.style.display = DisplayStyle.Flex;
             cameraHints.schedule.Execute(() => cameraHints.style.display = DisplayStyle.None)
                        .StartingIn(3000);
+        }
+    }
+
+    // ── Extension for fluent class assignment ────────────────────────────────
+    internal static class VisualElementExtensions
+    {
+        public static T WithClass<T>(this T element, string className) where T : VisualElement
+        {
+            element.AddToClassList(className);
+            return element;
         }
     }
 }
