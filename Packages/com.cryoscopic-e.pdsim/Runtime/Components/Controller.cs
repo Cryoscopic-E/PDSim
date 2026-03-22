@@ -1,6 +1,8 @@
-using GeTModel;
-using PDSim.ScriptableObjects;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
 using PDSimAPI;
+using PDSim.ScriptableObjects;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -27,7 +29,7 @@ namespace PDSim.Components
         // Data Assets
         // -----------
 
-        public PlanningProblem problem;
+        public PDSim.ScriptableObjects.PlanningProblem problem;
         public PlanGeneration planGeneration;
         [System.NonSerialized]
         public Visualisation visualisation;
@@ -50,7 +52,7 @@ namespace PDSim.Components
         // _initFluentIndex is the cursor; _initPhase is true until every fluent
         // has been stepped through.
 
-        private List<GeTStateVariable> _initFluents;
+        private List<(FluentExpression Fluent, object Value)> _initFluents;
         private int  _initFluentIndex = -1;
         private bool _initPhase       = false;
 
@@ -75,7 +77,7 @@ namespace PDSim.Components
         // Events and Delegates
         // --------------------
 
-        public delegate void VisualisationReady(List<GeTActionInstance> actions);
+        public delegate void VisualisationReady(List<GroundedAction> actions);
         public event VisualisationReady OnVisualisationReady;
 
         public delegate void VisualiseInitBlock();
@@ -118,7 +120,7 @@ namespace PDSim.Components
             visualisation = new Visualisation(problem.proto, planGeneration.proto);
 
             visualisation.TimeLineAdvance += (_, args) =>
-                OnTimeLineAdvanced?.Invoke(args.Time.ToDouble(), args.Progress);
+                OnTimeLineAdvanced?.Invoke(args.Time, args.Progress);
 
             // WorldStateChanged only fires for plan actions (not init fluents —
             // those are fed manually via UpdateQueue in StepInitPhase).
@@ -127,7 +129,8 @@ namespace PDSim.Components
 
             visualisation.ActionStarted += (_, action) =>
             {
-                int index = visualisation.PlanGeneration.Plan.Actions.IndexOf(action);
+                var actions = visualisation.PlanResult.Plan?.Actions ?? new List<GroundedAction>();
+                int index = actions.IndexOf(action);
                 OnVisualisationActionBlock?.Invoke(action.ToString(), index);
             };
 
@@ -168,11 +171,12 @@ namespace PDSim.Components
             _pendingAdvance   = false;
 
             // Snapshot the initial state as a list so we can step through it.
-            _initFluents      = visualisation.CurrentWorldState.State.ToList();
+            _initFluents      = visualisation.CurrentWorldState.State.Select(kvp => (kvp.Key, kvp.Value)).ToList();
             _initFluentIndex  = -1;
             _initPhase        = _initFluents.Count > 0;
 
-            OnVisualisationReady?.Invoke(visualisation.PlanGeneration.Plan.Actions);
+            var actions = visualisation.PlanResult.Plan?.Actions ?? new List<GroundedAction>();
+            OnVisualisationReady?.Invoke(actions);
             OnVisualiseInitBlock?.Invoke();  // starts AnimationsLoop in AnimationsController
 
             // Queue the first init fluent so the loop has something to process.

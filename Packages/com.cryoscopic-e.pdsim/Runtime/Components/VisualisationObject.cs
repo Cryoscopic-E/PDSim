@@ -1,4 +1,4 @@
-using GeTModel;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,24 +40,24 @@ namespace PDSim.Components
         // ------------
 
         // Keep track of the object's state when actions are applied
-        private Dictionary<string, GeTStateVariable> state;
+        private Dictionary<string, (FluentExpression Fluent, object Value)> state;
 
-        public List<GeTStateVariable> GetObjectState()
+        public List<(FluentExpression Fluent, object Value)> GetObjectState()
         {
             return state.Values.ToList();
         }
 
         // Add a fluent assignment to the object's state
-        public void AddFluentAssignment(GeTStateVariable fluentAssignment)
+        public void AddFluentAssignment((FluentExpression Fluent, object Value) fluentAssignment)
         {
             // Add only if object is active
             if (gameObject.activeSelf)
-                state[fluentAssignment.Fluent.FluentName] = fluentAssignment;
+                state[fluentAssignment.Fluent.Name] = fluentAssignment;
         }
 
         private void Awake()
         {
-            state = new Dictionary<string, GeTStateVariable>();
+            state = new Dictionary<string, (FluentExpression Fluent, object Value)>();
 
             if (!useNavMeshAgent) return;
             _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();

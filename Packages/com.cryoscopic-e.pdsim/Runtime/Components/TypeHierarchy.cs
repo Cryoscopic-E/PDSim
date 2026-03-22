@@ -1,4 +1,7 @@
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +25,7 @@ namespace PDSim.Components
         [SerializeField]
         public ModelTypes modelTypes;
 
-        public void Populate(List<GeTTypeDeclaration> typeDeclarations)
+        public void Populate(List<PlanType> typeDeclarations)
         {
             modelTypes = new ModelTypes();
             modelTypes.Populate(typeDeclarations);
@@ -77,35 +80,30 @@ namespace PDSim.Components
         // List to serialize
         public List<SerializableTypeNode> serializableTypeNodes;
 
-        public void Populate(List<GeTTypeDeclaration> typeDeclarations)
+        public void Populate(List<PlanType> typeDeclarations)
         {
-            // From typeDeclarations list of type-parent pairs, populate tree from _root
-            var node = GetRoot();
-            foreach (var typeDeclaration in typeDeclarations)
-            {
-                var parentType = typeDeclaration.TypeName;
-                var currentType = typeDeclaration.Name;
+            // Firstpass: Add all nodes to a dictionary for easy lookup
+            var allNodes = new Dictionary<string, TypeNode>();
+            allNodes["object"] = GetRoot();
 
-                if (parentType == null || parentType == string.Empty)
+            foreach (var type in typeDeclarations)
+            {
+                allNodes[type.Name] = new TypeNode(type.Name);
+            }
+
+            // Second pass: Link children to parents
+            foreach (var type in typeDeclarations)
+            {
+                var parentName = type.Parent?.Name ?? "object";
+                if (allNodes.TryGetValue(parentName, out var parentNode))
                 {
-                    // if parent is null or empty, add as child of 'object'
-                    var root = GetRoot();
-                    root.children.Add(new TypeNode(currentType));
+                    parentNode.children.Add(allNodes[type.Name]);
                 }
                 else
                 {
-                    // find parent node
-                    var parent = FindNode(parentType);
-                    if (parent == null)
-                    {
-                        Debug.LogError($"Parent {parentType} not found");
-                        continue;
-                    }
-                    // add child
-                    parent.children.Add(new TypeNode(currentType));
+                    GetRoot().children.Add(allNodes[type.Name]);
                 }
             }
-
         }
 
         private TypeNode FindNode(string typeName)
@@ -116,93 +114,47 @@ namespace PDSim.Components
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
+                if (node.Name == typeName)
+                    return node;
+
                 foreach (var n in node.children)
                 {
                     queue.Enqueue(n);
                 }
-
-                if (node.Name == typeName)
-                    return node;
             }
             return null;
         }
 
         public List<string> GetChildrenTypes(string typeName)
         {
-            var root = GetRoot();
+            var startNode = FindNode(typeName);
+            if (startNode == null) return new List<string>() { typeName };
+
+            var subTypes = new List<string>();
             var queue = new Queue<TypeNode>();
-            queue.Enqueue(root);
-            var subTypes = new List<string>() { typeName };
+            queue.Enqueue(startNode);
+            
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                foreach (var n in node.children)
+                subTypes.Add(node.Name);
+                foreach (var child in node.children)
                 {
-                    queue.Enqueue(n);
+                    queue.Enqueue(child);
                 }
-
-                if (node.Name != typeName) continue;
-
-                var childrenQueue = new Queue<TypeNode>();
-                childrenQueue.Enqueue(node);
-                while (childrenQueue.Count > 0)
-                {
-                    var child = childrenQueue.Dequeue();
-                    foreach (var n in child.children)
-                    {
-                        subTypes.Add(n.Name);
-                        childrenQueue.Enqueue(n);
-                    }
-                }
-                return subTypes;
-
             }
             return subTypes;
         }
+        
         public List<string> GetLeafNodesFromType(string type)
         {
-            var root = GetRoot();
-            var queue = new Queue<TypeNode>();
-            queue.Enqueue(root);
-            var directLeafs = new List<string>();
-            while (queue.Count > 0)
-            {
-                var node = queue.Dequeue();
-                foreach (var n in node.children)
-                {
-                    queue.Enqueue(n);
-                }
+            var startNode = FindNode(type);
+            if (startNode == null) return new List<string>();
 
-                if (node.Name != type) continue;
-
-
-                // is type
-                // loop through all children nodes
-                var childrenQueue = new Queue<TypeNode>();
-                childrenQueue.Enqueue(node);
-                while (childrenQueue.Count > 0)
-                {
-                    var child = childrenQueue.Dequeue();
-                    if (child.children.Count == 0)
-                        directLeafs.Add(child.Name);
-                    else
-                    {
-                        foreach (var n in child.children)
-                        {
-                            childrenQueue.Enqueue(n);
-                        }
-                    }
-                }
-                return directLeafs;
-            }
-            return directLeafs;
-        }
-        public List<string> GetLeafNodes()
-        {
-            var root = GetRoot();
-            var queue = new Queue<TypeNode>();
-            queue.Enqueue(root);
             var leaves = new List<string>();
+            var queue = new Queue<TypeNode>();
+            queue.Enqueue(startNode);
+            
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
@@ -210,42 +162,33 @@ namespace PDSim.Components
                     leaves.Add(node.Name);
                 else
                 {
-                    foreach (var n in node.children)
-                    {
-                        queue.Enqueue(n);
-                    }
+                    foreach (var child in node.children)
+                        queue.Enqueue(child);
                 }
             }
             return leaves;
         }
+        
+        public List<string> GetLeafNodes()
+        {
+            return GetLeafNodesFromType("object");
+        }
 
         public bool IsChildOf(string checkType, string parentType)
         {
-            var root = GetRoot();
+            var parentNode = FindNode(parentType);
+            if (parentNode == null) return false;
+
             var queue = new Queue<TypeNode>();
-            queue.Enqueue(root);
+            foreach (var child in parentNode.children)
+                queue.Enqueue(child);
+
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                foreach (var n in node.children)
-                {
-                    queue.Enqueue(n);
-                }
-
-                if (node.Name != parentType) continue;
-
-                var childrenQueue = new Queue<TypeNode>();
-                childrenQueue.Enqueue(node);
-                while (childrenQueue.Count > 0)
-                {
-                    var child = childrenQueue.Dequeue();
-                    foreach (var n in child.children)
-                    {
-                        if (n.Name.Equals(checkType))
-                            return true;
-                        childrenQueue.Enqueue(n);
-                    }
-                }
+                if (node.Name == checkType) return true;
+                foreach (var child in node.children)
+                    queue.Enqueue(child);
             }
             return false;
         }
@@ -291,7 +234,7 @@ namespace PDSim.Components
         public void OnAfterDeserialize()
         {
             // Populate runtime data
-            if (serializableTypeNodes.Count > 0)
+            if (serializableTypeNodes != null && serializableTypeNodes.Count > 0)
             {
                 ReadFromSerializedNodes(0, out _root);
             }

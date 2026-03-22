@@ -16,7 +16,13 @@ namespace PDSim.SceneUI
 
         private void OnEnable()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            var uiDocument = GetComponent<UIDocument>();
+            if (uiDocument.visualTreeAsset == null)
+            {
+                uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/ObjectStatePanelUI");
+            }
+
+            _root = uiDocument.rootVisualElement;
 
             _root.style.display = DisplayStyle.None;
 

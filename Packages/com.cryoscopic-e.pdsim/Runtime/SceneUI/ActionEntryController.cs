@@ -1,4 +1,4 @@
-﻿using GeTModel;
+﻿using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -13,7 +13,7 @@ namespace PDSim.SceneUI
         }
 
 
-        public void SetActionData(GeTActionInstance data)
+        public void SetActionData(GroundedAction data)
         {
             label.text = data.ToString();
         }

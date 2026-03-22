@@ -1,4 +1,4 @@
-using GeTModel;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using PDSim.Components;
 using System.Collections.Generic;
 using UnityEngine;
@@ -61,7 +61,33 @@ namespace PDSim.SceneUI
             _problemObjects       = ProblemObjects.Instance;
             _animationsController = AnimationsController.Instance;
 
-            var root = GetComponent<UIDocument>().rootVisualElement;
+            if (_controller == null) Debug.LogError("[PDSim] Controller.Instance is null!");
+            if (_problemObjects == null) Debug.LogError("[PDSim] ProblemObjects.Instance is null!");
+            if (_animationsController == null) Debug.LogError("[PDSim] AnimationsController.Instance is null!");
+
+            var uiDocument = GetComponent<UIDocument>();
+            if (uiDocument == null)
+            {
+                Debug.LogError("[PDSim] UIDocument component not found on MainUI GameObject!");
+                return;
+            }
+
+            if (uiDocument.visualTreeAsset == null)
+            {
+                Debug.Log("[PDSim] visualTreeAsset is null, attempting to load from Resources...");
+                uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/VisualisationUI");
+                if (uiDocument.visualTreeAsset == null)
+                {
+                    Debug.LogError("[PDSim] Failed to load VisualisationUI from Resources/SceneUI/VisualisationUI");
+                }
+            }
+
+            var root = uiDocument.rootVisualElement;
+            if (root == null)
+            {
+                Debug.LogError("[PDSim] rootVisualElement is null!");
+                return;
+            }
 
             backButton         = root.Q<Button>("BackButton");
             playButton         = root.Q<Button>("PlayButton");
@@ -80,44 +106,67 @@ namespace PDSim.SceneUI
             timelineBar           = root.Q<ProgressBar>("TimeLine");
 
             actionInfo = root.Q<VisualElement>("ActionInfo");
-            actionInfo.style.display = DisplayStyle.None;
-
             cameraHints = root.Q<VisualElement>("CameraHints");
-            cameraHints.style.display = DisplayStyle.None;
-
             speedBar = root.Q<VisualElement>("SpeedBar");
-            speedBar.style.display = DisplayStyle.None;
+
+            // Log missing elements
+            if (backButton == null) Debug.LogError("[PDSim] Missing UI Element: BackButton");
+            if (playButton == null) Debug.LogError("[PDSim] Missing UI Element: PlayButton");
+            if (pauseButton == null) Debug.LogError("[PDSim] Missing UI Element: PauseButton");
+            if (reloadButton == null) Debug.LogError("[PDSim] Missing UI Element: ReloadButton");
+            if (nextStepButton == null) Debug.LogError("[PDSim] Missing UI Element: SkipButton");
+            if (forwardAllButton == null) Debug.LogError("[PDSim] Missing UI Element: PlayContButton");
+            if (planPanelButton == null) Debug.LogError("[PDSim] Missing UI Element: PlanPanelButton");
+            if (actionTabButton == null) Debug.LogError("[PDSim] Missing UI Element: ActionTabButton");
+            if (objectInfoButton == null) Debug.LogError("[PDSim] Missing UI Element: ObjectInfoButton");
+            if (cameraControlsButton == null) Debug.LogError("[PDSim] Missing UI Element: CameraControlsButton");
+            if (simulationSpeedControlsButton == null) Debug.LogError("[PDSim] Missing UI Element: SpeedControlButton");
+            if (simulationSpeedSlider == null) Debug.LogError("[PDSim] Missing UI Element: SpeedSlider");
+            if (timelineBar == null) Debug.LogError("[PDSim] Missing UI Element: TimeLine");
+            if (actionInfo == null) Debug.LogError("[PDSim] Missing UI Element: ActionInfo");
+            if (cameraHints == null) Debug.LogError("[PDSim] Missing UI Element: CameraHints");
+            if (speedBar == null) Debug.LogError("[PDSim] Missing UI Element: SpeedBar");
 
             // Scene name label
             var simulationNameLabel = root.Q<Label>("SimulationName");
+            if (simulationNameLabel == null) Debug.LogError("[PDSim] Missing UI Element: SimulationName");
             var sceneName = SceneManager.GetActiveScene().name;
-            simulationNameLabel.text = char.ToUpper(sceneName[0]) + sceneName.Substring(1);
+            if (simulationNameLabel != null)
+                simulationNameLabel.text = char.ToUpper(sceneName[0]) + sceneName.Substring(1);
 
             actionStatus       = root.Q<Label>("Action");
             predicateAnimated  = root.Q<Label>("Predicate");
+            if (actionStatus == null) Debug.LogError("[PDSim] Missing UI Element: Action (Label)");
+            if (predicateAnimated == null) Debug.LogError("[PDSim] Missing UI Element: Predicate (Label)");
 
             // ── Wire up buttons ─────────────────────────────────────────────────
-            backButton.clicked   += BackButtonClicked;
-            playButton.clicked   += PlayButtonClicked;
-            pauseButton.clicked  += PauseButtonClicked;
-            reloadButton.clicked += ReloadButtonClicked;
-            nextStepButton.clicked   += NextStepButtonClicked;
-            forwardAllButton.clicked += ForwardAllButtonClicked;
+            if (backButton != null) backButton.clicked   += BackButtonClicked;
+            if (playButton != null) playButton.clicked   += PlayButtonClicked;
+            if (pauseButton != null) pauseButton.clicked  += PauseButtonClicked;
+            if (reloadButton != null) reloadButton.clicked += ReloadButtonClicked;
+            if (nextStepButton != null) nextStepButton.clicked   += NextStepButtonClicked;
+            if (forwardAllButton != null) forwardAllButton.clicked += ForwardAllButtonClicked;
 
-            planPanelButton.clicked   += PlanPanelButtonClicked;
-            actionTabButton.clicked   += ActionTabButtonClicked;
-            objectInfoButton.clicked  += ObjectInfoButtonClicked;
-            cameraControlsButton.clicked += CameraControlsButtonClicked;
+            if (planPanelButton != null) planPanelButton.clicked   += PlanPanelButtonClicked;
+            if (actionTabButton != null) actionTabButton.clicked   += ActionTabButtonClicked;
+            if (objectInfoButton != null) objectInfoButton.clicked  += ObjectInfoButtonClicked;
+            if (cameraControlsButton != null) cameraControlsButton.clicked += CameraControlsButtonClicked;
 
-            simulationSpeedControlsButton.clicked += () =>
-                speedBar.style.display = speedBar.style.display == DisplayStyle.None
-                    ? DisplayStyle.Flex : DisplayStyle.None;
+            if (simulationSpeedControlsButton != null)
+            {
+                simulationSpeedControlsButton.clicked += () =>
+                    speedBar.style.display = speedBar.style.display == DisplayStyle.None
+                        ? DisplayStyle.Flex : DisplayStyle.None;
+            }
 
             // Speed slider controls animation speed, not Time.timeScale, so it
             // doesn't interfere with the pause mechanism.
-            simulationSpeedSlider.SetValueWithoutNotify(1f);
-            simulationSpeedSlider.RegisterValueChangedCallback(evt =>
-                _controller.animationSpeed = evt.newValue);
+            if (simulationSpeedSlider != null)
+            {
+                simulationSpeedSlider.SetValueWithoutNotify(1f);
+                simulationSpeedSlider.RegisterValueChangedCallback(evt =>
+                    _controller.animationSpeed = evt.newValue);
+            }
 
             // ── Subscribe to Controller events ──────────────────────────────────
             _controller.OnVisualisationReady       += VisualisationReady;
@@ -245,7 +294,7 @@ namespace PDSim.SceneUI
 
         // ── Controller event handlers ────────────────────────────────────────────
 
-        private void VisualisationReady(List<GeTActionInstance> planList)
+        private void VisualisationReady(List<GroundedAction> planList)
         {
             actionStatus.text     = "Ready";
             predicateAnimated.text = "";

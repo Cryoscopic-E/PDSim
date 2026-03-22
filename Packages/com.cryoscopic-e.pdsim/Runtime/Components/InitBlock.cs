@@ -1,6 +1,10 @@
-﻿using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PDSim.Components
@@ -24,24 +28,23 @@ namespace PDSim.Components
         public List<InitBlockComponent> Components;
 
 
-        public void InitialiseComponent(List<GeTStateVariable> stateVariables)
+        public void InitialiseComponent(List<(FluentExpression Fluent, object Value)> stateVariables)
         {
             Components = new List<InitBlockComponent>();
             foreach (var stateVariable in stateVariables)
             {
-                var fluentName = stateVariable.Fluent.FluentName;
-                var parameters = stateVariable.GetParameters();
-                var value = stateVariable.Value.Atom.ToString();
+                var fluentName = stateVariable.Fluent.Name;
+                var parameters = stateVariable.Fluent.Arguments
+                    .Select(a => a is ConstantExpression c ? c.Value.ToString() : a.ToString())
+                    .ToList();
+                var value = stateVariable.Value?.ToString() ?? "null";
 
-                if (value != null)
+                Components.Add(new InitBlockComponent()
                 {
-                    Components.Add(new InitBlockComponent()
-                    {
-                        FluentName = fluentName,
-                        Parameters = parameters,
-                        Value = value
-                    });
-                }
+                    FluentName = fluentName,
+                    Parameters = parameters,
+                    Value = value
+                });
             }
         }
 

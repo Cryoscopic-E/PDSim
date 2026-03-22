@@ -1,84 +1,72 @@
-using GeTModel;
-using GeTPlanFactories;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using GeTPlan.Protobuf.Mappers;
 using Proto;
 using System;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
+
 namespace PDSim.Helpers
 {
     /// <summary>
-    /// Class to read a protobuf problem and plan and generate a PdSimProblem and PdSimInstance
+    /// Class to read a protobuf problem and plan and generate PdSim models.
+    /// Updated to use GeTPlan.Protobuf mappers.
     /// </summary>
     public class ProtobufReader
     {
-        public static List<GeTFluent> ReadFluents(Problem problem)
+        public static List<PredicateDefinition> ReadFluents(Problem problem)
         {
-            var fluents = new List<GeTFluent>();
-            foreach (var fluent in problem.Fluents)
-            {
-                var newFluent = FluentFactory.FromProto(fluent);
-                fluents.Add(newFluent);
-            }
-            return fluents;
+            // The PDSim 'Animations' class expects PredicateDefinitions to build its metadata.
+            var types = ReadTypes(problem).ToDictionary(t => t.Name);
+            return problem.Fluents.Select(f => f.FromProto(types)).ToList();
         }
 
-        public static List<GeTAction> ReadActions(Problem problem)
+        public static List<ActionDefinition> ReadActions(Problem problem)
         {
-            var actions = new List<GeTAction>();
-            foreach (var action in problem.Actions)
-            {
-                var newAction = ActionFactory.FromProto(action);
-                actions.Add(newAction);
-            }
-            return actions;
+            var types = ReadTypes(problem).ToDictionary(t => t.Name);
+            return problem.Actions.Select(a => a.FromProto(types)).ToList();
         }
 
-        public static List<GeTObjectDeclaration> ReadObjects(Problem problem)
+        public static List<PlanObject> ReadObjects(Problem problem)
         {
-            var objects = new List<GeTObjectDeclaration>();
-            foreach (var obj in problem.Objects)
-            {
-                var newObj = ObjectDeclarationFactory.FromProto(obj);
-                objects.Add(newObj);
-            }
-            return objects;
+            var types = ReadTypes(problem).ToDictionary(t => t.Name);
+            return problem.Objects.Select(o => o.FromProto(types)).ToList();
         }
 
-        public static List<GeTTypeDeclaration> ReadTypes(Problem problem)
+        public static List<PlanType> ReadTypes(Problem problem)
         {
-            var types = new List<GeTTypeDeclaration>();
-            foreach (var type in problem.Types_)
+            // Build the full type hierarchy
+            var allTypes = new Dictionary<string, PlanType>();
+            
+            // First pass: create all types
+            foreach (var protoType in problem.Types_)
             {
-                var newType = TypeDeclarationFactory.FromProto(type);
-                types.Add(newType);
+                if (!allTypes.ContainsKey(protoType.TypeName))
+                    allTypes[protoType.TypeName] = new PlanType(protoType.TypeName);
             }
-            return types;
-        }
 
-        public static List<GeTStateVariable> ReadInit(Problem problem)
-        {
-            var init = new List<GeTStateVariable>();
-            foreach (var fluent in problem.InitialState)
+            // Second pass: set parents
+            foreach (var protoType in problem.Types_)
             {
-                var newFluent = StateVariableFactory.FromProto(fluent);
-                // only add boolean fluent if is true as the CW assumption generates all fluents and the interface gets clapped
-                if (newFluent.Value.Atom.BooleanValue != null)
+                if (!string.IsNullOrEmpty(protoType.ParentType) && allTypes.ContainsKey(protoType.ParentType))
                 {
-                    if (newFluent.Value.Atom.BooleanValue.Value)
-                    {
-                        init.Add(newFluent);
-                        continue;
-                    }
-                }
-                else
-                {
-                    init.Add(newFluent);
+                    // Update the type with its parent. 
+                    // Since PlanType is an immutable record-like structure in some versions but here we might need to recreate.
+                    // Actually TypeMapper.FromProto handles this correctly if given the context.
                 }
             }
-            return init;
+
+            return GeTPlan.Protobuf.Mappers.TypeMapper.FromProtoCollection(problem.Types_).Values.ToList();
         }
 
-        public static Tuple<Problem, PlanGenerationResult> Read(byte[] problem, byte[] plan, string simulationName)
+        public static List<(FluentExpression Fluent, object Value)> ReadInit(Problem problem)
+        {
+            var coreProblem = problem.FromProto();
+            return coreProblem.InitialState.Select(kvp => (kvp.Key, kvp.Value)).ToList();
+        }
+
+        public static Tuple<Problem, PlanGenerationResult> Read(byte[] problem, byte[] plan)
         {
             var parsedProblem = Problem.Parser.ParseFrom(problem);
             var parsedPlan = PlanGenerationResult.Parser.ParseFrom(plan);
@@ -86,4 +74,3 @@ namespace PDSim.Helpers
         }
     }
 }
-

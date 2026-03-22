@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
 
 namespace PDSim.Components
 {
@@ -51,7 +54,7 @@ namespace PDSim.Components
             public string Name;
             public List<string> ParametersNames;
             public List<string> ParametersTypes;
-            public ValueType FluentValueType;
+            public string FluentValueType;
 
             public override string ToString()
             {

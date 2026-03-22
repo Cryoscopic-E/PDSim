@@ -1,4 +1,6 @@
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
 using PDSim.Utils;
 using System.Collections.Generic;
 using UnityEditor;
@@ -21,11 +23,9 @@ namespace PDSim.Components
             }
         }
 
-        // OnSimulationObjectHovered is called when the mouse hovers over an object
         public delegate void VisualisationObjectHovered(VisualisationObject @object);
         public event VisualisationObjectHovered OnVisualisationObjectHovered;
 
-        // OnSimulationObjectUnHovered is called when the mouse exits an object
         public delegate void VisualisationObjectUnhovered();
         public event VisualisationObjectUnhovered OnVisualisationObjectUnhovered;
 
@@ -35,12 +35,11 @@ namespace PDSim.Components
 
         private Dictionary<string, VisualisationObject> _objectDictionary;
 
-        // Access problem objects names with type
         private Dictionary<string, List<string>> _typeToObjects;
 
         public List<string> GetObjectsOfType(string type)
         {
-            if (_typeToObjects.ContainsKey(type))
+            if (_typeToObjects != null && _typeToObjects.ContainsKey(type))
                 return _typeToObjects[type];
             return new List<string>();
         }
@@ -50,7 +49,7 @@ namespace PDSim.Components
 
         public string GetTypeOfObject(string objectName)
         {
-            if (__objectToTypes.ContainsKey(objectName))
+            if (__objectToTypes != null && __objectToTypes.ContainsKey(objectName))
                 return __objectToTypes[objectName];
             return null;
         }
@@ -70,7 +69,9 @@ namespace PDSim.Components
                 var child = transform.GetChild(i);
                 if (child.TryGetComponent(out VisualisationObject visualisationObject))
                 {
-                    _objectDictionary.Add(child.name, visualisationObject);
+                    if (!_objectDictionary.ContainsKey(child.name))
+                        _objectDictionary.Add(child.name, visualisationObject);
+                    
                     if (_typeToObjects.ContainsKey(visualisationObject.objectType))
                     {
                         _typeToObjects[visualisationObject.objectType].Add(child.name);
@@ -80,56 +81,48 @@ namespace PDSim.Components
                         _typeToObjects.Add(visualisationObject.objectType, new List<string> { child.name });
                     }
 
-                    __objectToTypes.Add(child.name, visualisationObject.objectType);
+                    if (!__objectToTypes.ContainsKey(child.name))
+                        __objectToTypes.Add(child.name, visualisationObject.objectType);
                 }
             }
         }
 
         public VisualisationObject GetObjectInScene(string objectName)
         {
-            if (_objectDictionary.ContainsKey(objectName))
+            if (_objectDictionary != null && _objectDictionary.ContainsKey(objectName))
                 return _objectDictionary[objectName];
             return null;
         }
 
-        // Mouse Hover objects events
-        // --------------------------
         public void HoverObject(VisualisationObject @object)
         {
-            OnVisualisationObjectHovered(@object);
+            OnVisualisationObjectHovered?.Invoke(@object);
         }
 
         public void ClearHover()
         {
-            OnVisualisationObjectUnhovered();
+            OnVisualisationObjectUnhovered?.Invoke();
         }
 
 
 # if UNITY_EDITOR
-        public void InitialiseComponent(List<GeTObjectDeclaration> objectDeclarations, List<string> allLeafType)
+        public void InitialiseComponent(List<PlanObject> objectDeclarations, List<string> allLeafType)
         {
             foreach (var type in allLeafType)
             {
                 var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
-                // Get the generic object prefab
                 Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(CommonPaths.PDSIM_OBJECT_PREFAB, typeof(GameObject));
-                // Create instance of generic object
                 var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
                 prefabInstance.GetComponent<VisualisationObject>().objectType = type;
-                // Save new model
                 var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + type + ".prefab");
-
-
 
                 prefabs.Add(newModel.GetComponent<VisualisationObject>());
 
-                // Ensure PDSimMetadata is present
                 if (newModel.GetComponent<PDSimMetadata>() == null)
                 {
                     newModel.AddComponent<PDSimMetadata>();
                 }
 
-                // --- GENERATE BEHAVIOR SCRIPT ---
                 var sceneName = SceneManager.GetActiveScene().name;
                 var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
                 var behaviorFolder = AssetUtils.GetSimulationBehaviorsPath(sceneName);
@@ -148,18 +141,16 @@ namespace PDSim.Components
                     Debug.Log($"[PDSim] Generated behavior script for type '{type}': {scriptPath}");
                 }
 
-                // Remove from scene
                 DestroyImmediate(prefabInstance);
             }
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            // Create Objects in Scene
+            
             foreach (var obj in objectDeclarations)
             {
-                var type = obj.TypeName;
+                var type = obj.Type.Name;
                 var prefabPath = $"{AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name)}/{type}.prefab";
                 var prefab = AssetDatabase.LoadAssetAtPath<VisualisationObject>(prefabPath);
-
 
                 var instance = PrefabUtility.InstantiatePrefab(prefab, transform) as VisualisationObject;
                 instance.gameObject.name = obj.Name;
@@ -168,4 +159,3 @@ namespace PDSim.Components
 #endif
     }
 }
-

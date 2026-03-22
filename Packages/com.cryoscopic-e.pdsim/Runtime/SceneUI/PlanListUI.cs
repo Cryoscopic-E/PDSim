@@ -1,4 +1,4 @@
-using GeTModel;
+using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,7 +17,13 @@ namespace PDSim.SceneUI
 
         private void OnEnable()
         {
-            _root = GetComponent<UIDocument>().rootVisualElement;
+            var uiDocument = GetComponent<UIDocument>();
+            if (uiDocument.visualTreeAsset == null)
+            {
+                uiDocument.visualTreeAsset = Resources.Load<VisualTreeAsset>("SceneUI/PlanPanelUI");
+            }
+
+            _root = uiDocument.rootVisualElement;
 
             _movablePanel = new(_root);
 
@@ -26,7 +32,7 @@ namespace PDSim.SceneUI
             _root.style.display = DisplayStyle.None;
         }
 
-        public PlanActionsListController InitializePlanList(List<GeTActionInstance> list)
+        public PlanActionsListController InitializePlanList(List<GroundedAction> list)
         {
             _actionListController = new PlanActionsListController();
             _actionListController.SetPlanActions(list);

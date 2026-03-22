@@ -1,4 +1,8 @@
-﻿using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,19 +44,14 @@ namespace PDSim.Components
 
         private Dictionary<string, AnimationRoutine> _animationsActive;
 
-        //private Queue<AnimationQueueElement> animationQueue  = new Queue<AnimationQueueElement>();
-
-        // OnVisualisationStep is called when the visualisation is animating a single fluent
         public delegate void VisualisationStep(string predicate);
         public event VisualisationStep OnVisualisationStep;
 
-        // OnVisualisationEnd is called when the all the queues in animationsActive are empty
         public delegate void AnimationEnd();
         public event AnimationEnd OnTimePointAnimationEnd;
 
         private bool stop = false;
 
-        // Single tracked coroutine — never accumulate multiple AnimationsLoop instances.
         private Coroutine _loopCoroutine;
 
         private void Awake()
@@ -90,22 +89,16 @@ namespace PDSim.Components
 
         private IEnumerator AnimationsLoop()
         {
-            // Always yield at least one frame before the first check.
-            // StartCoroutine() executes synchronously up to the first yield, so
-            // without this guard OnTimePointAnimationEnd would fire in the same
-            // frame the loop is started (before the screen has rendered once).
             yield return null;
 
             while (!stop)
             {
-                // Check if the dictionary is empty
                 if (_animationsActive.Count == 0)
                 {
                     OnTimePointAnimationEnd?.Invoke();
                     yield return null;
                 }
 
-                // Check is the animation routine state is finished
                 var toRemove = new List<string>();
                 foreach (var animationRoutine in _animationsActive)
                 {
@@ -128,7 +121,7 @@ namespace PDSim.Components
         }
 
 
-        public void UpdateQueue(GeTActionInstance action, GeTStateVariable newStateVar)
+        public void UpdateQueue(GroundedAction action, (FluentExpression Fluent, object Value) newStateVar)
         {
             var match = _animations.AnimationCheck(newStateVar);
 
@@ -147,17 +140,23 @@ namespace PDSim.Components
                 }
 
                 float duration = 0f;
-                if (action != null && action.StartTime != null && action.EndTime != null)
+                if (action != null && action.StartTime.HasValue && action.EndTime.HasValue)
                 {
-                    duration = (float)(action.EndTime.ToDouble() - action.StartTime.ToDouble());
+                    duration = (float)(action.EndTime.Value - action.StartTime.Value);
                 }
+
+                var parameters = newStateVar.Fluent.Arguments
+                    .Select(a => a is ConstantExpression c ? c.Value.ToString() : a.ToString())
+                    .Select(p => _objects.GetObjectInScene(p)?.gameObject)
+                    .Where(g => g != null)
+                    .ToArray();
 
                 _animationsActive[context].queue.Enqueue(new AnimationQueueElement()
                 {
                     animationName = animationData.name,
                     fluentString = newStateVar.Fluent.ToString(),
-                    value = newStateVar.Value.Atom,
-                    parametersObjects = newStateVar.GetParameters().Select(p => _objects.GetObjectInScene(p).gameObject).ToArray(),
+                    value = newStateVar.Value,
+                    parametersObjects = parameters,
                     graphToClone = animationData.sceneObjectReference,
                     scriptClassName = animationData.scriptClassName,
                     duration = duration
@@ -175,24 +174,20 @@ namespace PDSim.Components
                 switch (_animationsActive[context].state)
                 {
                     case AnimationState.None:
-
                         if (_animationsActive[context].queue.Count > 0)
                             _animationsActive[context].state = AnimationState.Ready;
-
                         else
                             _animationsActive[context].state = AnimationState.Finished;
-
                         break;
                     case AnimationState.Ready:
                         var animation = _animationsActive[context].queue.Dequeue();
-                        OnVisualisationStep?.Invoke(animation.fluentString); // Safe invoke
+                        OnVisualisationStep?.Invoke(animation.fluentString); 
                         TriggerAnimation(animation, context, animation.parametersObjects);
                         break;
                     case AnimationState.Running:
                         yield return null;
                         break;
                     case AnimationState.End:
-                        // animation has ended, if queue is empty, set state to none, else set state to ready
                         if (_animationsActive[context].queue.Count == 0)
                             _animationsActive[context].state = AnimationState.None;
                         else
@@ -206,12 +201,13 @@ namespace PDSim.Components
                 yield return new WaitForEndOfFrame();
             }
         }
+        
         Dictionary<string, GameObject> _activeGraphs = new Dictionary<string, GameObject>();
+        
         private void AnimationEndHandler(string context)
         {
-            Debug.Log($"Animation {context} ended, still {_animationsActive[context].queue.Count} animation in queue,state was {_animationsActive[context].state}");
+            if (!_animationsActive.ContainsKey(context)) return;
             _animationsActive[context].state = AnimationState.End;
-            Debug.Log($"state is {_animationsActive[context].state}");
 
             if (_activeGraphs.ContainsKey(context))
             {
@@ -223,23 +219,18 @@ namespace PDSim.Components
 
         private void TriggerAnimation(AnimationQueueElement animationElement, string context, GameObject[] objects)
         {
-            // Create a new instance of the graph using Object Pool
             var animationInstance = SimpleObjectPool.Instance.Get(animationElement.graphToClone);
 
             animationInstance.name = $"{context} === {animationElement.animationName}";
             _activeGraphs.Add(context, animationInstance);
 
-            // Fetch the visualizer script from the pool instance
             var scriptVisualizer = animationInstance.GetComponent<IFluentVisualizer>();
 
-            // Auto-attach if missing but we know the name
             if (scriptVisualizer == null && !string.IsNullOrEmpty(animationElement.scriptClassName))
             {
                 System.Type type = null;
                 foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    // scriptClassName is stored as the fully-qualified type name for new animations.
-                    // Fall back to the legacy "GeneratedVisualizers." prefix for older scenes.
                     type = assembly.GetType(animationElement.scriptClassName)
                         ?? assembly.GetType("GeneratedVisualizers." + animationElement.scriptClassName);
                     if (type != null) break;
@@ -252,7 +243,6 @@ namespace PDSim.Components
 
             if (scriptVisualizer != null)
             {
-                Debug.Log($"[AnimationsController] Using C# Script for {animationElement.animationName}");
                 scriptVisualizer.Animate(
                     new List<string>(),
                     animationElement.value,
@@ -264,10 +254,7 @@ namespace PDSim.Components
                 return;
             }
 
-            Debug.LogWarning($"No IFluentVisualizer found for {animationElement.animationName}. Animation will hang.");
-            // Immediately end to avoid hang
             AnimationEndHandler(context);
-
             _animationsActive[context].state = AnimationState.Running;
         }
 
@@ -286,20 +273,12 @@ namespace PDSim.Components
         private class AnimationQueueElement
         {
             public string animationName;
-
             public string fluentString;
-
-            public GeTAtom value;
-
+            public object value;
             public GameObject[] parametersObjects;
-
             public GameObject graphToClone;
-
             public string scriptClassName;
-
             public float duration;
         }
     }
-
-
 }

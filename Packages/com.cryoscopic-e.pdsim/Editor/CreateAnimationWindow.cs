@@ -1,6 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using PDSim.Components;
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
 using PDSim.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -127,27 +131,18 @@ namespace PDSim.Editor
                 System.IO.Directory.CreateDirectory(folderPath);
             }
 
-            string className = PDSimAPI.Generators.FluentScriptGenerator.GetVisualizerClassName(predicateName, attributeTypes);
+            // Convert Metadata to PredicateDefinition for generator
+            var argTypes = attributeTypes.Select(t => new PlanType(t)).ToArray();
+            var predicate = new PredicateDefinition(predicateName, argTypes);
+
+            string className = PDSimAPI.Generators.FluentScriptGenerator.GetVisualizerClassName(predicate);
             string fullTypeName = $"{namespaceName}.{className}";
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
-
-            // Convert Metadata to GeTFluent
-            var parameters = new List<GeTParameter>();
-            if (_metadata.ParametersNames != null)
-            {
-                for (int i = 0; i < _metadata.ParametersNames.Count; i++)
-                {
-                    string pName = _metadata.ParametersNames[i];
-                    string pType = i < attributeTypes.Count ? attributeTypes[i] : "object";
-                    parameters.Add(new GeTParameter(pName, pType));
-                }
-            }
-            var fluent = new GeTFluent(predicateName, _metadata.FluentValueType, parameters);
 
             // Only generate if it doesn't exist yet
             if (!System.IO.File.Exists(filePath))
             {
-                string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className, namespaceName);
+                string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(predicate, className, namespaceName);
                 System.IO.File.WriteAllText(filePath, code);
                 AssetDatabase.Refresh();
                 Debug.Log($"[PDSim] Generated C# Script: {filePath}");

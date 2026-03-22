@@ -1,9 +1,12 @@
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
 using PDSim.Components;
 using PDSim.ScriptableObjects;
 using PDSimAPI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,7 +23,7 @@ namespace PDSim.Editor
         }
 
         // ScriptableObject references
-        private PlanningProblem _planningProblem;
+        private PDSim.ScriptableObjects.PlanningProblem _planningProblem;
         private PlanGeneration _planGeneration;
 
         // Parsed model
@@ -95,8 +98,8 @@ namespace PDSim.Editor
         private void DrawObjectFields()
         {
             EditorGUI.BeginChangeCheck();
-            _planningProblem = (PlanningProblem)EditorGUILayout.ObjectField(
-                "Planning Problem", _planningProblem, typeof(PlanningProblem), false);
+            _planningProblem = (PDSim.ScriptableObjects.PlanningProblem)EditorGUILayout.ObjectField(
+                "Planning Problem", _planningProblem, typeof(PDSim.ScriptableObjects.PlanningProblem), false);
             _planGeneration = (PlanGeneration)EditorGUILayout.ObjectField(
                 "Plan Generation", _planGeneration, typeof(PlanGeneration), false);
 
@@ -214,8 +217,8 @@ namespace PDSim.Editor
             if (_showFluents)
             {
                 EditorGUI.indentLevel++;
-                foreach (var kvp in _visualisation.FluentsDefinitions)
-                    EditorGUILayout.LabelField(kvp.Value.ToString(), EditorStyles.wordWrappedLabel);
+                foreach (var f in _visualisation.FluentsDefinitions)
+                    EditorGUILayout.LabelField(f.ToString(), EditorStyles.wordWrappedLabel);
                 EditorGUI.indentLevel--;
             }
 
@@ -231,13 +234,12 @@ namespace PDSim.Editor
             if (_showActions)
             {
                 EditorGUI.indentLevel++;
-                foreach (var kvp in _visualisation.ActionsDefinitions)
+                foreach (var a in _visualisation.ActionsDefinitions)
                 {
-                    var a = kvp.Value;
-                    string paramStr = a.parameters != null && a.parameters.Count > 0
-                        ? string.Join(", ", a.parameters)
+                    string paramStr = a.Parameters != null && a.Parameters.Count > 0
+                        ? string.Join(", ", a.Parameters.Select(p => $"{p.Name}: {p.Type.Name}"))
                         : string.Empty;
-                    EditorGUILayout.LabelField($"{a.actionName}({paramStr})");
+                    EditorGUILayout.LabelField($"{a.Name}({paramStr})");
                 }
                 EditorGUI.indentLevel--;
             }
@@ -249,13 +251,13 @@ namespace PDSim.Editor
         private void DrawInitialStateSection()
         {
             _showInitialState = EditorGUILayout.BeginFoldoutHeaderGroup(
-                _showInitialState, $"Initial State  ({_visualisation.CurrentWorldState.State.Count})");
+                _showInitialState, $"Initial State  ({_visualisation.CurrentWorldState.State.Count()})");
 
             if (_showInitialState)
             {
                 EditorGUI.indentLevel++;
                 foreach (var sv in _visualisation.CurrentWorldState.State)
-                    EditorGUILayout.LabelField(sv.ToString(), EditorStyles.wordWrappedLabel);
+                    EditorGUILayout.LabelField($"{sv.Key} = {sv.Value}", EditorStyles.wordWrappedLabel);
                 EditorGUI.indentLevel--;
             }
 
@@ -267,7 +269,12 @@ namespace PDSim.Editor
 
         private void DrawPlanTab()
         {
-            var plan = _visualisation.PlanGeneration.Plan;
+            var plan = _visualisation.PlanResult.Plan;
+            if (plan == null)
+            {
+                EditorGUILayout.HelpBox("No plan available in PlanResult.", MessageType.Warning);
+                return;
+            }
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(

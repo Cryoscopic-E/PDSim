@@ -1,4 +1,4 @@
-﻿using GeTModel;
+﻿using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
@@ -14,7 +14,7 @@ namespace PDSim.SceneUI
         }
 
 
-        public void SetData(GeTStateVariable data)
+        public void SetData((FluentExpression Fluent, object Value) data)
         {
             label.text = data.ToString();
         }

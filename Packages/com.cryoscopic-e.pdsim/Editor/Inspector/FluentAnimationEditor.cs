@@ -2,7 +2,12 @@ using PDSim.Components;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
+using PDSimAPI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PDSim.Editor.Inspector
 {
@@ -114,17 +119,11 @@ namespace PDSim.Editor.Inspector
             string folderPath = PDSim.Utils.AssetUtils.GetSimulationScriptsPath(sceneName);
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
 
-            // Convert Metadata to GeTFluent
-            var parameters = new System.Collections.Generic.List<GeTParameter>();
-            for (int i = 0; i < fluentAnimation.metaData.ParametersNames.Count; i++)
-            {
-                string pName = fluentAnimation.metaData.ParametersNames[i];
-                string pType = i < attributeTypes.Count ? attributeTypes[i] : "object";
-                parameters.Add(new GeTParameter(pName, pType));
-            }
-            var fluent = new GeTFluent(predicateName, fluentAnimation.metaData.FluentValueType, parameters);
+            // Convert Metadata to PredicateDefinition for generator
+            var argTypes = attributeTypes.Select(t => new PlanType(t)).ToArray();
+            var predicate = new PredicateDefinition(predicateName, argTypes);
 
-            string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(fluent, className, namespaceName);
+            string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(predicate, className, namespaceName);
             System.IO.File.WriteAllText(filePath, code);
             AssetDatabase.Refresh();
             Debug.Log($"[PDSim] Regenerated C# Script: {filePath}");

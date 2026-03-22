@@ -29,7 +29,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using GeTModel;
+using GeTPlan.Core.Models;
+using GeTPlan.Core.Logic;
+using GeTPlan.Core.Models.Expressions;
 using PDSim.Components;
 using PDSim.Utils.Animation;
 using UnityEngine;
@@ -45,11 +47,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class BooleanToggle_ObjectVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            bool isActive = value.BooleanValue ?? false;
+            bool isActive = value is bool b && b;
             StartCoroutine(Run(objects[0], isActive, duration, onComplete));
         }
 
@@ -100,11 +102,11 @@ namespace GeneratedVisualizers
                 { "black",  Color.black },
             };
 
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            string symbol = value.Symbol ?? "white";
+            string symbol = value?.ToString() ?? "white";
             Color target  = Palette.TryGetValue(symbol, out var c) ? c : Color.white;
             StartCoroutine(Run(objects[0], target, duration, onComplete));
         }
@@ -130,12 +132,12 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class IntegerCounter_LocationVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            long count = value.IntValue ?? 0;
-            StartCoroutine(Run(objects[0], (int)count, duration, onComplete));
+            int count = Convert.ToInt32(value ?? 0);
+            StartCoroutine(Run(objects[0], count, duration, onComplete));
         }
 
         private IEnumerator Run(GameObject loc, int count, float dur, Action onComplete)
@@ -174,11 +176,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class RealGauge_VehicleVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            float level = value.RealValue != null ? Mathf.Clamp01((float)value.RealValue.ToDouble()) : 0f;
+            float level = Mathf.Clamp01((float)Convert.ToDouble(value ?? 0.0));
             StartCoroutine(Run(objects[0], level, duration, onComplete));
         }
 
@@ -217,11 +219,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class MoveToObject_BlockBlockVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length < 2) { onComplete?.Invoke(); return; }
-            bool isOn = value.BooleanValue ?? false;
+            bool isOn = value is bool b && b;
             if (!isOn)           { onComplete?.Invoke(); return; } // false → nothing to show
             StartCoroutine(Run(objects[0], objects[1], duration, onComplete));
         }
@@ -256,11 +258,11 @@ namespace GeneratedVisualizers
         [Tooltip("How high above both endpoints the arc peaks (world units).")]
         public float arcHeight = 2f;
 
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length < 2) { onComplete?.Invoke(); return; }
-            bool arrived = value.BooleanValue ?? false;
+            bool arrived = value is bool b && b;
             if (!arrived)         { onComplete?.Invoke(); return; }
             StartCoroutine(Run(objects[0], objects[1], duration, onComplete));
         }
@@ -302,11 +304,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class HoldAttach_RobotObjectVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length < 2) { onComplete?.Invoke(); return; }
-            bool isHolding = value.BooleanValue ?? false;
+            bool isHolding = value is bool b && b;
             StartCoroutine(Run(objects[0], objects[1], isHolding, duration, onComplete));
         }
 
@@ -357,11 +359,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class DriveToLocation_TruckLocationVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length < 2) { onComplete?.Invoke(); return; }
-            bool arrived = value.BooleanValue ?? false;
+            bool arrived = value is bool b && b;
             if (!arrived)          { onComplete?.Invoke(); return; }
             StartCoroutine(Run(objects[0], objects[1], duration, onComplete));
         }
@@ -396,11 +398,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class DoorState_RoomVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            string state = value.Symbol ?? "closed";
+            string state = value?.ToString() ?? "closed";
             StartCoroutine(Run(objects[0], state, duration, onComplete));
         }
 
@@ -443,11 +445,11 @@ namespace GeneratedVisualizers
     // ----------------------------------------------------------
     public class MultiFluentParallel_MachineVisualizer : MonoBehaviour, IFluentVisualizer
     {
-        public void Animate(List<string> args, GeTAtom value, GameObject[] objects,
+        public void Animate(List<string> args, object value, GameObject[] objects,
                             float duration, Action onComplete)
         {
             if (objects.Length == 0) { onComplete?.Invoke(); return; }
-            bool isProcessing = value.BooleanValue ?? false;
+            bool isProcessing = value is bool b && b;
             StartCoroutine(Run(objects[0], isProcessing, duration, onComplete));
         }
 
