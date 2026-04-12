@@ -7,7 +7,7 @@ using GeTPlan.Core.Logic;
 using GeTPlan.Core.Models.Expressions;
 using PDSim.Runtime.Utils;
 
-namespace PDSim.Runtime.Components
+namespace PDSim.Interactive
 {
     /// <summary>
     /// LogicalAction allows defining planning actions directly on GameObjects in the Inspector.

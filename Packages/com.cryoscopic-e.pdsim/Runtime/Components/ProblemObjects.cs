@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using PDSim.Interactive;
 
 namespace PDSim.Components
 {

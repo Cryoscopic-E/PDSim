@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using GeTPlan.Core.Models;
 
-namespace PDSim.Components
+namespace PDSim.Interactive
 {
     /// <summary>
     /// Functional metadata for PDSim objects.
@@ -15,6 +16,11 @@ namespace PDSim.Components
             public string name;
             public T reference;
         }
+
+        [Header("Planning")]
+        [SerializeField, Tooltip("The type name used in the planning domain (e.g., 'robot', 'location').")]
+        private string planTypeName = "object";
+        public string PlanTypeName => planTypeName;
 
         [Header("Functional Categories")]
         public List<Entry<Transform>> anchors = new List<Entry<Transform>>();
@@ -31,6 +37,23 @@ namespace PDSim.Components
         private void Awake()
         {
             InitializeCaches();
+        }
+
+        private void OnEnable()
+        {
+            if (PDSimWorldObserver.Instance != null)
+                PDSimWorldObserver.Instance.RegisterObject(this);
+        }
+
+        private void OnDisable()
+        {
+            if (PDSimWorldObserver.Instance != null)
+                PDSimWorldObserver.Instance.UnregisterObject(this);
+        }
+
+        public PlanObject ToPlanObject()
+        {
+            return new PlanObject(gameObject.name, new PlanType(planTypeName));
         }
 
         private void InitializeCaches()

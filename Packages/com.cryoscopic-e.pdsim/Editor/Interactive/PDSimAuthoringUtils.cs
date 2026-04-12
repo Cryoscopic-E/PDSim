@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEngine;
 using PDSim.Components;
-using PDSim.Runtime.Components;
+using PDSim.Interactive;
 
-namespace PDSim.Editor
+namespace PDSim.Editor.Interactive
 {
     public static class PDSimAuthoringUtils
     {

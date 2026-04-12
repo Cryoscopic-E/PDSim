@@ -5,12 +5,12 @@ using UnityEngine.UIElements;
 using GeTPlan.Core.Models;
 using GeTPlan.Core.Logic;
 using GeTPlan.Protobuf.Client;
-using PDSim.Runtime.Components;
+using PDSim.Interactive;
 using PDSim.Components;
 using GeTPlan.Core.Models.Expressions;
 using PDSim.Runtime.Utils;
 
-namespace PDSim.Runtime.SceneUI
+namespace PDSim.Interactive.UI
 {
     public class InteractiveDashboard : MonoBehaviour
     {
@@ -73,8 +73,7 @@ namespace PDSim.Runtime.SceneUI
             var observer = PDSimWorldObserver.Instance;
             if (observer == null) return;
 
-            // 1. Generate Domain and Problem
-            var domain = observer.GenerateDomain();
+            // 1. Generate Problem (includes domain)
             var problem = observer.GenerateProblem();
 
             // 2. Parse Goal from UI
@@ -85,9 +84,18 @@ namespace PDSim.Runtime.SceneUI
                 if (goalExpr != null) problem.Goals.Add(goalExpr);
             }
 
-            // 3. Solve
-            using var client = new PlanningClient();
-            var result = client.DoPlan(problem);
+            // 3. Solve via backend
+            PlanResult result;
+            try
+            {
+                using var client = new PlanningClient();
+                result = client.DoPlan(problem);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[PDSim] Failed to connect to backend: {ex.Message}");
+                return;
+            }
 
             if (result.Status == PlanGenStatus.SolvedSatisficing || result.Status == PlanGenStatus.SolvedOptimally)
             {
@@ -97,10 +105,8 @@ namespace PDSim.Runtime.SceneUI
                 var controller = Controller.Instance;
                 if (controller != null)
                 {
-                    // Manually inject the results since we bypassed the ScriptableObject loading
-                    controller.visualisation = new PDSimAPI.Visualisation(new byte[0], new byte[0]); // Dummy bytes
-                    // We'd need a cleaner way to 'inject' a live result into Controller.
-                    // For now, let's just log.
+                    controller.visualisation = new PDSimAPI.Visualisation(problem, result);
+                    controller.StartVisualisation();
                 }
             }
             else

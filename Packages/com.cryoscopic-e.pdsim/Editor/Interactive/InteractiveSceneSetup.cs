@@ -2,9 +2,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using PDSim.Components;
-using PDSim.Runtime.Components;
+using PDSim.Interactive;
+using PDSim.Interactive.UI;
 
-namespace PDSim.Editor
+namespace PDSim.Editor.Interactive
 {
     public static class InteractiveSceneSetup
     {
@@ -35,7 +36,7 @@ namespace PDSim.Editor
             
             // Add UI Dashboard
             managerGo.AddComponent<UnityEngine.UIElements.UIDocument>();
-            managerGo.AddComponent<PDSim.Runtime.SceneUI.InteractiveDashboard>();
+            managerGo.AddComponent<InteractiveDashboard>();
             
             // 3. Controller (for animation handoff)
             var controllerGo = new GameObject("PDSim Controller");

@@ -1,9 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 using PDSim.Components;
+using PDSim.Interactive;
 using System.Linq;
 
-namespace PDSim.Editor
+namespace PDSim.Editor.Interactive
 {
     public static class PDSimMetadataMenuItems
     {

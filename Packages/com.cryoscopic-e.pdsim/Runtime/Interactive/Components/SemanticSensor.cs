@@ -5,7 +5,7 @@ using GeTPlan.Core.Models.Expressions;
 using PDSim.Components;
 using PDSim.Runtime.Utils;
 
-namespace PDSim.Runtime.Components
+namespace PDSim.Interactive
 {
     public enum SensingMode
     {

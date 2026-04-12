@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 using PDSim.Components;
+using PDSim.Interactive;
 
 namespace PDSim.Utils.Animation
 {
