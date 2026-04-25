@@ -1,18 +1,24 @@
-using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
+using GeTPlan.Core.Models;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace PDSim.SceneUI
 {
+    /// <summary>
+    /// Manages the Plan List UI panel, including visibility and initialization of the action list.
+    /// </summary>
     public class PlanListUI : MonoBehaviour
     {
+        #region Private Fields
         private ListView _planList;
         private PlanActionsListController _actionListController;
         private MovablePanel _movablePanel;
         private VisualElement _root;
         private bool _visible;
+        #endregion
 
+        #region Unity Lifecycle
         private void OnEnable()
         {
             var uiDocument = GetComponent<UIDocument>();
@@ -51,7 +57,14 @@ namespace PDSim.SceneUI
 
             _movablePanel = new MovablePanel(_root);
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Initializes the plan list with the provided actions.
+        /// </summary>
+        /// <param name="list">List of grounded actions.</param>
+        /// <returns>The initialized PlanActionsListController.</returns>
         public PlanActionsListController InitializePlanList(List<GroundedAction> list)
         {
             _actionListController = new PlanActionsListController();
@@ -60,6 +73,9 @@ namespace PDSim.SceneUI
             return _actionListController;
         }
 
+        /// <summary>
+        /// Toggles the visibility of the Plan List panel.
+        /// </summary>
         public void ToggleVisibility()
         {
             _movablePanel.ResetPosition();
@@ -76,9 +92,14 @@ namespace PDSim.SceneUI
             }
         }
 
+        /// <summary>
+        /// Highlights the action at the specified index in the list.
+        /// </summary>
+        /// <param name="index">Index of the action to highlight.</param>
         public void HighlightCurrentAction(int index)
         {
             _planList.AddToSelection(index);
         }
+        #endregion
     }
 }

@@ -1,4 +1,4 @@
-using GeTPlan.Core.Models; using GeTPlan.Core.Logic; using GeTPlan.Core.Models.Expressions; using PDSimAPI;
+using GeTPlan.Core.Models.Expressions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,91 +8,71 @@ using PDSim.ScriptableObjects;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Represents an object in the planning domain within the Unity scene.
+    /// Manages object-specific state, movement, and interaction with the planning system.
+    /// </summary>
     public class VisualisationObject : MonoBehaviour
     {
-        // Object settings
-        // ---------------
+        #region Public API
 
+        /// <summary>
+        /// The type of the object in the planning domain.
+        /// </summary>
+        [Header("Object Settings")]
         [Tooltip("The type of the object in the PDDL domain.")]
-        public string objectType;
+        public string ObjectType;
 
+        /// <summary>
+        /// Whether to use a NavMeshAgent for movement.
+        /// </summary>
         [Tooltip("Use Navmesh Agent for movement.")]
-        public bool useNavMeshAgent = false;
+        public bool UseNavMeshAgent = false;
 
+        /// <summary>
+        /// Optional movement settings for custom speed, acceleration, etc.
+        /// </summary>
         [Tooltip("(Optional) Movement Settings")]
-        public MovementSettings movementSettings;
+        public MovementSettings MovementSettings;
 
-
-        // Movement settings
-        // -----------------
-
-        private const float Speed = 1f;
-        private const float AngularSpeed = 120f;
-        private const float Acceleration = 8f;
-        private const float StoppingDistance = 0.1f;
-
-        // NavMeshAgent 
-        // ------------
-
-        private NavMeshAgent _navMeshAgent;
-
-        // Object State
-        // ------------
-
-        // Keep track of the object's state when actions are applied
-        private Dictionary<string, (FluentExpression Fluent, object Value)> state;
-
+        /// <summary>
+        /// Retrieves the current state of the object as a list of fluent assignments.
+        /// </summary>
+        /// <returns>A list of grounded fluents and their values.</returns>
         public List<(FluentExpression Fluent, object Value)> GetObjectState()
         {
-            return state.Values.ToList();
+            return _state.Values.ToList();
         }
 
-        // Add a fluent assignment to the object's state
+        /// <summary>
+        /// Adds a fluent assignment to the object's local state tracking.
+        /// </summary>
+        /// <param name="fluentAssignment">The grounded fluent and its value.</param>
         public void AddFluentAssignment((FluentExpression Fluent, object Value) fluentAssignment)
         {
             // Add only if object is active
             if (gameObject.activeSelf)
-                state[fluentAssignment.Fluent.Name] = fluentAssignment;
+                _state[fluentAssignment.Fluent.Name] = fluentAssignment;
         }
 
-        private void Awake()
-        {
-            state = new Dictionary<string, (FluentExpression Fluent, object Value)>();
-
-            if (!useNavMeshAgent) return;
-            _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-            if (_navMeshAgent == null)
-            {
-                _navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
-            }
-
-            _navMeshAgent.enabled = useNavMeshAgent;
-        }
-
-        private void OnMouseEnter()
-        {
-            ProblemObjects.Instance.HoverObject(this);
-        }
-
-        private void OnMouseExit()
-        {
-            ProblemObjects.Instance.ClearHover();
-        }
-
-        #region HELPER FUNCTIONS
-
-        // Move the object to a new position
+        /// <summary>
+        /// Smoothly moves the object to a target position.
+        /// Uses NavMeshAgent if enabled, otherwise performs a manual Lerp.
+        /// </summary>
+        /// <param name="position">The target position in world space.</param>
+        /// <param name="faceTarget">Whether the object should rotate to face the movement direction.</param>
+        /// <returns>An enumerator for the movement coroutine.</returns>
         public IEnumerator MoveTo(Vector3 position, bool faceTarget = true)
         {
-            if (useNavMeshAgent)
+            if (UseNavMeshAgent)
             {
-                if (movementSettings != null)
+                if (MovementSettings != null)
                 {
-                    _navMeshAgent.speed = movementSettings.speed;
-                    _navMeshAgent.angularSpeed = movementSettings.angularSpeed;
-                    _navMeshAgent.acceleration = movementSettings.acceleration;
-                    _navMeshAgent.stoppingDistance = movementSettings.stoppingDistance;
-                    _navMeshAgent.updateRotation = movementSettings.faceTarget;
+                    _navMeshAgent.speed = MovementSettings.Speed;
+                    _navMeshAgent.angularSpeed = MovementSettings.AngularSpeed;
+                    _navMeshAgent.acceleration = MovementSettings.Acceleration;
+                    _navMeshAgent.stoppingDistance = MovementSettings.StoppingDistance;
+                    _navMeshAgent.updateRotation = MovementSettings.FaceTarget;
                 }
                 else
                 {
@@ -119,26 +99,26 @@ namespace PDSim.Components
                 // Initialize variables from movement settings or defaults
                 var t = 0f;
                 var startPosition = transform.position;
-                var targetPosition = position; // Assuming 'position' is a parameter or a known variable
-                var movementSettingsOrDefault = movementSettings ?? new MovementSettings
+                var targetPosition = position;
+                var movementSettingsOrDefault = MovementSettings ?? new MovementSettings
                 {
-                    stoppingDistance = StoppingDistance,
-                    acceleration = Acceleration,
-                    speed = Speed,
-                    faceTarget = faceTarget,
-                    angularSpeed = AngularSpeed
+                    StoppingDistance = StoppingDistance,
+                    Acceleration = Acceleration,
+                    Speed = Speed,
+                    FaceTarget = faceTarget,
+                    AngularSpeed = AngularSpeed
                 };
 
                 // Use destructuring for cleaner access to settings
                 var (stopDistance, acceleration, speed, focusTarget, angularSpeed) = (
-                    movementSettingsOrDefault.stoppingDistance,
-                    movementSettingsOrDefault.acceleration,
-                    movementSettingsOrDefault.speed,
-                    movementSettingsOrDefault.faceTarget,
-                    movementSettingsOrDefault.angularSpeed
+                    movementSettingsOrDefault.StoppingDistance,
+                    movementSettingsOrDefault.Acceleration,
+                    movementSettingsOrDefault.Speed,
+                    movementSettingsOrDefault.FaceTarget,
+                    movementSettingsOrDefault.AngularSpeed
                 );
 
-                if (Vector3.Distance(transform.position, targetPosition) > movementSettingsOrDefault.stoppingDistance)
+                if (Vector3.Distance(transform.position, targetPosition) > movementSettingsOrDefault.StoppingDistance)
                 {
                     while (Vector3.Distance(transform.position, targetPosition) > stopDistance)
                     {
@@ -158,8 +138,46 @@ namespace PDSim.Components
             }
         }
 
-        #endregion HELPER FUNCTIONS
+        #endregion
 
+        #region Unity Lifecycle
 
+        private void Awake()
+        {
+            _state = new Dictionary<string, (FluentExpression Fluent, object Value)>();
+
+            if (!UseNavMeshAgent) return;
+            _navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+            if (_navMeshAgent == null)
+            {
+                _navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+            }
+
+            _navMeshAgent.enabled = UseNavMeshAgent;
+        }
+
+        private void OnMouseEnter()
+        {
+            ProblemObjects.Instance.HoverObject(this);
+        }
+
+        private void OnMouseExit()
+        {
+            ProblemObjects.Instance.ClearHover();
+        }
+
+        #endregion
+
+        #region Private Internals
+
+        private const float Speed = 1f;
+        private const float AngularSpeed = 120f;
+        private const float Acceleration = 8f;
+        private const float StoppingDistance = 0.1f;
+
+        private NavMeshAgent _navMeshAgent;
+        private Dictionary<string, (FluentExpression Fluent, object Value)> _state;
+
+        #endregion
     }
 }

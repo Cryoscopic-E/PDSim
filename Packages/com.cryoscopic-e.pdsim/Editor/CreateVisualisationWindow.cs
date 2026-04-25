@@ -8,21 +8,36 @@ using UnityEditor.SceneManagement;
 using UnityEditor.SceneTemplate;
 using UnityEngine;
 using UnityEngine.UIElements;
+
 namespace PDSim.Editor
 {
+    /// <summary>
+    /// Custom editor window for creating a new PDSim visualisation.
+    /// </summary>
     public class CreateVisualisationWindow : EditorWindow
     {
+        #region Fields
+        private bool _connectionStatus = false;
+        private Label _connectionStatusLabel;
+        private TextField _visualisationNameField;
+        private Button _createSimulationButton;
+        private Button _cancelButton;
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Shows the CreateVisualisationWindow.
+        /// </summary>
         [MenuItem("PDSim/Create Visualisation")]
         public static void ShowWindow()
         {
             var wnd = GetWindow<CreateVisualisationWindow>();
             wnd.titleContent = new GUIContent("Create Visualisation");
         }
-        private bool _connectionStatus = false;
-        private Label _connectionStatusLabel;
-        private TextField _visualisationNameField;
-        private Button _createSimulationButton;
-        private Button _cancelButton;
+
+        /// <summary>
+        /// Called when the window is created to initialize the UI.
+        /// </summary>
         public void CreateGUI()
         {
             // Set Window not resizable
@@ -33,7 +48,7 @@ namespace PDSim.Editor
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.CREATESIM_WINDOW_UI);
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.CreateSimWindowUI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
 
@@ -45,8 +60,9 @@ namespace PDSim.Editor
             SetButtonListeners();
             EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
         }
+        #endregion
 
-
+        #region Private Methods
         /// <summary>
         ///  Test connection to PDSim Backend Server
         ///
@@ -111,12 +127,12 @@ namespace PDSim.Editor
             var problemPath = simulationDataRoot + "Problem.asset";
             var planGenPath = simulationDataRoot + "Plan.asset";
 
-            var planningProblem = CreateInstance<PlanningProblem>();
-            planningProblem.proto = problem;
+            var planningProblem = CreateInstance<ParsedProblem>();
+            planningProblem.Proto = problem;
             EditorUtility.SetDirty(planningProblem);
 
             var planGen = CreateInstance<PlanGeneration>();
-            planGen.proto = plan;
+            planGen.Proto = plan;
             EditorUtility.SetDirty(planGen);
 
             AssetDatabase.CreateAsset(planningProblem, problemPath);
@@ -161,7 +177,7 @@ namespace PDSim.Editor
 
         private void CreateSimulationScene()
         {
-            var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(CommonPaths.TEMPLATE_VISUALISATION_SCENE);
+            var sceneTemplate = AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(CommonPaths.TemplateVisualisationScene);
 
             var newScenePath = AssetUtils.CreateScenePath(_visualisationNameField.value);
             var result = SceneTemplateService.Instantiate(sceneTemplate, false, newScenePath);
@@ -262,6 +278,6 @@ namespace PDSim.Editor
             EditorCoroutineUtility.StartCoroutine(TestConnection(), this);
         }
         #endregion
+        #endregion
     }
-
 }

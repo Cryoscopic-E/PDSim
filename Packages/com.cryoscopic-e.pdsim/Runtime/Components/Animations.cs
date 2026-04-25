@@ -1,20 +1,22 @@
 using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
 using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static PDSim.Components.FluentAnimation;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Manages the mapping between fluent effects and their corresponding animations.
+    /// Provides functionality to check and retrieve animation data for grounded fluents.
+    /// </summary>
     public class Animations : MonoBehaviour
     {
-        // Singleton Instance
-        // ------------------
+        #region Public API
 
-        private static Animations _instance;
+        /// <summary>
+        /// Singleton instance of the Animations manager.
+        /// </summary>
         public static Animations Instance
         {
             get
@@ -25,32 +27,20 @@ namespace PDSim.Components
             }
         }
 
-        // Map fluent effect names to animations
-        public Dictionary<string, FluentAnimation> effectToAnimations;
+        /// <summary>
+        /// Maps fluent effect names to their corresponding animation component.
+        /// </summary>
+        public Dictionary<string, FluentAnimation> EffectToAnimations { get; private set; }
 
-        // Cache for AnimationCheck
-        private Dictionary<string, List<AnimationData>> _cache;
-
-        private void Awake()
+        /// <summary>
+        /// Checks for available animations that match a given grounded fluent and its value.
+        /// </summary>
+        /// <param name="fluent">The grounded fluent and its current value.</param>
+        /// <returns>A list of matching animation data.</returns>
+        public List<FluentAnimation.AnimationData> AnimationCheck((FluentExpression Fluent, object Value) fluent)
         {
-            effectToAnimations = new Dictionary<string, FluentAnimation>();
-            _cache = new Dictionary<string, List<AnimationData>>();
-
-            // Find all FluentAnimation components in the scene
-            var fluentAnimations = FindObjectsByType<FluentAnimation>(FindObjectsSortMode.None);
-            foreach (var fluentAnimation in fluentAnimations)
-            {
-                if (fluentAnimation.metaData != null)
-                {
-                    effectToAnimations.Add(fluentAnimation.metaData.Name, fluentAnimation);
-                }
-            }
-        }
-
-        public List<AnimationData> AnimationCheck((FluentExpression Fluent, object Value) fluent)
-        {
-            if (!effectToAnimations.ContainsKey(fluent.Fluent.Name))
-                return new List<AnimationData>();
+            if (!EffectToAnimations.ContainsKey(fluent.Fluent.Name))
+                return new List<FluentAnimation.AnimationData>();
 
             // Construct cache key
             // Grounded fluents have ConstantExpression arguments.
@@ -73,18 +63,18 @@ namespace PDSim.Components
                 return _cache[cacheKey];
             }
 
-            var returnList = new List<AnimationData>();
+            var returnList = new List<FluentAnimation.AnimationData>();
 
-            var fluentAnimation = effectToAnimations[fluent.Fluent.Name];
-            var animationData = fluentAnimation.animationData;
+            var fluentAnimation = EffectToAnimations[fluent.Fluent.Name];
+            var animationData = fluentAnimation.AnimationDataList;
 
             var typeHierarchy = TypeHierarchy.Instance;
-            
+
             foreach (var animation in animationData)
             {
-                var animationParameters = animation.parameters;
+                var animationParameters = animation.Parameters;
                 var match = true;
-                
+
                 if (animationParameters.Count != fluentParametersAsTypes.Count)
                 {
                     match = false;
@@ -103,7 +93,7 @@ namespace PDSim.Components
                         }
                     }
                 }
-                
+
                 if (match)
                 {
                     returnList.Add(animation);
@@ -114,6 +104,10 @@ namespace PDSim.Components
             return returnList;
         }
 
+        /// <summary>
+        /// Initializes the component with a list of predicate definitions from the domain.
+        /// </summary>
+        /// <param name="fluents">The list of fluents to initialize.</param>
         public void InitialiseComponent(List<PredicateDefinition> fluents)
         {
             foreach (var fluent in fluents)
@@ -123,15 +117,46 @@ namespace PDSim.Components
                 var parametersTypes = fluent.ArgumentTypes.Select(t => t.Name).ToList();
                 var parametersNames = fluent.ArgumentTypes.Select((t, i) => $"arg{i}").ToList();
 
-                fluentAnimation.metaData = new FluentMetadata()
+                fluentAnimation.MetaData = new FluentAnimation.FluentMetadata()
                 {
                     Name = fluent.Name,
                     ParametersNames = parametersNames,
                     ParametersTypes = parametersTypes,
                     FluentValueType = fluent.ValueType
                 };
-                fluentAnimation.animationData = new List<AnimationData>();
+                fluentAnimation.AnimationDataList = new List<FluentAnimation.AnimationData>();
             }
         }
+
+        #endregion
+
+        #region Unity Lifecycle
+
+        private void Awake()
+        {
+            EffectToAnimations = new Dictionary<string, FluentAnimation>();
+            _cache = new Dictionary<string, List<FluentAnimation.AnimationData>>();
+
+            // Find all FluentAnimation components in the scene
+            var fluentAnimations = FindObjectsByType<FluentAnimation>(FindObjectsSortMode.None);
+            foreach (var fluentAnimation in fluentAnimations)
+            {
+                if (fluentAnimation.MetaData != null)
+                {
+                    EffectToAnimations.Add(fluentAnimation.MetaData.Name, fluentAnimation);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private Internals
+
+        private static Animations _instance;
+
+        // Cache for AnimationCheck
+        private Dictionary<string, List<FluentAnimation.AnimationData>> _cache;
+
+        #endregion
     }
 }

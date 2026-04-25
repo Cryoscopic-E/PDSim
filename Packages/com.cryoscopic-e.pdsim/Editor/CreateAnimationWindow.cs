@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using PDSim.Components;
 using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
-using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
 using PDSim.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -17,14 +14,23 @@ namespace PDSim.Editor
     /// </summary>
     public class CreateAnimationWindow : EditorWindow
     {
-        public VisualTreeAsset predicateAnimationAttributeTemplate;
+        #region Fields
+        /// <summary>
+        /// Template for the predicate animation attribute UI.
+        /// </summary>
+        public VisualTreeAsset PredicateAnimationAttributeTemplate;
 
         private FluentAnimation.FluentMetadata _metadata;
-
         private ScrollView _predicateAnimationAttributeList;
-
         private FluentAnimation _context;
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Shows the CreateAnimationWindow as a modal window.
+        /// </summary>
+        /// <param name="metadata">The fluent metadata.</param>
+        /// <param name="context">The fluent animation context.</param>
         public static void ShowAsModal(FluentAnimation.FluentMetadata metadata, FluentAnimation context)
         {
             var wnd = GetWindow<CreateAnimationWindow>();
@@ -35,6 +41,9 @@ namespace PDSim.Editor
             wnd.ShowModal();
         }
 
+        /// <summary>
+        /// Called when the window is created to initialize the UI.
+        /// </summary>
         public void CreateGUI()
         {
             // Set Window not resizable
@@ -45,11 +54,14 @@ namespace PDSim.Editor
             var root = rootVisualElement;
 
             // Import UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.ANIMATION_DIALOG_UI);
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.AnimationDialogUI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
         }
 
+        /// <summary>
+        /// Updates the window content based on the provided metadata.
+        /// </summary>
         public void UpdateContent()
         {
             var root = rootVisualElement;
@@ -68,7 +80,7 @@ namespace PDSim.Editor
             {
                 var item = items[i];
                 var controller = new PredicateAnimationAttributeController();
-                var fromUxml = predicateAnimationAttributeTemplate.Instantiate();
+                var fromUxml = PredicateAnimationAttributeTemplate.Instantiate();
                 controller.SetVisualElement(fromUxml);
                 controller.SetMetadata(_metadata.ParametersNames[i], item);
                 controller.UpdateContent();
@@ -91,8 +103,9 @@ namespace PDSim.Editor
             };
 
         }
+        #endregion
 
-
+        #region Private Methods
         /// <summary>
         /// Creates a new animation object and sets its components.
         /// </summary>
@@ -111,7 +124,7 @@ namespace PDSim.Editor
 
             var animationName = AnimationNames.UniqueAnimationName(predicateName, attributeTypes);
 
-            // --- CREATE NEW GAMEOBJECT (No longer using Prefab) ---
+            // Create a new scene GameObject to represent this animation variant.
             var instance = new GameObject(animationName);
             Undo.RegisterCreatedObjectUndo(instance, "Create Animation Variant");
 
@@ -119,7 +132,7 @@ namespace PDSim.Editor
             instance.transform.position = Vector3.zero;
             instance.transform.parent = Animations.Instance.transform;
 
-            // --- C# SCRIPT GENERATION ---
+            // Generate the C# visualizer script if it doesn't already exist.
             // Everything should be handled in the DLL library
             var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
@@ -163,7 +176,6 @@ namespace PDSim.Editor
 
             EditorUtility.SetDirty(_context);
         }
-
+        #endregion
     }
-
 }

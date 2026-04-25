@@ -5,49 +5,88 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 using PDSim.Components;
-using PDSim.Interactive;
 
 namespace PDSim.Utils.Animation
 {
+    /// <summary>
+    /// Represents a single animation step that can be executed as a coroutine.
+    /// </summary>
     public interface IAnimationAction
     {
+        /// <summary>
+        /// Executes the animation action.
+        /// </summary>
+        /// <returns>An enumerator for the animation coroutine.</returns>
         IEnumerator Execute();
     }
 
+    /// <summary>
+    /// Fluent interface for building animation sequences.
+    /// </summary>
     public interface IAnimationBuilder
     {
+        /// <summary>Moves a GameObject to a destination.</summary>
         ITransformationBuilder Move(GameObject target);
+        /// <summary>Moves a GameObject using a specific anchor point.</summary>
         ITransformationBuilder Move(GameObject target, string anchorTag);
+        /// <summary>Rotates a GameObject.</summary>
         ITransformationBuilder Rotate(GameObject target);
+        /// <summary>Rotates a GameObject using a specific anchor point.</summary>
         ITransformationBuilder Rotate(GameObject target, string anchorTag);
+        /// <summary>Scales a GameObject.</summary>
         ITransformationBuilder Scale(GameObject target);
+        /// <summary>Shows a GameObject.</summary>
         IAnimationBuilder Show(GameObject target);
+        /// <summary>Hides a GameObject.</summary>
         IAnimationBuilder Hide(GameObject target);
+        /// <summary>Changes the color of a GameObject's renderer.</summary>
         IAnimationBuilder Color(GameObject target, Color color);
+        /// <summary>Changes the color of a specific aesthetic part of a GameObject.</summary>
         IAnimationBuilder Color(GameObject target, string aestheticTag, Color color);
+        /// <summary>Updates text on a GameObject's UI or TMP component.</summary>
         IAnimationBuilder Text(GameObject target, string displayTag, string text);
+        /// <summary>Attaches a child GameObject to a parent.</summary>
         IAnimationBuilder Attach(GameObject child, GameObject parent);
+        /// <summary>Detaches a child GameObject from its parent.</summary>
         IAnimationBuilder Detach(GameObject child);
+        /// <summary>Waits for a specified number of seconds.</summary>
         IAnimationBuilder Wait(float seconds);
+        /// <summary>Defines the next step in a sequential animation.</summary>
         IAnimationBuilder Then();
+        /// <summary>Starts a block of animations that run in parallel.</summary>
         IAnimationBuilder Parallel();
+        /// <summary>Ends a parallel block or the animation sequence.</summary>
         IAnimationBuilder End();
+        /// <summary>Returns an enumerator to play the built animation.</summary>
         IEnumerator Play();
     }
 
+    /// <summary>
+    /// Fluent interface for building transformations (move, rotate, scale).
+    /// </summary>
     public interface ITransformationBuilder : IAnimationBuilder
     {
+        /// <summary>Sets the destination position.</summary>
         ITransformationBuilder To(Vector3 position);
+        /// <summary>Sets the destination target GameObject.</summary>
         ITransformationBuilder To(GameObject target);
-        /// <summary>Move to a named anchor on the destination object (resolved via PDSimMetadata).</summary>
+        /// <summary>Sets the destination target GameObject and anchor tag.</summary>
         ITransformationBuilder To(GameObject target, string anchorTag);
+        /// <summary>Sets a relative movement or rotation delta.</summary>
         ITransformationBuilder By(Vector3 axis);
+        /// <summary>Sets the destination rotation.</summary>
         ITransformationBuilder To(Quaternion rotation);
+        /// <summary>Sets the duration of the transformation.</summary>
         ITransformationBuilder Duration(float seconds);
+        /// <summary>Sets the easing function for the transformation.</summary>
         ITransformationBuilder WithEasing(EasingType type);
+        /// <summary>Specifies that the transformation should occur in local space.</summary>
         ITransformationBuilder InLocalSpace();
     }
 
+    /// <summary>
+    /// Implementation of the fluent animation builder.
+    /// </summary>
     public class AnimationBuilder : ITransformationBuilder
     {
         internal readonly List<IAnimationAction> Actions = new List<IAnimationAction>();
@@ -60,22 +99,37 @@ namespace PDSim.Utils.Animation
             _parent = parent;
         }
 
+        /// <inheritdoc/>
         public ITransformationBuilder Move(GameObject target) => AddAction(new MoveAction(target));
+        /// <inheritdoc/>
         public ITransformationBuilder Move(GameObject target, string anchorTag) => AddAction(new MoveAction(target, anchorTag));
+        /// <inheritdoc/>
         public ITransformationBuilder Rotate(GameObject target) => AddAction(new RotateAction(target));
+        /// <inheritdoc/>
         public ITransformationBuilder Rotate(GameObject target, string anchorTag) => AddAction(new RotateAction(target, anchorTag));
+        /// <inheritdoc/>
         public ITransformationBuilder Scale(GameObject target) => AddAction(new ScaleAction(target));
+        /// <inheritdoc/>
         public IAnimationBuilder Show(GameObject target) => AddAction(new InstantAction(() => target?.SetActive(true)));
+        /// <inheritdoc/>
         public IAnimationBuilder Hide(GameObject target) => AddAction(new InstantAction(() => target?.SetActive(false)));
+        /// <inheritdoc/>
         public IAnimationBuilder Color(GameObject target, Color color) => AddAction(new ColorAction(target, color));
+        /// <inheritdoc/>
         public IAnimationBuilder Color(GameObject target, string aestheticTag, Color color) => AddAction(new ColorAction(target, aestheticTag, color));
+        /// <inheritdoc/>
         public IAnimationBuilder Text(GameObject target, string displayTag, string text) => AddAction(new TextAction(target, displayTag, text));
+        /// <inheritdoc/>
         public IAnimationBuilder Attach(GameObject child, GameObject parent) => AddAction(new InstantAction(() => child?.transform.SetParent(parent?.transform, true)));
+        /// <inheritdoc/>
         public IAnimationBuilder Detach(GameObject child) => AddAction(new InstantAction(() => child?.transform.SetParent(null, true)));
+        /// <inheritdoc/>
         public IAnimationBuilder Wait(float seconds) => AddAction(new WaitAction(seconds));
 
+        /// <inheritdoc/>
         public IAnimationBuilder Then() => this;
 
+        /// <inheritdoc/>
         public IAnimationBuilder Parallel()
         {
             var parallel = new ParallelBlock(this);
@@ -83,6 +137,7 @@ namespace PDSim.Utils.Animation
             return parallel.InternalBuilder;
         }
 
+        /// <inheritdoc/>
         public IAnimationBuilder End() => _parent ?? this;
 
         private ITransformationBuilder AddAction(IAnimationAction action)
@@ -91,6 +146,7 @@ namespace PDSim.Utils.Animation
             return this;
         }
 
+        /// <inheritdoc/>
         public IEnumerator Play()
         {
             if (_isParallel)
@@ -113,14 +169,22 @@ namespace PDSim.Utils.Animation
             }
         }
 
-        // --- Transformation Methods ---
+        // Methods for setting transformation parameters (destination, duration, easing, etc.).
+        /// <inheritdoc/>
         public ITransformationBuilder To(Vector3 position) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(position); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder To(GameObject target) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(target); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder To(GameObject target, string anchorTag) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTargetWithTag(target, anchorTag); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder By(Vector3 axis) { (Actions[Actions.Count - 1] as ITweenAction)?.SetDelta(axis); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder To(Quaternion rotation) { (Actions[Actions.Count - 1] as ITweenAction)?.SetTarget(rotation); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder Duration(float seconds) { (Actions[Actions.Count - 1] as ITweenAction)?.SetDuration(seconds); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder WithEasing(EasingType type) { (Actions[Actions.Count - 1] as ITweenAction)?.SetEasing(type); return this; }
+        /// <inheritdoc/>
         public ITransformationBuilder InLocalSpace() { (Actions[Actions.Count - 1] as ITweenAction)?.SetLocal(true); return this; }
     }
 
@@ -136,8 +200,11 @@ namespace PDSim.Utils.Animation
         void SetLocal(bool local);
     }
 
-    // --- Action Implementations ---
+    // Define the specific animation action implementations for moving, rotating, scaling, and more.
 
+    /// <summary>
+    /// An action that executes immediately.
+    /// </summary>
     public class InstantAction : IAnimationAction
     {
         private readonly Action _action;
@@ -145,6 +212,9 @@ namespace PDSim.Utils.Animation
         public IEnumerator Execute() { _action?.Invoke(); yield break; }
     }
 
+    /// <summary>
+    /// An action that waits for a specified duration.
+    /// </summary>
     public class WaitAction : IAnimationAction
     {
         private readonly float _seconds;
@@ -159,13 +229,16 @@ namespace PDSim.Utils.Animation
                     yield return null;
                     continue;
                 }
-                float speed = Controller.Instance != null ? Controller.Instance.animationSpeed : 1.0f;
+                float speed = Controller.Instance != null ? Controller.Instance.AnimationSpeed : 1.0f;
                 elapsed += Time.deltaTime * speed;
                 yield return null;
             }
         }
     }
 
+    /// <summary>
+    /// Base class for tweened animation actions.
+    /// </summary>
     public abstract class TweenAction : IAnimationAction, ITweenAction
     {
         protected GameObject Target;
@@ -174,7 +247,7 @@ namespace PDSim.Utils.Animation
         protected EasingType EasingType = EasingType.Linear;
         protected bool IsLocal = false;
 
-        public TweenAction(GameObject target, string tag = null)
+        protected TweenAction(GameObject target, string tag = null)
         {
             Target = target;
             Tag = tag;
@@ -189,6 +262,7 @@ namespace PDSim.Utils.Animation
         public void SetEasing(EasingType type) => EasingType = type;
         public void SetLocal(bool local) => IsLocal = local;
 
+        /// <inheritdoc/>
         public abstract IEnumerator Execute();
 
         protected Transform ResolveTarget()
@@ -196,7 +270,7 @@ namespace PDSim.Utils.Animation
             if (Target == null) return null;
             if (string.IsNullOrEmpty(Tag)) return Target.transform;
 
-            var metadata = Target.GetComponent<PDSimMetadata>();
+            var metadata = Target.GetComponent<ProblemObjectMetaData>();
             if (metadata != null)
             {
                 var anchor = metadata.GetAnchor(Tag);
@@ -221,7 +295,7 @@ namespace PDSim.Utils.Animation
                     continue;
                 }
 
-                float speed = Controller.Instance != null ? Controller.Instance.animationSpeed : 1.0f;
+                float speed = Controller.Instance != null ? Controller.Instance.AnimationSpeed : 1.0f;
                 elapsed += Time.deltaTime * speed;
                 float t = Mathf.Clamp01(elapsed / TimeSeconds);
                 update(Easing.Apply(t, EasingType));
@@ -231,6 +305,9 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// Action that moves a GameObject.
+    /// </summary>
     public class MoveAction : TweenAction
     {
         private Vector3 _start;
@@ -255,7 +332,7 @@ namespace PDSim.Utils.Animation
 
             if (!string.IsNullOrEmpty(_endTargetTag))
             {
-                var meta   = _endTarget.GetComponent<PDSimMetadata>();
+                var meta   = _endTarget.GetComponent<ProblemObjectMetaData>();
                 var anchor = meta?.GetAnchor(_endTargetTag);
                 if (anchor != null) return anchor.position;
                 Debug.LogWarning($"[PDSim] Destination tag '{_endTargetTag}' not found on '{_endTarget.name}'. Using root.");
@@ -264,6 +341,7 @@ namespace PDSim.Utils.Animation
             return _endTarget.transform.position;
         }
 
+        /// <inheritdoc/>
         public override IEnumerator Execute()
         {
             var resolvedSource = ResolveTarget();
@@ -271,7 +349,7 @@ namespace PDSim.Utils.Animation
 
             // If the moving object is marked for NavMesh movement, use the agent.
             var visObj = Target.GetComponent<VisualisationObject>();
-            if (visObj != null && visObj.useNavMeshAgent)
+            if (visObj != null && visObj.UseNavMeshAgent)
                 yield return ExecuteNavMesh(resolvedSource, visObj);
             else
                 yield return ExecuteLerp(resolvedSource);
@@ -305,11 +383,11 @@ namespace PDSim.Utils.Animation
             }
 
             // Apply movement settings (or defaults).
-            var s = visObj.movementSettings;
-            float baseSpeed       = s != null ? s.speed           : 1f;
-            float angularSpeed    = s != null ? s.angularSpeed    : 120f;
-            float acceleration    = s != null ? s.acceleration    : 8f;
-            float stoppingDist    = s != null ? s.stoppingDistance : 0.1f;
+            var s = visObj.MovementSettings;
+            float baseSpeed       = s != null ? s.Speed           : 1f;
+            float angularSpeed    = s != null ? s.AngularSpeed    : 120f;
+            float acceleration    = s != null ? s.Acceleration    : 8f;
+            float stoppingDist    = s != null ? s.StoppingDistance : 0.1f;
 
             agent.angularSpeed    = angularSpeed;
             agent.acceleration    = acceleration;
@@ -336,7 +414,7 @@ namespace PDSim.Utils.Animation
                 }
 
                 agent.isStopped = false;
-                float speedScale = Controller.Instance != null ? Controller.Instance.animationSpeed : 1f;
+                float speedScale = Controller.Instance != null ? Controller.Instance.AnimationSpeed : 1f;
                 agent.speed = baseSpeed * speedScale;
                 yield return null;
             }
@@ -347,6 +425,9 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// Action that rotates a GameObject.
+    /// </summary>
     public class RotateAction : TweenAction
     {
         private Quaternion _start;
@@ -358,6 +439,7 @@ namespace PDSim.Utils.Animation
         public override void SetTarget(Vector3 euler) => _end = Quaternion.Euler(euler);
         public override void SetDelta(Vector3 delta) => _delta = delta;
 
+        /// <inheritdoc/>
         public override IEnumerator Execute()
         {
             var resolvedTarget = ResolveTarget();
@@ -375,6 +457,9 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// Action that scales a GameObject.
+    /// </summary>
     public class ScaleAction : TweenAction
     {
         private Vector3 _start;
@@ -383,6 +468,7 @@ namespace PDSim.Utils.Animation
         public ScaleAction(GameObject target, string tag = null) : base(target, tag) { }
         public override void SetTarget(Vector3 scale) => _end = scale;
 
+        /// <inheritdoc/>
         public override IEnumerator Execute()
         {
             var resolvedTarget = ResolveTarget();
@@ -396,6 +482,9 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// Action that changes the color of a GameObject's material.
+    /// </summary>
     public class ColorAction : TweenAction
     {
         private Color _start;
@@ -406,13 +495,14 @@ namespace PDSim.Utils.Animation
         public ColorAction(GameObject target, Color end) : base(target) { _end = end; }
         public ColorAction(GameObject target, string tag, Color end) : base(target, tag) { _end = end; }
 
+        /// <inheritdoc/>
         public override IEnumerator Execute()
         {
             if (Target == null) yield break;
 
             if (!string.IsNullOrEmpty(Tag))
             {
-                var metadata = Target.GetComponent<PDSimMetadata>();
+                var metadata = Target.GetComponent<ProblemObjectMetaData>();
                 _renderer = metadata?.GetRender(Tag);
             }
 
@@ -433,11 +523,15 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// A block of actions that execute in parallel.
+    /// </summary>
     public class ParallelBlock : IAnimationAction
     {
         internal readonly AnimationBuilder InternalBuilder;
         public ParallelBlock(AnimationBuilder parent) { InternalBuilder = new AnimationBuilder(true, parent); }
 
+        /// <inheritdoc/>
         public IEnumerator Execute()
         {
             var enumerators = new List<IEnumerator>();
@@ -460,6 +554,9 @@ namespace PDSim.Utils.Animation
         }
     }
 
+    /// <summary>
+    /// Action that updates text on a GameObject.
+    /// </summary>
     public class TextAction : IAnimationAction
     {
         private readonly GameObject _target;
@@ -473,10 +570,11 @@ namespace PDSim.Utils.Animation
             _text = text;
         }
 
+        /// <inheritdoc/>
         public IEnumerator Execute()
         {
             if (_target == null) yield break;
-            var metadata = _target.GetComponent<PDSimMetadata>();
+            var metadata = _target.GetComponent<ProblemObjectMetaData>();
             var display = metadata?.GetUI(_tag);
 
             if (display == null)

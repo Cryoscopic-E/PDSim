@@ -3,34 +3,33 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
-using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace PDSim.Editor.Inspector
 {
     /// <summary>
-    /// Custom inspector for the FluentAnimation class.
+    /// Custom inspector for the FluentAnimation component.
     /// </summary>
     [CustomEditor(typeof(FluentAnimation))]
     public class FluentAnimationEditor : UnityEditor.Editor
     {
-        private FluentAnimation fluentAnimation;
-        private ReorderableList list;
+        #region Fields
+        private FluentAnimation _fluentAnimation;
+        private ReorderableList _list;
+        #endregion
 
+        #region Unity Lifecycle
         private void OnEnable()
         {
-            fluentAnimation = (FluentAnimation)target;
+            _fluentAnimation = (FluentAnimation)target;
 
-            list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
+            _list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
 
 
-            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            _list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
                 // Get the element and its data we want to draw from the list.
-                var element = list.serializedProperty.GetArrayElementAtIndex(index);
+                var element = _list.serializedProperty.GetArrayElementAtIndex(index);
                 var nameProperty = element.FindPropertyRelative("name");
                 var visualizerProperty = element.FindPropertyRelative("visualizer");
                 var sceneObjectProperty = element.FindPropertyRelative("sceneObjectReference");
@@ -60,27 +59,27 @@ namespace PDSim.Editor.Inspector
                 }
             };
 
-            list.elementHeightCallback = (int index) =>
+            _list.elementHeightCallback = (int index) =>
             {
                 return EditorGUIUtility.singleLineHeight * 2 + 10;
             };
 
             // When user clicks on add button, open the CreateAnimationWindow.
-            list.onAddCallback = (ReorderableList List) =>
+            _list.onAddCallback = (ReorderableList List) =>
             {
                 EditorApplication.delayCall += CreateAnimation;
             };
 
             // When user clicks on remove button, remove the animation from the list.
-            list.onRemoveCallback = (ReorderableList List) =>
+            _list.onRemoveCallback = (ReorderableList List) =>
             {
                 if (EditorUtility.DisplayDialog("Warning!", "Are you sure you want to delete the animation?", "Yes", "No"))
                 {
                     // Destroy the animation object.
-                    var data = fluentAnimation.animationData[List.index];
-                    if (data.sceneObjectReference != null)
+                    var data = _fluentAnimation.AnimationDataList[List.index];
+                    if (data.SceneObjectReference != null)
                     {
-                        DestroyImmediate(data.sceneObjectReference);
+                        DestroyImmediate(data.SceneObjectReference);
                     }
                     // Remove the animation from the list.
                     ReorderableList.defaultBehaviours.DoRemoveButton(List);
@@ -94,20 +93,46 @@ namespace PDSim.Editor.Inspector
         {
             EditorApplication.delayCall -= CreateAnimation;
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Opens the CreateAnimationWindow to add a new animation.
+        /// </summary>
         public void CreateAnimation()
         {
-            CreateAnimationWindow.ShowAsModal(fluentAnimation.metaData, fluentAnimation);
+            CreateAnimationWindow.ShowAsModal(_fluentAnimation.MetaData, _fluentAnimation);
         }
 
+        /// <summary>
+        /// Draws the custom inspector GUI.
+        /// </summary>
+        public override void OnInspectorGUI()
+        {
+            if (_fluentAnimation.MetaData == null)
+            {
+                EditorGUILayout.HelpBox("Missing MetaData", MessageType.Error);
+                return;
+            }
+
+            EditorGUILayout.LabelField(_fluentAnimation.MetaData.ToString(), EditorStyles.whiteLargeLabel, GUILayout.Height(20));
+            
+            EditorGUILayout.Space();
+            serializedObject.Update();
+            _list.DoLayoutList();
+            serializedObject.ApplyModifiedProperties();
+        }
+        #endregion
+
+        #region Private Methods
         private void RegenerateScript(int index)
         {
-            var data = fluentAnimation.animationData[index];
-            var predicateName = fluentAnimation.metaData.Name;
-            var attributeTypes = data.parameters;
+            var data = _fluentAnimation.AnimationDataList[index];
+            var predicateName = _fluentAnimation.MetaData.Name;
+            var attributeTypes = data.Parameters;
 
             // scriptClassName may be fully-qualified (new) or a bare class name (legacy).
-            var fullTypeName = data.scriptClassName;
+            var fullTypeName = data.ScriptClassName;
             var className = fullTypeName.Contains(".")
                 ? fullTypeName.Substring(fullTypeName.LastIndexOf('.') + 1)
                 : fullTypeName;
@@ -128,21 +153,6 @@ namespace PDSim.Editor.Inspector
             AssetDatabase.Refresh();
             Debug.Log($"[PDSim] Regenerated C# Script: {filePath}");
         }
-
-        public override void OnInspectorGUI()
-        {
-            if (fluentAnimation.metaData == null)
-            {
-                EditorGUILayout.HelpBox("Missing MetaData", MessageType.Error);
-                return;
-            }
-
-            EditorGUILayout.LabelField(fluentAnimation.metaData.ToString(), EditorStyles.whiteLargeLabel, GUILayout.Height(20));
-            
-            EditorGUILayout.Space();
-            serializedObject.Update();
-            list.DoLayoutList();
-            serializedObject.ApplyModifiedProperties();
-        }
+        #endregion
     }
 }

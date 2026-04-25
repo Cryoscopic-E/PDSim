@@ -5,16 +5,25 @@ using static PDSim.Components.ModelTypes;
 
 namespace PDSim.Editor.Inspector
 {
+    /// <summary>
+    /// Custom inspector for the TypeHierarchy component, visualizing the PDDL type tree.
+    /// </summary>
     [CustomEditor(typeof(TypeHierarchy))]
     public class TypeHierarchyEditor : UnityEditor.Editor
     {
-        private TypeHierarchy typeHierarchy;
+        #region Fields
+        private TypeHierarchy _typeHierarchy;
+        #endregion
 
+        #region Unity Lifecycle
         private void OnEnable()
         {
-            typeHierarchy = (TypeHierarchy)target;
+            _typeHierarchy = (TypeHierarchy)target;
         }
 
+        /// <summary>
+        /// Draws the custom inspector GUI for the TypeHierarchy.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             EditorGUILayout.BeginVertical();
@@ -22,15 +31,16 @@ namespace PDSim.Editor.Inspector
             EditorGUILayout.LabelField("TYPES DECLARATION", EditorStyles.boldLabel);
             EditorGUILayout.Space();
             EditorGUILayout.BeginVertical();
-            DrawNodes(typeHierarchy.modelTypes.GetRoot());
+            DrawNodes(_typeHierarchy.ModelTypes.GetRoot());
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
-
+        #region Private Methods
         private void DrawNodes(TypeNode node, int depth = 0)
         {
             if (node == null)
@@ -47,10 +57,10 @@ namespace PDSim.Editor.Inspector
                 label += '\u221F'.ToString();
             }
             // Recursively draw the tree
-            if (node.children.Count > 0)
+            if (node.Children.Count > 0)
             {
                 GUILayout.Label(label + node.Name);
-                var children = node.children;
+                var children = node.Children;
                 foreach (var c in children)
                 {
                     DrawNodes(c, depth + 1);
@@ -61,7 +71,6 @@ namespace PDSim.Editor.Inspector
                 GUILayout.Label(label + node.Name, EditorStyles.linkLabel);
             }
         }
+        #endregion
     }
-
-
 }

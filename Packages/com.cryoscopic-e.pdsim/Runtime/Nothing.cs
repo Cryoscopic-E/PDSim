@@ -1,10 +1,12 @@
-﻿/// This script does nothing.
+/// <summary>
+/// This script does nothing.
 /// Take it as a form of art, of a statement, or just as a joke.
 /// Few things are as powerful as nothing.
 /// Yet, nothing is not nothing.
 /// 
-///Here, take some asccii art that only Ryan will get.
-///
+/// Here, take some asccii art that only Ryan will get.
+/// </summary>
+//
 //= +++++**++##*++*+=+**+==+===---:.......::.:=**+++++=====++===---=+***##****#######*****#*-::---=-:--------------------=========
 //= +*++***++##*+**+=-:=+=++==---............:++====+++++*********+===++++*#=+**+===+**####+-::::::---:---==-:-----:------------==
 //= +******+*##*+**+=-::==*++=-:..:........-+==+++++*******#######**++++=--==*###**++==---+=::--::----=+=-----=+=-----------------

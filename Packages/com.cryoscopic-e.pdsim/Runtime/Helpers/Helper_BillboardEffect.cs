@@ -1,20 +1,43 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PDSim.Helpers
 {
+    /// <summary>
+    /// Rotates the GameObject to face the main camera.
+    /// Useful for world-space UI elements like nameplates or icons.
+    /// </summary>
     public class Helper_BillboardEffect : MonoBehaviour
     {
-        public Canvas canvas;
+        #region Inspector Fields
+
+        [Header("Settings")]
+        [Tooltip("The canvas to associate with the main camera.")]
+        [SerializeField, FormerlySerializedAs("canvas")]
+        private Canvas Canvas;
+
+        #endregion
+
+        #region Unity Lifecycle
+
         private void Start()
         {
-            canvas.worldCamera = Camera.main;
+            if (Canvas != null)
+            {
+                Canvas.worldCamera = Camera.main;
+            }
         }
-        void Update()
+
+        private void Update()
         {
+            if (Camera.main == null) return;
+
             // Billboard effect for object gui
             transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward,
-                             canvas.worldCamera.transform.rotation * Vector3.up);
+                             Camera.main.transform.rotation * Vector3.up);
         }
+
+        #endregion
     }
 }
 

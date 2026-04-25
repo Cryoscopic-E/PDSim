@@ -1,7 +1,10 @@
-using System;
+using UnityEngine;
 
 namespace PDSim.Utils.Animation
 {
+    /// <summary>
+    /// Supported easing types for animations.
+    /// </summary>
     public enum EasingType
     {
         Linear,
@@ -16,8 +19,17 @@ namespace PDSim.Utils.Animation
         SmoothStep
     }
 
+    /// <summary>
+    /// Utility class for calculating easing functions.
+    /// </summary>
     public static class Easing
     {
+        /// <summary>
+        /// Applies the specified easing function to a normalized time value.
+        /// </summary>
+        /// <param name="t">The normalized time (0 to 1).</param>
+        /// <param name="type">The type of easing to apply.</param>
+        /// <returns>The eased time value.</returns>
         public static float Apply(float t, EasingType type)
         {
             switch (type)

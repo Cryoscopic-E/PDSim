@@ -3,9 +3,16 @@ using UnityEngine;
 
 namespace PDSim.Utils
 {
+    /// <summary>
+    /// A simple object pooling system to reuse GameObjects and reduce instantiation overhead.
+    /// </summary>
     public class SimpleObjectPool : MonoBehaviour
     {
         private static SimpleObjectPool _instance;
+
+        /// <summary>
+        /// Singleton instance of the SimpleObjectPool.
+        /// </summary>
         public static SimpleObjectPool Instance
         {
             get
@@ -20,12 +27,17 @@ namespace PDSim.Utils
             }
         }
 
-        private Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
+        private readonly Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
 
+        #region Public API
+
+        /// <summary>
+        /// Retrieves an object from the pool or instantiates a new one if the pool is empty.
+        /// </summary>
+        /// <param name="prefab">The prefab to retrieve from the pool.</param>
+        /// <returns>A pooled or new instance of the prefab.</returns>
         public GameObject Get(GameObject prefab)
         {
-            // Use prefab name (or instance ID) as key
-            // Note: prefab.name might need to be unique enough
             string key = prefab.GetInstanceID().ToString();
 
             if (!_pools.ContainsKey(key))
@@ -36,48 +48,55 @@ namespace PDSim.Utils
             if (_pools[key].Count > 0)
             {
                 var obj = _pools[key].Dequeue();
-                if (obj != null) // Check in case it was destroyed externally
+                if (obj != null)
                 {
                     obj.SetActive(true);
                     return obj;
                 }
             }
 
-            // Create new
             var newObj = Instantiate(prefab);
-            // We need a way to link this instance back to its key when returning
-            // For simplicity, we assume the caller knows the original prefab or we track it.
-            // But getting the key back from the instance is tricky without a component.
-            // Let's add a tracker component.
             var tracker = newObj.AddComponent<PoolTracker>();
-            tracker.poolKey = key;
+            tracker.PoolKey = key;
             return newObj;
         }
 
+        /// <summary>
+        /// Returns an object to the pool for later reuse.
+        /// </summary>
+        /// <param name="obj">The GameObject to return to the pool.</param>
         public void Return(GameObject obj)
         {
             var tracker = obj.GetComponent<PoolTracker>();
             if (tracker != null)
             {
                 obj.SetActive(false);
-                obj.transform.SetParent(transform); // Move to pool container
+                obj.transform.SetParent(transform);
                 
-                if (!_pools.ContainsKey(tracker.poolKey))
+                if (!_pools.ContainsKey(tracker.PoolKey))
                 {
-                    _pools[tracker.poolKey] = new Queue<GameObject>();
+                    _pools[tracker.PoolKey] = new Queue<GameObject>();
                 }
-                _pools[tracker.poolKey].Enqueue(obj);
+                _pools[tracker.PoolKey].Enqueue(obj);
             }
             else
             {
-                Debug.LogWarning("Returning object to pool without PoolTracker. Destroying instead.");
+                Debug.LogWarning("[PDSim] Returning object to pool without PoolTracker. Destroying instead.");
                 Destroy(obj);
             }
         }
+
+        #endregion
     }
 
+    /// <summary>
+    /// Component attached to pooled objects to track which pool they belong to.
+    /// </summary>
     public class PoolTracker : MonoBehaviour
     {
-        public string poolKey;
+        /// <summary>
+        /// The unique key for the pool this object belongs to.
+        /// </summary>
+        public string PoolKey;
     }
 }

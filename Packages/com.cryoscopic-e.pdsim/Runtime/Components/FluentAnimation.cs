@@ -1,24 +1,39 @@
 using UnityEngine;
 using System.Collections.Generic;
-using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
-using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Holds animation data and metadata for a specific fluent.
+    /// Used by the Animations component to match grounded fluents to visualization objects.
+    /// </summary>
     public class FluentAnimation : MonoBehaviour
     {
-        public FluentMetadata metaData;
+        #region Public API
 
-        public List<AnimationData> animationData;
+        /// <summary>
+        /// Metadata describing the fluent this animation component represents.
+        /// </summary>
+        public FluentMetadata MetaData;
 
+        /// <summary>
+        /// List of animations associated with this fluent.
+        /// </summary>
+        public List<AnimationData> AnimationDataList;
 
+        /// <summary>
+        /// Adds new animation data to this fluent.
+        /// </summary>
+        /// <param name="animationName">The unique name of the animation.</param>
+        /// <param name="attributes">The list of attribute types the animation matches.</param>
+        /// <param name="sceneObject">The prefab or scene object reference for the animation.</param>
+        /// <param name="scriptClassName">The optional script class name for custom visualization logic.</param>
+        /// <returns>True if the animation was added, false if an animation with the same name already exists.</returns>
         public bool AddAnimationData(string animationName, List<string> attributes, GameObject sceneObject, string scriptClassName)
         {
-            foreach (var data in animationData)
+            foreach (var data in AnimationDataList)
             {
-                if (data.name == animationName)
+                if (data.Name == animationName)
                 {
                     return false;
                 }
@@ -26,40 +41,82 @@ namespace PDSim.Components
 
             var visualizer = sceneObject.GetComponent<IFluentVisualizer>() as MonoBehaviour;
 
-            animationData.Add(new AnimationData()
+            AnimationDataList.Add(new AnimationData()
             {
-                name = animationName,
-                parameters = attributes,
-                scriptClassName = scriptClassName,
-                visualizer = visualizer,
-                sceneObjectReference = sceneObject
+                Name = animationName,
+                Parameters = attributes,
+                ScriptClassName = scriptClassName,
+                Visualizer = visualizer,
+                SceneObjectReference = sceneObject
             });
             return true;
         }
 
+        #endregion
 
+        #region Data Classes
+
+        /// <summary>
+        /// Represents a specific animation mapping for a fluent.
+        /// </summary>
         [System.Serializable]
         public class AnimationData
         {
-            public string name;
-            public List<string> parameters;
-            public string scriptClassName;
-            public MonoBehaviour visualizer;
-            public GameObject sceneObjectReference;
+            /// <summary>
+            /// The name of the animation.
+            /// </summary>
+            public string Name;
+            /// <summary>
+            /// The parameter types this animation expects.
+            /// </summary>
+            public List<string> Parameters;
+            /// <summary>
+            /// The class name of the IFluentVisualizer implementation.
+            /// </summary>
+            public string ScriptClassName;
+            /// <summary>
+            /// Reference to the visualizer component.
+            /// </summary>
+            public MonoBehaviour Visualizer;
+            /// <summary>
+            /// Reference to the scene object or prefab used for the animation.
+            /// </summary>
+            public GameObject SceneObjectReference;
         }
 
+        /// <summary>
+        /// Metadata about the fluent being animated.
+        /// </summary>
         [System.Serializable]
         public class FluentMetadata
         {
+            /// <summary>
+            /// The name of the fluent.
+            /// </summary>
             public string Name;
+            /// <summary>
+            /// The names of the fluent's parameters.
+            /// </summary>
             public List<string> ParametersNames;
+            /// <summary>
+            /// The types of the fluent's parameters.
+            /// </summary>
             public List<string> ParametersTypes;
+            /// <summary>
+            /// The type of the fluent's value.
+            /// </summary>
             public string FluentValueType;
 
+            /// <summary>
+            /// Returns a string representation of the fluent metadata.
+            /// </summary>
+            /// <returns>A formatted string.</returns>
             public override string ToString()
             {
                 return $"{Name} ({string.Join(", ", ParametersTypes)}) := {FluentValueType}";
             }
         }
+
+        #endregion
     }
 }

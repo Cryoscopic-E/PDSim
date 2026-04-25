@@ -1,7 +1,4 @@
-using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
 using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +6,16 @@ using UnityEngine;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Displays the initial state (init block) of the planning problem in the Unity Inspector.
+    /// </summary>
     public class InitBlock : MonoBehaviour
     {
-        // Singleton Instance
-        // ------------------
+        #region Public API
 
-        private static InitBlock _instance;
+        /// <summary>
+        /// Singleton instance of the InitBlock component.
+        /// </summary>
         public static InitBlock Instance
         {
             get
@@ -25,9 +26,16 @@ namespace PDSim.Components
             }
         }
 
+        /// <summary>
+        /// The list of state variables in the initial state.
+        /// </summary>
+        [Tooltip("The list of fluents and their values in the initial state.")]
         public List<InitBlockComponent> Components;
 
-
+        /// <summary>
+        /// Initializes the component with the initial state variables from the problem.
+        /// </summary>
+        /// <param name="stateVariables">The list of fluents and their values.</param>
         public void InitialiseComponent(List<(FluentExpression Fluent, object Value)> stateVariables)
         {
             Components = new List<InitBlockComponent>();
@@ -48,17 +56,45 @@ namespace PDSim.Components
             }
         }
 
+        #endregion
+
+        #region Data Classes
+
+        /// <summary>
+        /// Represents a single fluent assignment in the initial state.
+        /// </summary>
         [Serializable]
         public class InitBlockComponent
         {
+            /// <summary>
+            /// The name of the fluent.
+            /// </summary>
             public string FluentName;
+            /// <summary>
+            /// The parameters of the fluent.
+            /// </summary>
             public List<string> Parameters;
+            /// <summary>
+            /// The value assigned to the fluent.
+            /// </summary>
             public string Value;
 
+            /// <summary>
+            /// Returns a string representation of the fluent assignment.
+            /// </summary>
+            /// <returns>A formatted string.</returns>
             public override string ToString()
             {
                 return $"{FluentName}({string.Join(",", Parameters)}) := {Value}";
             }
         }
+
+        #endregion
+
+        #region Private Internals
+
+        private static InitBlock _instance;
+
+        #endregion
     }
 }

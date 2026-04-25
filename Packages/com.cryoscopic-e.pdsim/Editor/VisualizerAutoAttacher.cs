@@ -1,9 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 using PDSim.Components;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace PDSim.Editor
 {
     /// <summary>
@@ -13,42 +10,48 @@ namespace PDSim.Editor
     [InitializeOnLoad]
     public static class VisualizerAutoAttacher
     {
+        #region Constructor
         static VisualizerAutoAttacher()
         {
             EditorApplication.delayCall += ScanAndAttach;
             // Also run when scripts are compiled
             AssemblyReloadEvents.afterAssemblyReload += ScanAndAttach;
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Scans the scene and attaches generated visualizers and behaviors to appropriate GameObjects.
+        /// </summary>
         public static void ScanAndAttach()
         {
             var fluentAnimations = Object.FindObjectsByType<FluentAnimation>(FindObjectsSortMode.None);
             var simObjects = Object.FindObjectsByType<VisualisationObject>(FindObjectsSortMode.None);
             bool madeChanges = false;
 
-            // --- Attach Fluent Visualizers ---
+            // Iterate through all identified fluent animations and attempt to bind their visualizer scripts.
             foreach (var fa in fluentAnimations)
             {
-                if (fa.animationData == null) continue;
+                if (fa.AnimationDataList == null) continue;
 
-                foreach (var data in fa.animationData)
+                foreach (var data in fa.AnimationDataList)
                 {
-                    if (data.sceneObjectReference != null && data.visualizer == null && !string.IsNullOrEmpty(data.scriptClassName))
+                    if (data.SceneObjectReference != null && data.Visualizer == null && !string.IsNullOrEmpty(data.ScriptClassName))
                     {
                         if (TryAttachFluent(fa, data)) madeChanges = true;
                     }
                 }
             }
 
-            // --- Attach Object Behaviors ---
+            // Identify and attach custom behavior scripts to simulation objects based on their object type.
             var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
 
             foreach (var obj in simObjects)
             {
-                if (string.IsNullOrEmpty(obj.objectType)) continue;
+                if (string.IsNullOrEmpty(obj.ObjectType)) continue;
 
-                var className = $"{PDSimAPI.Generators.ActionScriptGenerator.ToPascalCase(obj.objectType)}Behavior";
+                var className = $"{PDSimAPI.Generators.ActionScriptGenerator.ToPascalCase(obj.ObjectType)}Behavior";
                 var fullTypeName = $"PDSim.Generated.Behaviors.{sanitizedSceneName}.{className}";
 
                 if (TryAttachBehavior(obj.gameObject, fullTypeName))
@@ -62,26 +65,28 @@ namespace PDSim.Editor
                 AssetDatabase.SaveAssets();
             }
         }
+        #endregion
 
+        #region Private Methods
         private static bool TryAttachFluent(FluentAnimation context, FluentAnimation.AnimationData data)
         {
             // scriptClassName is now stored as the fully-qualified type name for new animations.
             // Fall back to the legacy "GeneratedVisualizers." prefix for older scenes.
-            var type = ResolveType(data.scriptClassName)
-                ?? ResolveType("GeneratedVisualizers." + data.scriptClassName);
+            var type = ResolveType(data.ScriptClassName)
+                ?? ResolveType("GeneratedVisualizers." + data.ScriptClassName);
             if (type != null)
             {
-                var component = data.sceneObjectReference.GetComponent(type) as MonoBehaviour;
+                var component = data.SceneObjectReference.GetComponent(type) as MonoBehaviour;
                 if (component == null)
                 {
-                    component = data.sceneObjectReference.AddComponent(type) as MonoBehaviour;
+                    component = data.SceneObjectReference.AddComponent(type) as MonoBehaviour;
                 }
 
                 if (component != null)
                 {
-                    data.visualizer = component;
+                    data.Visualizer = component;
                     EditorUtility.SetDirty(context);
-                    Debug.Log($"[PDSim] Auto-attached visualizer '{data.scriptClassName}' to '{data.sceneObjectReference.name}'.");
+                    Debug.Log($"[PDSim] Auto-attached visualizer '{data.ScriptClassName}' to '{data.SceneObjectReference.name}'.");
                     return true;
                 }
             }
@@ -113,5 +118,6 @@ namespace PDSim.Editor
             }
             return null;
         }
+        #endregion
     }
 }

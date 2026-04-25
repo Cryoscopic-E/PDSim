@@ -1,8 +1,5 @@
 using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
 using GeTPlan.Core.Models.Expressions;
-using PDSimAPI;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +8,17 @@ using PDSim.Utils;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Controls the execution of animations in the simulation.
+    /// Manages the animation queue and triggers animations based on state changes.
+    /// </summary>
     public class AnimationsController : MonoBehaviour
     {
-        private const float ANIMATION_INTERVAL = 0.1f;
+        #region Public API
 
-        // Singleton Instance
-        // ------------------
-
-        private static AnimationsController _instance;
+        /// <summary>
+        /// Singleton instance of the AnimationsController.
+        /// </summary>
         public static AnimationsController Instance
         {
             get
@@ -29,6 +29,9 @@ namespace PDSim.Components
             }
         }
 
+        /// <summary>
+        /// Represents the state of an animation routine.
+        /// </summary>
         public enum AnimationState
         {
             None,
@@ -38,89 +41,32 @@ namespace PDSim.Components
             Finished
         }
 
-        private ProblemObjects _objects;
-
-        private Animations _animations;
-
-        private Dictionary<string, AnimationRoutine> _animationsActive;
-
+        /// <summary>
+        /// Delegate for visualization step events.
+        /// </summary>
+        /// <param name="predicate">The predicate being visualized.</param>
         public delegate void VisualisationStep(string predicate);
+
+        /// <summary>
+        /// Event fired when a visualization step begins.
+        /// </summary>
         public event VisualisationStep OnVisualisationStep;
 
+        /// <summary>
+        /// Delegate for animation end events.
+        /// </summary>
         public delegate void AnimationEnd();
+
+        /// <summary>
+        /// Event fired when all animations for a time point have finished.
+        /// </summary>
         public event AnimationEnd OnTimePointAnimationEnd;
 
-        private bool stop = false;
-
-        private Coroutine _loopCoroutine;
-
-        private void Awake()
-        {
-            _animations = Animations.Instance;
-            _objects = ProblemObjects.Instance;
-            _animationsActive = new Dictionary<string, AnimationRoutine>();
-        }
-
-        private void RestartLoop()
-        {
-            if (_loopCoroutine != null)
-                StopCoroutine(_loopCoroutine);
-            _loopCoroutine = StartCoroutine(AnimationsLoop());
-        }
-
-        private void Start()
-        {
-            Controller.Instance.OnVisualiseInitBlock += () =>
-            {
-                stop = false;
-                RestartLoop();
-            };
-
-            Controller.Instance.OnVisualisationActionBlock += (block, i) =>
-            {
-                RestartLoop();
-            };
-
-            Controller.Instance.OnVisualisationFinished += () =>
-            {
-                stop = true;
-            };
-        }
-
-        private IEnumerator AnimationsLoop()
-        {
-            yield return null;
-
-            while (!stop)
-            {
-                if (_animationsActive.Count == 0)
-                {
-                    OnTimePointAnimationEnd?.Invoke();
-                    yield return null;
-                }
-
-                var toRemove = new List<string>();
-                foreach (var animationRoutine in _animationsActive)
-                {
-                    if (animationRoutine.Value.state == AnimationState.Finished)
-                    {
-                        toRemove.Add(animationRoutine.Key);
-                    }
-                    else if (animationRoutine.Value.state == AnimationState.None)
-                    {
-                        StartCoroutine(AnimationMachineLoop(animationRoutine.Key));
-                    }
-                }
-                foreach (var key in toRemove)
-                {
-                    _animationsActive.Remove(key);
-                }
-
-                yield return new WaitForSeconds(ANIMATION_INTERVAL);
-            }
-        }
-
-
+        /// <summary>
+        /// Updates the animation queue with new state variables resulting from an action.
+        /// </summary>
+        /// <param name="action">The grounded action that caused the state change.</param>
+        /// <param name="newStateVar">The new fluent state variable and its value.</param>
         public void UpdateQueue(GroundedAction action, (FluentExpression Fluent, object Value) newStateVar)
         {
             var match = _animations.AnimationCheck(newStateVar);
@@ -151,16 +97,101 @@ namespace PDSim.Components
                     .Where(g => g != null)
                     .ToArray();
 
-                _animationsActive[context].queue.Enqueue(new AnimationQueueElement()
+                _animationsActive[context].Queue.Enqueue(new AnimationQueueElement()
                 {
-                    animationName = animationData.name,
-                    fluentString = newStateVar.Fluent.ToString(),
-                    value = newStateVar.Value,
-                    parametersObjects = parameters,
-                    graphToClone = animationData.sceneObjectReference,
-                    scriptClassName = animationData.scriptClassName,
-                    duration = duration
+                    AnimationName = animationData.Name,
+                    FluentString = newStateVar.Fluent.ToString(),
+                    Value = newStateVar.Value,
+                    ParametersObjects = parameters,
+                    GraphToClone = animationData.SceneObjectReference,
+                    ScriptClassName = animationData.ScriptClassName,
+                    Duration = duration
                 });
+            }
+        }
+
+        #endregion
+
+        #region Unity Lifecycle
+
+        private void Awake()
+        {
+            _animations = Animations.Instance;
+            _objects = ProblemObjects.Instance;
+            _animationsActive = new Dictionary<string, AnimationRoutine>();
+        }
+
+        private void Start()
+        {
+            Controller.Instance.OnVisualiseInitBlock += () =>
+            {
+                _stop = false;
+                RestartLoop();
+            };
+
+            Controller.Instance.OnVisualisationActionBlock += (block, i) =>
+            {
+                RestartLoop();
+            };
+
+            Controller.Instance.OnVisualisationFinished += () =>
+            {
+                _stop = true;
+            };
+        }
+
+        #endregion
+
+        #region Private Internals
+
+        private const float AnimationInterval = 0.1f;
+
+        private static AnimationsController _instance;
+
+        private ProblemObjects _objects;
+        private Animations _animations;
+        private Dictionary<string, AnimationRoutine> _animationsActive;
+        private Dictionary<string, GameObject> _activeGraphs = new Dictionary<string, GameObject>();
+        private bool _stop = false;
+        private Coroutine _loopCoroutine;
+
+        private void RestartLoop()
+        {
+            if (_loopCoroutine != null)
+                StopCoroutine(_loopCoroutine);
+            _loopCoroutine = StartCoroutine(AnimationsLoop());
+        }
+
+        private IEnumerator AnimationsLoop()
+        {
+            yield return null;
+
+            while (!_stop)
+            {
+                if (_animationsActive.Count == 0)
+                {
+                    OnTimePointAnimationEnd?.Invoke();
+                    yield return null;
+                }
+
+                var toRemove = new List<string>();
+                foreach (var animationRoutine in _animationsActive)
+                {
+                    if (animationRoutine.Value.State == AnimationState.Finished)
+                    {
+                        toRemove.Add(animationRoutine.Key);
+                    }
+                    else if (animationRoutine.Value.State == AnimationState.None)
+                    {
+                        StartCoroutine(AnimationMachineLoop(animationRoutine.Key));
+                    }
+                }
+                foreach (var key in toRemove)
+                {
+                    _animationsActive.Remove(key);
+                }
+
+                yield return new WaitForSeconds(AnimationInterval);
             }
         }
 
@@ -168,30 +199,30 @@ namespace PDSim.Components
         {
             if (!_animationsActive.ContainsKey(context))
                 yield break;
-            _animationsActive[context].state = AnimationState.None;
-            while (_animationsActive[context].state != AnimationState.Finished)
+            _animationsActive[context].State = AnimationState.None;
+            while (_animationsActive[context].State != AnimationState.Finished)
             {
-                switch (_animationsActive[context].state)
+                switch (_animationsActive[context].State)
                 {
                     case AnimationState.None:
-                        if (_animationsActive[context].queue.Count > 0)
-                            _animationsActive[context].state = AnimationState.Ready;
+                        if (_animationsActive[context].Queue.Count > 0)
+                            _animationsActive[context].State = AnimationState.Ready;
                         else
-                            _animationsActive[context].state = AnimationState.Finished;
+                            _animationsActive[context].State = AnimationState.Finished;
                         break;
                     case AnimationState.Ready:
-                        var animation = _animationsActive[context].queue.Dequeue();
-                        OnVisualisationStep?.Invoke(animation.fluentString); 
-                        TriggerAnimation(animation, context, animation.parametersObjects);
+                        var animation = _animationsActive[context].Queue.Dequeue();
+                        OnVisualisationStep?.Invoke(animation.FluentString);
+                        TriggerAnimation(animation, context, animation.ParametersObjects);
                         break;
                     case AnimationState.Running:
                         yield return null;
                         break;
                     case AnimationState.End:
-                        if (_animationsActive[context].queue.Count == 0)
-                            _animationsActive[context].state = AnimationState.None;
+                        if (_animationsActive[context].Queue.Count == 0)
+                            _animationsActive[context].State = AnimationState.None;
                         else
-                            _animationsActive[context].state = AnimationState.Ready;
+                            _animationsActive[context].State = AnimationState.Ready;
                         break;
                     case AnimationState.Finished:
                     default:
@@ -201,13 +232,11 @@ namespace PDSim.Components
                 yield return new WaitForEndOfFrame();
             }
         }
-        
-        Dictionary<string, GameObject> _activeGraphs = new Dictionary<string, GameObject>();
-        
+
         private void AnimationEndHandler(string context)
         {
             if (!_animationsActive.ContainsKey(context)) return;
-            _animationsActive[context].state = AnimationState.End;
+            _animationsActive[context].State = AnimationState.End;
 
             if (_activeGraphs.ContainsKey(context))
             {
@@ -219,20 +248,20 @@ namespace PDSim.Components
 
         private void TriggerAnimation(AnimationQueueElement animationElement, string context, GameObject[] objects)
         {
-            var animationInstance = SimpleObjectPool.Instance.Get(animationElement.graphToClone);
+            var animationInstance = SimpleObjectPool.Instance.Get(animationElement.GraphToClone);
 
-            animationInstance.name = $"{context} === {animationElement.animationName}";
+            animationInstance.name = $"{context} === {animationElement.AnimationName}";
             _activeGraphs.Add(context, animationInstance);
 
             var scriptVisualizer = animationInstance.GetComponent<IFluentVisualizer>();
 
-            if (scriptVisualizer == null && !string.IsNullOrEmpty(animationElement.scriptClassName))
+            if (scriptVisualizer == null && !string.IsNullOrEmpty(animationElement.ScriptClassName))
             {
                 System.Type type = null;
                 foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    type = assembly.GetType(animationElement.scriptClassName)
-                        ?? assembly.GetType("GeneratedVisualizers." + animationElement.scriptClassName);
+                    type = assembly.GetType(animationElement.ScriptClassName)
+                        ?? assembly.GetType("GeneratedVisualizers." + animationElement.ScriptClassName);
                     if (type != null) break;
                 }
                 if (type != null)
@@ -245,40 +274,42 @@ namespace PDSim.Components
             {
                 scriptVisualizer.Animate(
                     new List<string>(),
-                    animationElement.value,
+                    animationElement.Value,
                     objects,
-                    animationElement.duration,
+                    animationElement.Duration,
                     () => AnimationEndHandler(context)
                 );
-                _animationsActive[context].state = AnimationState.Running;
+                _animationsActive[context].State = AnimationState.Running;
                 return;
             }
 
             AnimationEndHandler(context);
-            _animationsActive[context].state = AnimationState.Running;
+            _animationsActive[context].State = AnimationState.Running;
         }
 
         private class AnimationRoutine
         {
-            public AnimationState state;
-            public Queue<AnimationQueueElement> queue;
+            public AnimationState State { get; set; }
+            public Queue<AnimationQueueElement> Queue { get; set; }
 
             public AnimationRoutine()
             {
-                state = AnimationState.None;
-                queue = new Queue<AnimationQueueElement>();
+                State = AnimationState.None;
+                Queue = new Queue<AnimationQueueElement>();
             }
         }
 
         private class AnimationQueueElement
         {
-            public string animationName;
-            public string fluentString;
-            public object value;
-            public GameObject[] parametersObjects;
-            public GameObject graphToClone;
-            public string scriptClassName;
-            public float duration;
+            public string AnimationName { get; set; }
+            public string FluentString { get; set; }
+            public object Value { get; set; }
+            public GameObject[] ParametersObjects { get; set; }
+            public GameObject GraphToClone { get; set; }
+            public string ScriptClassName { get; set; }
+            public float Duration { get; set; }
         }
+
+        #endregion
     }
 }

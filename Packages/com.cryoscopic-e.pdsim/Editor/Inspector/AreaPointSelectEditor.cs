@@ -4,17 +4,33 @@ using PDSim.Helpers;
 
 namespace PDSim.Editor.Inspector
 {
+    /// <summary>
+    /// Custom editor for Helper_AreaPointSelect, providing scene handles for resizing the area.
+    /// </summary>
     [CustomEditor(typeof(Helper_AreaPointSelect))]
     public class Helper_AreaPointSelectEditor : UnityEditor.Editor
     {
+        #region Fields
         // Each axis has two face handles (+X/-X, +Y/-Y, +Z/-Z)
-        private static readonly Vector3[] FaceDirections =
+        private static readonly Vector3[] _faceDirections =
         {
             Vector3.right, Vector3.left,
             Vector3.up,    Vector3.down,
             Vector3.forward, Vector3.back
         };
 
+        // Directional light from top-right-front; maps face normals to [minShade, 1].
+        private static readonly Vector3 _sunDir =
+            new Vector3(0.45f, 1f, 0.35f).normalized;
+
+        private Vector3? _previewPoint;
+        private float _previewTimer;
+        #endregion
+
+        #region Unity Lifecycle
+        /// <summary>
+        /// Draws the custom inspector GUI for AreaPointSelect.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
@@ -35,7 +51,7 @@ namespace PDSim.Editor.Inspector
             if (GUILayout.Button("Reset Offset", GUILayout.Height(24)))
             {
                 Undo.RecordObject(area, "Reset AreaPointSelect Offset");
-                area.offset = Vector3.zero;
+                area.Offset = Vector3.zero;
                 EditorUtility.SetDirty(area);
             }
             EditorGUILayout.EndHorizontal();
@@ -48,9 +64,6 @@ namespace PDSim.Editor.Inspector
             }
         }
 
-        private Vector3? _previewPoint;
-        private float _previewTimer;
-
         private void OnSceneGUI()
         {
             var area = (Helper_AreaPointSelect)target;
@@ -62,47 +75,47 @@ namespace PDSim.Editor.Inspector
                 Repaint();
             }
 
-            Color solid = area.gizmoColor;
+            Color solid = area.GizmoColor;
             Vector3 center = area.Center;
 
             // Shaded faces
-            DrawShadedBox(center, area.size, solid);
+            DrawShadedBox(center, area.Size, solid);
 
             // Wire box on top
             Handles.color = solid;
-            Handles.DrawWireCube(center, area.size);
+            Handles.DrawWireCube(center, area.Size);
 
             // Dimension label
-            if (area.showLabel)
+            if (area.ShowLabel)
             {
                 Handles.color = Color.white;
                 GUIStyle labelStyle = new GUIStyle(GUI.skin.label)
                 {
-                    normal = { textColor = area.gizmoColor },
+                    normal = { textColor = area.GizmoColor },
                     fontStyle = FontStyle.Bold,
                     fontSize = 11
                 };
                 Handles.Label(
-                    center + Vector3.up * (area.size.y * 0.5f + 0.15f),
-                    $"{area.name}\n{area.size.x:F1} × {area.size.y:F1} × {area.size.z:F1}",
+                    center + Vector3.up * (area.Size.y * 0.5f + 0.15f),
+                    $"{area.name}\n{area.Size.x:F1} × {area.Size.y:F1} × {area.Size.z:F1}",
                     labelStyle);
             }
 
-            // ── Offset position handle ──────────────────────────────────────────
+            // Rendering the offset position handle for the area.
             EditorGUI.BeginChangeCheck();
             Vector3 newCenter = Handles.PositionHandle(center, Quaternion.identity);
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(area, "Move AreaPointSelect Offset");
-                area.offset = newCenter - area.transform.position;
+                area.Offset = newCenter - area.transform.position;
                 EditorUtility.SetDirty(area);
             }
 
-            // ── Face resize handles ─────────────────────────────────────────────
+            // Rendering handles to resize the area's faces.
             Handles.color = solid;
             float capSize = HandleUtility.GetHandleSize(center) * 0.08f;
 
-            Vector3 halfSize = area.size * 0.5f;
+            Vector3 halfSize = area.Size * 0.5f;
             Vector3[] faceOffsets =
             {
                 new Vector3( halfSize.x, 0, 0), new Vector3(-halfSize.x, 0, 0),
@@ -110,22 +123,22 @@ namespace PDSim.Editor.Inspector
                 new Vector3(0, 0,  halfSize.z), new Vector3(0, 0, -halfSize.z)
             };
 
-            for (int i = 0; i < FaceDirections.Length; i++)
+            for (int i = 0; i < _faceDirections.Length; i++)
             {
                 Vector3 handlePos = center + faceOffsets[i];
                 EditorGUI.BeginChangeCheck();
-                Vector3 newPos = Handles.Slider(handlePos, FaceDirections[i],
+                Vector3 newPos = Handles.Slider(handlePos, _faceDirections[i],
                     capSize * 2f, Handles.DotHandleCap, 0.5f);
                 if (EditorGUI.EndChangeCheck())
                 {
                     Undo.RecordObject(area, "Resize AreaPointSelect");
 
-                    // delta > 0 means the face moved outward (FaceDirections already
+                    // delta > 0 means the face moved outward (_faceDirections already
                     // encodes the sign, so no extra sign flip needed).
-                    float delta = Vector3.Dot(newPos - handlePos, FaceDirections[i]);
-                    Vector3 dir = FaceDirections[i];
-                    Vector3 newSize   = area.size;
-                    Vector3 newOffset = area.offset;
+                    float delta = Vector3.Dot(newPos - handlePos, _faceDirections[i]);
+                    Vector3 dir = _faceDirections[i];
+                    Vector3 newSize   = area.Size;
+                    Vector3 newOffset = area.Offset;
 
                     // Grow the size by delta, shift the offset by delta/2 so the
                     // opposite face stays fixed.
@@ -145,13 +158,13 @@ namespace PDSim.Editor.Inspector
                         newOffset.z += dir.z * delta * 0.5f;
                     }
 
-                    area.size   = newSize;
-                    area.offset = newOffset;
+                    area.Size   = newSize;
+                    area.Offset = newOffset;
                     EditorUtility.SetDirty(area);
                 }
             }
 
-            // ── Preview point ───────────────────────────────────────────────────
+            // Rendering the preview point if one is currently active.
             if (_previewPoint.HasValue)
             {
                 Handles.color = Color.magenta;
@@ -167,11 +180,9 @@ namespace PDSim.Editor.Inspector
                 HandleUtility.Repaint();
             }
         }
+        #endregion
 
-        // Directional light from top-right-front; maps face normals to [minShade, 1].
-        private static readonly Vector3 SunDir =
-            new Vector3(0.45f, 1f, 0.35f).normalized;
-
+        #region Private Methods
         private static void DrawShadedBox(Vector3 center, Vector3 size, Color baseColor)
         {
             Vector3 h = size * 0.5f;
@@ -193,7 +204,7 @@ namespace PDSim.Editor.Inspector
             foreach (var (normal, verts) in faces)
             {
                 float shade = Mathf.Lerp(minShade, 1f,
-                    (Vector3.Dot(normal, SunDir) + 1f) * 0.5f);
+                    (Vector3.Dot(normal, _sunDir) + 1f) * 0.5f);
                 Color faceColor = new Color(
                     baseColor.r * shade,
                     baseColor.g * shade,
@@ -202,5 +213,6 @@ namespace PDSim.Editor.Inspector
                 Handles.DrawSolidRectangleWithOutline(verts, faceColor, Color.clear);
             }
         }
+        #endregion
     }
 }

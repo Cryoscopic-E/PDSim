@@ -5,28 +5,37 @@ using UnityEngine;
 namespace PDSim.Editor.Inspector
 {
     /// <summary>
-    /// Custom inspector for the ProblemObjects class.
+    /// Custom inspector for the ProblemObjects component.
     /// </summary>
     [CustomEditor(typeof(ProblemObjects))]
     public class ProblemObjectsEditor : UnityEditor.Editor
     {
-        private ProblemObjects problemObjects;
+        #region Fields
+        private ProblemObjects _problemObjects;
+        #endregion
 
+        #region Unity Lifecycle
         private void OnEnable()
         {
-            problemObjects = (ProblemObjects)target;
+            _problemObjects = (ProblemObjects)target;
         }
+
+        /// <summary>
+        /// Draws the custom inspector GUI for ProblemObjects.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             GUILayout.Label("Problem Objects Customisation", EditorStyles.largeLabel);
-            if (problemObjects.prefabs == null)
+            if (_problemObjects.Prefabs == null)
                 return;
-            for (var i = 0; i < problemObjects.prefabs.Count; ++i)
+            for (var i = 0; i < _problemObjects.Prefabs.Count; ++i)
             {
                 DrawModel(i);
             }
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         /// Draws the model and button to open the prefab attached.
         /// </summary>
@@ -34,14 +43,14 @@ namespace PDSim.Editor.Inspector
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
             // MODEL NAME
-            EditorGUILayout.LabelField(problemObjects.prefabs[index].name, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(_problemObjects.Prefabs[index].name, EditorStyles.boldLabel);
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.ObjectField(problemObjects.prefabs[index], typeof(VisualisationObject), false);
+            EditorGUILayout.ObjectField(_problemObjects.Prefabs[index], typeof(VisualisationObject), false);
             // EDIT PREFAB BUTTON
             if (GUILayout.Button("Edit", GUILayout.ExpandWidth(false)))
             {
-                if (!AssetDatabase.OpenAsset(problemObjects.prefabs[index]))
+                if (!AssetDatabase.OpenAsset(_problemObjects.Prefabs[index]))
                 {
                     throw new UnityException("Can't Open Prefab");
                 }
@@ -49,5 +58,6 @@ namespace PDSim.Editor.Inspector
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
         }
+        #endregion
     }
 }

@@ -1,19 +1,23 @@
 using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
-using GeTPlan.Core.Models.Expressions;
 using PDSim.Utils;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using PDSim.Interactive;
 
 namespace PDSim.Components
 {
+    /// <summary>
+    /// Manages the collection of objects in the planning problem and their mapping to scene GameObjects.
+    /// Provides functionality for object lookup and prefab management.
+    /// </summary>
     public class ProblemObjects : MonoBehaviour
     {
-        //Singleton
-        private static ProblemObjects _instance;
+        #region Public API
+
+        /// <summary>
+        /// Singleton instance of the ProblemObjects manager.
+        /// </summary>
         public static ProblemObjects Instance
         {
             get
@@ -24,20 +28,36 @@ namespace PDSim.Components
             }
         }
 
+        /// <summary>
+        /// Delegate for object hover events.
+        /// </summary>
         public delegate void VisualisationObjectHovered(VisualisationObject @object);
+        /// <summary>
+        /// Event fired when a visualization object is hovered.
+        /// </summary>
         public event VisualisationObjectHovered OnVisualisationObjectHovered;
 
+        /// <summary>
+        /// Delegate for object unhover events.
+        /// </summary>
         public delegate void VisualisationObjectUnhovered();
+        /// <summary>
+        /// Event fired when a visualization object is no longer hovered.
+        /// </summary>
         public event VisualisationObjectUnhovered OnVisualisationObjectUnhovered;
 
-
+        /// <summary>
+        /// The list of visualization object prefabs available for instantiation.
+        /// </summary>
         [SerializeField]
-        public List<VisualisationObject> prefabs;
+        [Tooltip("The list of visualization object prefabs.")]
+        public List<VisualisationObject> Prefabs;
 
-        private Dictionary<string, VisualisationObject> _objectDictionary;
-
-        private Dictionary<string, List<string>> _typeToObjects;
-
+        /// <summary>
+        /// Retrieves all object names of a given type.
+        /// </summary>
+        /// <param name="type">The type name.</param>
+        /// <returns>A list of object names.</returns>
         public List<string> GetObjectsOfType(string type)
         {
             if (_typeToObjects != null && _typeToObjects.ContainsKey(type))
@@ -45,22 +65,56 @@ namespace PDSim.Components
             return new List<string>();
         }
 
-
-        private Dictionary<string, string> __objectToTypes;
-
+        /// <summary>
+        /// Retrieves the type of a specific object by its name.
+        /// </summary>
+        /// <param name="objectName">The name of the object.</param>
+        /// <returns>The type name, or null if not found.</returns>
         public string GetTypeOfObject(string objectName)
         {
-            if (__objectToTypes != null && __objectToTypes.ContainsKey(objectName))
-                return __objectToTypes[objectName];
+            if (_objectToTypes != null && _objectToTypes.ContainsKey(objectName))
+                return _objectToTypes[objectName];
             return null;
         }
 
+        /// <summary>
+        /// Retrieves a visualization object in the scene by its name.
+        /// </summary>
+        /// <param name="objectName">The name of the object.</param>
+        /// <returns>The VisualisationObject component, or null if not found.</returns>
+        public VisualisationObject GetObjectInScene(string objectName)
+        {
+            if (_objectDictionary != null && _objectDictionary.ContainsKey(objectName))
+                return _objectDictionary[objectName];
+            return null;
+        }
+
+        /// <summary>
+        /// Triggers the hover event for an object.
+        /// </summary>
+        /// <param name="object">The object being hovered.</param>
+        public void HoverObject(VisualisationObject @object)
+        {
+            OnVisualisationObjectHovered?.Invoke(@object);
+        }
+
+        /// <summary>
+        /// Triggers the unhover event.
+        /// </summary>
+        public void ClearHover()
+        {
+            OnVisualisationObjectUnhovered?.Invoke();
+        }
+
+        #endregion
+
+        #region Unity Lifecycle
 
         private void Awake()
         {
             _objectDictionary = new Dictionary<string, VisualisationObject>();
             _typeToObjects = new Dictionary<string, List<string>>();
-            __objectToTypes = new Dictionary<string, string>();
+            _objectToTypes = new Dictionary<string, string>();
         }
 
         private void Start()
@@ -72,56 +126,55 @@ namespace PDSim.Components
                 {
                     if (!_objectDictionary.ContainsKey(child.name))
                         _objectDictionary.Add(child.name, visualisationObject);
-                    
-                    if (_typeToObjects.ContainsKey(visualisationObject.objectType))
+
+                    if (_typeToObjects.ContainsKey(visualisationObject.ObjectType))
                     {
-                        _typeToObjects[visualisationObject.objectType].Add(child.name);
+                        _typeToObjects[visualisationObject.ObjectType].Add(child.name);
                     }
                     else
                     {
-                        _typeToObjects.Add(visualisationObject.objectType, new List<string> { child.name });
+                        _typeToObjects.Add(visualisationObject.ObjectType, new List<string> { child.name });
                     }
 
-                    if (!__objectToTypes.ContainsKey(child.name))
-                        __objectToTypes.Add(child.name, visualisationObject.objectType);
+                    if (!_objectToTypes.ContainsKey(child.name))
+                        _objectToTypes.Add(child.name, visualisationObject.ObjectType);
                 }
             }
         }
 
-        public VisualisationObject GetObjectInScene(string objectName)
-        {
-            if (_objectDictionary != null && _objectDictionary.ContainsKey(objectName))
-                return _objectDictionary[objectName];
-            return null;
-        }
+        #endregion
 
-        public void HoverObject(VisualisationObject @object)
-        {
-            OnVisualisationObjectHovered?.Invoke(@object);
-        }
+        #region Private Internals
 
-        public void ClearHover()
-        {
-            OnVisualisationObjectUnhovered?.Invoke();
-        }
+        private static ProblemObjects _instance;
 
+        private Dictionary<string, VisualisationObject> _objectDictionary;
+        private Dictionary<string, List<string>> _typeToObjects;
+        private Dictionary<string, string> _objectToTypes;
 
-# if UNITY_EDITOR
+        #endregion
+
+        #region Editor Support
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Initializes the component in the editor, generating prefabs and scripts for each type.
+        /// </summary>
         public void InitialiseComponent(List<PlanObject> objectDeclarations, List<string> allLeafType)
         {
             foreach (var type in allLeafType)
             {
                 var folderPath = AssetUtils.GetSimulationObjectsPath(SceneManager.GetActiveScene().name);
-                Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(CommonPaths.PDSIM_OBJECT_PREFAB, typeof(GameObject));
+                Object originalPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(CommonPaths.PdsimObjectPrefab, typeof(GameObject));
                 var prefabInstance = PrefabUtility.InstantiatePrefab(originalPrefab, null) as GameObject;
-                prefabInstance.GetComponent<VisualisationObject>().objectType = type;
+                prefabInstance.GetComponent<VisualisationObject>().ObjectType = type;
                 var newModel = PrefabUtility.SaveAsPrefabAsset(prefabInstance, folderPath + "/" + type + ".prefab");
 
-                prefabs.Add(newModel.GetComponent<VisualisationObject>());
+                Prefabs.Add(newModel.GetComponent<VisualisationObject>());
 
-                if (newModel.GetComponent<PDSimMetadata>() == null)
+                if (newModel.GetComponent<ProblemObjectMetaData>() == null)
                 {
-                    newModel.AddComponent<PDSimMetadata>();
+                    newModel.AddComponent<ProblemObjectMetaData>();
                 }
 
                 var sceneName = SceneManager.GetActiveScene().name;
@@ -146,7 +199,7 @@ namespace PDSim.Components
             }
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            
+
             foreach (var obj in objectDeclarations)
             {
                 var type = obj.Type.Name;
@@ -158,5 +211,7 @@ namespace PDSim.Components
             }
         }
 #endif
+
+        #endregion
     }
 }

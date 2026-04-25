@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using PDSim.Components;
 
 namespace PDSim.Helpers
@@ -14,21 +15,34 @@ namespace PDSim.Helpers
     [RequireComponent(typeof(Renderer))]
     public class Helper_HighlightEffect : MonoBehaviour
     {
+        #region Inspector Fields
+
+        [Header("Settings")]
         [Tooltip("Color to flash to.")]
-        public Color highlightColor = new Color(1f, 0.9f, 0f, 1f);  // yellow
+        [SerializeField, FormerlySerializedAs("highlightColor")]
+        private Color HighlightColor = new Color(1f, 0.9f, 0f, 1f); // yellow
 
         [Tooltip("Total duration of one flash cycle (seconds).")]
-        public float flashDuration = 0.35f;
+        [SerializeField, FormerlySerializedAs("flashDuration")]
+        private float FlashDuration = 0.35f;
 
         [Tooltip("Number of full flash cycles for a single Flash() call.")]
-        [Min(1)] public int pulseCount = 2;
+        [SerializeField, FormerlySerializedAs("pulseCount")]
+        [Min(1)]
+        private int PulseCount = 2;
 
-        // ── State ────────────────────────────────────────────────────────────────
+        #endregion
+
+        #region State
 
         private Renderer _renderer;
         private MaterialPropertyBlock _block;
         private Color _originalColor;
         private Coroutine _activeRoutine;
+
+        #endregion
+
+        #region Unity Lifecycle
 
         private void Awake()
         {
@@ -42,16 +56,18 @@ namespace PDSim.Helpers
             _originalColor = _renderer.material.color;
         }
 
-        // ── Public API ───────────────────────────────────────────────────────────
+        #endregion
+
+        #region Public API
 
         /// <summary>
-        /// Plays <see cref="pulseCount"/> flash cycles then restores the original color.
+        /// Plays <see cref="PulseCount"/> flash cycles then restores the original color.
         /// If called while already flashing, restarts the effect.
         /// </summary>
         public void Flash()
         {
             if (_activeRoutine != null) StopCoroutine(_activeRoutine);
-            _activeRoutine = StartCoroutine(FlashRoutine(pulseCount, false));
+            _activeRoutine = StartCoroutine(FlashRoutine(PulseCount, false));
         }
 
         /// <summary>
@@ -74,7 +90,9 @@ namespace PDSim.Helpers
             SetColor(_originalColor);
         }
 
-        // ── Implementation ───────────────────────────────────────────────────────
+        #endregion
+
+        #region Implementation
 
         private IEnumerator FlashRoutine(int cycles, bool loop)
         {
@@ -84,9 +102,9 @@ namespace PDSim.Helpers
             for (int i = 0; i < cycles; i++)
             {
                 // Fade to highlight
-                yield return TweenColor(_originalColor, highlightColor, flashDuration * 0.5f);
+                yield return TweenColor(_originalColor, HighlightColor, FlashDuration * 0.5f);
                 // Fade back
-                yield return TweenColor(highlightColor, _originalColor, flashDuration * 0.5f);
+                yield return TweenColor(HighlightColor, _originalColor, FlashDuration * 0.5f);
 
                 if (!loop && i == cycles - 1) break;
             }
@@ -106,7 +124,7 @@ namespace PDSim.Helpers
                     yield return null;
                     continue;
                 }
-                float speed = Controller.Instance != null ? Controller.Instance.animationSpeed : 1f;
+                float speed = Controller.Instance != null ? Controller.Instance.AnimationSpeed : 1f;
                 elapsed += Time.deltaTime * speed;
                 SetColor(Color.Lerp(from, to, Mathf.Clamp01(elapsed / duration)));
                 yield return null;
@@ -117,8 +135,10 @@ namespace PDSim.Helpers
         private void SetColor(Color c)
         {
             _block.SetColor("_Color", c);
-            _block.SetColor("_BaseColor", c);   // URP
+            _block.SetColor("_BaseColor", c); // URP
             _renderer.SetPropertyBlock(_block);
         }
+
+        #endregion
     }
 }

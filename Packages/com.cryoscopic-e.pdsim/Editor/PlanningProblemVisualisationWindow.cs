@@ -1,6 +1,3 @@
-using GeTPlan.Core.Models;
-using GeTPlan.Core.Logic;
-using GeTPlan.Core.Models.Expressions;
 using PDSim.Components;
 using PDSim.ScriptableObjects;
 using PDSimAPI;
@@ -12,18 +9,14 @@ using UnityEngine;
 
 namespace PDSim.Editor
 {
-    public class PlanVisualisationWindow : EditorWindow
+    /// <summary>
+    /// Custom editor window for visualizing planning problems and plans.
+    /// </summary>
+    public class PlanningProblemVisualisationWindow : EditorWindow
     {
-        [MenuItem("PDSim/Plan Visualiser")]
-        public static void ShowWindow()
-        {
-            var wnd = GetWindow<PlanVisualisationWindow>();
-            wnd.titleContent = new GUIContent("Plan Visualiser");
-            wnd.minSize = new Vector2(420, 500);
-        }
-
+        #region Fields
         // ScriptableObject references
-        private PDSim.ScriptableObjects.PlanningProblem _planningProblem;
+        private PDSim.ScriptableObjects.ParsedProblem _planningProblem;
         private PlanGeneration _planGeneration;
 
         // Parsed model
@@ -32,7 +25,7 @@ namespace PDSim.Editor
 
         // UI state
         private int _selectedTab = 0;
-        private static readonly string[] TabLabels = { "Problem", "Plan" };
+        private static readonly string[] _tabLabels = { "Problem", "Plan" };
 
         // Scroll positions
         private Vector2 _problemScrollPos;
@@ -44,7 +37,22 @@ namespace PDSim.Editor
         private bool _showActions = true;
         private bool _showInitialState = true;
         private readonly Dictionary<string, bool> _typeFoldouts = new Dictionary<string, bool>();
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Shows the PlanningProblemVisualisationWindow.
+        /// </summary>
+        [MenuItem("PDSim/Planning Problem Visualiser")]
+        public static void ShowWindow()
+        {
+            var wnd = GetWindow<PlanningProblemVisualisationWindow>();
+            wnd.titleContent = new GUIContent("Plan Visualiser");
+            wnd.minSize = new Vector2(420, 500);
+        }
+        #endregion
+
+        #region Unity Lifecycle
         private void OnGUI()
         {
             DrawHeader();
@@ -67,7 +75,7 @@ namespace PDSim.Editor
                 return;
             }
 
-            _selectedTab = GUILayout.Toolbar(_selectedTab, TabLabels);
+            _selectedTab = GUILayout.Toolbar(_selectedTab, _tabLabels);
             EditorGUILayout.Space(4);
 
             switch (_selectedTab)
@@ -76,9 +84,11 @@ namespace PDSim.Editor
                 case 1: DrawPlanTab(); break;
             }
         }
+        #endregion
 
-        // ─── HEADER ──────────────────────────────────────────────────────────────
+        #region Private Methods
 
+        // Rendering logic for the window header.
         private void DrawHeader()
         {
             var headerStyle = new GUIStyle(GUI.skin.label)
@@ -93,13 +103,12 @@ namespace PDSim.Editor
             DrawSeparator();
         }
 
-        // ─── ASSET FIELDS & BUTTONS ──────────────────────────────────────────────
-
+        // Logic for drawing asset selection fields and action buttons.
         private void DrawObjectFields()
         {
             EditorGUI.BeginChangeCheck();
-            _planningProblem = (PDSim.ScriptableObjects.PlanningProblem)EditorGUILayout.ObjectField(
-                "Planning Problem", _planningProblem, typeof(PDSim.ScriptableObjects.PlanningProblem), false);
+            _planningProblem = (PDSim.ScriptableObjects.ParsedProblem)EditorGUILayout.ObjectField(
+                "Planning Problem", _planningProblem, typeof(PDSim.ScriptableObjects.ParsedProblem), false);
             _planGeneration = (PlanGeneration)EditorGUILayout.ObjectField(
                 "Plan Generation", _planGeneration, typeof(PlanGeneration), false);
 
@@ -117,8 +126,8 @@ namespace PDSim.Editor
 
             bool canParse = _planningProblem != null
                          && _planGeneration != null
-                         && _planningProblem.proto != null
-                         && _planGeneration.proto != null;
+                         && _planningProblem.Proto != null
+                         && _planGeneration.Proto != null;
 
             GUI.enabled = canParse;
             if (GUILayout.Button("Parse", GUILayout.Height(26)))
@@ -137,7 +146,7 @@ namespace PDSim.Editor
             _visualisation = null;
             try
             {
-                _visualisation = new Visualisation(_planningProblem.proto, _planGeneration.proto);
+                _visualisation = new Visualisation(_planningProblem.Proto, _planGeneration.Proto);
                 _typeFoldouts.Clear();
             }
             catch (Exception e)
@@ -154,14 +163,13 @@ namespace PDSim.Editor
                 EditorUtility.DisplayDialog("Auto-populate", "No Controller found in the active scene.", "OK");
                 return;
             }
-            _planningProblem = controller.problem;
-            _planGeneration = controller.planGeneration;
+            _planningProblem = controller.Problem;
+            _planGeneration = controller.PlanGeneration;
             _visualisation = null;
             _parseError = null;
         }
 
-        // ─── PROBLEM TAB ─────────────────────────────────────────────────────────
-
+        // Logic for drawing the problem tab, which lists objects, fluents, and actions.
         private void DrawProblemTab()
         {
             _problemScrollPos = EditorGUILayout.BeginScrollView(_problemScrollPos);
@@ -265,8 +273,7 @@ namespace PDSim.Editor
             EditorGUILayout.Space(2);
         }
 
-        // ─── PLAN TAB ─────────────────────────────────────────────────────────────
-
+        // Logic for drawing the plan tab, which lists the sequence of actions in the plan.
         private void DrawPlanTab()
         {
             var plan = _visualisation.PlanResult.Plan;
@@ -306,13 +313,13 @@ namespace PDSim.Editor
             EditorGUILayout.EndScrollView();
         }
 
-        // ─── HELPERS ─────────────────────────────────────────────────────────────
-
+        // Shared UI helper methods.
         private static void DrawSeparator()
         {
             var rect = EditorGUILayout.GetControlRect(false, 1);
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.3f));
             EditorGUILayout.Space(2);
         }
+        #endregion
     }
 }

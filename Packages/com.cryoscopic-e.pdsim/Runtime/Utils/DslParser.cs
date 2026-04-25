@@ -11,10 +11,22 @@ namespace PDSim.Runtime.Utils
     /// </summary>
     public static class DslParser
     {
+        #region Public API
+
+        /// <summary>
+        /// Parses a string expression into a <see cref="PlanExpression"/>.
+        /// </summary>
+        /// <param name="expression">The string expression to parse.</param>
+        /// <param name="selfName">The name to substitute for 'self'.</param>
+        /// <param name="hitName">The name to substitute for 'hit'.</param>
+        /// <returns>The parsed <see cref="PlanExpression"/>, or null if the expression is empty.</returns>
         public static PlanExpression Parse(string expression, string selfName = "", string hitName = "")
         {
             expression = expression.Trim();
-            if (string.IsNullOrEmpty(expression)) return null;
+            if (string.IsNullOrEmpty(expression))
+            {
+                return null;
+            }
 
             // Handle NOT
             if (expression.StartsWith("!"))
@@ -33,10 +45,16 @@ namespace PDSim.Runtime.Utils
             }
 
             // Handle boolean literals
-            if (bool.TryParse(expression, out bool b)) return new ConstantExpression(b);
-            
+            if (bool.TryParse(expression, out bool b))
+            {
+                return new ConstantExpression(b);
+            }
+
             // Handle numeric literals
-            if (double.TryParse(expression, out double d)) return new ConstantExpression(d);
+            if (double.TryParse(expression, out double d))
+            {
+                return new ConstantExpression(d);
+            }
 
             // Handle strings (potentially objects or fluents)
             if (expression.Contains("["))
@@ -45,12 +63,29 @@ namespace PDSim.Runtime.Utils
             }
 
             // Treat as parameter or constant
-            if (expression == "self") return new ParameterExpression(selfName);
-            if (expression == "hit") return new ParameterExpression(hitName);
-            
+            if (expression == "self")
+            {
+                return new ParameterExpression(selfName);
+            }
+            if (expression == "hit")
+            {
+                return new ParameterExpression(hitName);
+            }
+
             return new ParameterExpression(expression);
         }
 
+        #endregion
+
+        #region Private Internals
+
+        /// <summary>
+        /// Parses a fluent expression string into a <see cref="FluentExpression"/>.
+        /// </summary>
+        /// <param name="expression">The fluent expression string (e.g., "fluent[arg1, arg2]").</param>
+        /// <param name="selfName">The name to substitute for 'self'.</param>
+        /// <param name="hitName">The name to substitute for 'hit'.</param>
+        /// <returns>The parsed <see cref="FluentExpression"/>.</returns>
         private static FluentExpression ParseFluent(string expression, string selfName, string hitName)
         {
             int openBracket = expression.IndexOf('[');
@@ -65,14 +100,25 @@ namespace PDSim.Runtime.Utils
                 var planArgs = new List<PlanExpression>();
                 foreach (var arg in args)
                 {
-                    if (arg == "self") planArgs.Add(new ConstantExpression(selfName));
-                    else if (arg == "hit") planArgs.Add(new ConstantExpression(hitName));
-                    else planArgs.Add(new ConstantExpression(arg));
+                    if (arg == "self")
+                    {
+                        planArgs.Add(new ConstantExpression(selfName));
+                    }
+                    else if (arg == "hit")
+                    {
+                        planArgs.Add(new ConstantExpression(hitName));
+                    }
+                    else
+                    {
+                        planArgs.Add(new ConstantExpression(arg));
+                    }
                 }
                 return new FluentExpression(fluentName, planArgs.AsReadOnly());
             }
 
             return new FluentExpression(expression);
         }
+
+        #endregion
     }
 }
