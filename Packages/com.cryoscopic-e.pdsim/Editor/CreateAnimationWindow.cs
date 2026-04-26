@@ -57,6 +57,9 @@ namespace PDSim.Editor
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.AnimationDialogUI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
+
+            // Load the attribute template
+            PredicateAnimationAttributeTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.PredicateAnimationAttributeUI);
         }
 
         /// <summary>
@@ -65,6 +68,11 @@ namespace PDSim.Editor
         public void UpdateContent()
         {
             var root = rootVisualElement;
+
+            if (PredicateAnimationAttributeTemplate == null)
+            {
+                PredicateAnimationAttributeTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.PredicateAnimationAttributeUI);
+            }
 
             var animationName = root.Q<Label>("Predicate");
             animationName.text = _metadata.ToString();

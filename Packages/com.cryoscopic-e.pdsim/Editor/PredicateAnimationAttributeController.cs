@@ -1,5 +1,6 @@
 using PDSim.Components;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 namespace PDSim.Editor
 {
@@ -54,9 +55,25 @@ namespace PDSim.Editor
 
             _attribute = root.Q<DropdownField>("Attribute");
             _attribute.label = "?" + _attributeName;
-            _attribute.choices = TypeHierarchy.Instance.ModelTypes.GetChildrenTypes(_attributeType);
-            _attribute.value = _attribute.choices[0];
-
+            
+            if (TypeHierarchy.Instance != null && TypeHierarchy.Instance.ModelTypes != null)
+            {
+                _attribute.choices = TypeHierarchy.Instance.ModelTypes.GetChildrenTypes(_attributeType);
+                if (_attribute.choices.Count > 0)
+                {
+                    _attribute.value = _attribute.choices[0];
+                }
+                else
+                {
+                    _attribute.choices = new List<string> { _attributeType };
+                    _attribute.value = _attributeType;
+                }
+            }
+            else
+            {
+                _attribute.choices = new List<string> { _attributeType };
+                _attribute.value = _attributeType;
+            }
         }
         #endregion
     }

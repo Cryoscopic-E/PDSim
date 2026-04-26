@@ -23,17 +23,17 @@ namespace PDSim.Editor.Inspector
         {
             _fluentAnimation = (FluentAnimation)target;
 
-            _list = new ReorderableList(serializedObject, serializedObject.FindProperty("animationData"), true, false, true, true);
+            _list = new ReorderableList(serializedObject, serializedObject.FindProperty("AnimationDataList"), true, false, true, true);
 
 
             _list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
                 // Get the element and its data we want to draw from the list.
                 var element = _list.serializedProperty.GetArrayElementAtIndex(index);
-                var nameProperty = element.FindPropertyRelative("name");
-                var visualizerProperty = element.FindPropertyRelative("visualizer");
-                var sceneObjectProperty = element.FindPropertyRelative("sceneObjectReference");
-                var classNameProperty = element.FindPropertyRelative("scriptClassName");
+                var nameProperty = element.FindPropertyRelative("Name");
+                var visualizerProperty = element.FindPropertyRelative("Visualizer");
+                var sceneObjectProperty = element.FindPropertyRelative("SceneObjectReference");
+                var classNameProperty = element.FindPropertyRelative("ScriptClassName");
 
                 float lineHeight = EditorGUIUtility.singleLineHeight;
                 float spacing = 2;
