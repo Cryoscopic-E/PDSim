@@ -152,9 +152,10 @@ namespace PDSim.Editor
                 System.IO.Directory.CreateDirectory(folderPath);
             }
 
-            // Convert Metadata to PredicateDefinition for generator
-            var argTypes = attributeTypes.Select(t => new PlanType(t)).ToArray();
-            var predicate = new PredicateDefinition(predicateName, argTypes);
+            // Build PredicateDefinition with real parameter names from metadata
+            var parameters = attributeTypes.Zip(_metadata.ParametersNames,
+                (type, name) => new PredicateParameter(name, new PlanType(type)));
+            var predicate = new PredicateDefinition(predicateName, _metadata.FluentValueType ?? "bool", parameters);
 
             string className = PDSimAPI.Generators.FluentScriptGenerator.GetVisualizerClassName(predicate);
             string fullTypeName = $"{namespaceName}.{className}";

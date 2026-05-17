@@ -114,8 +114,8 @@ namespace PDSim.Components
             {
                 var fluentAnimation = gameObject.AddComponent<FluentAnimation>();
 
-                var parametersTypes = fluent.ArgumentTypes.Select(t => t.Name).ToList();
-                var parametersNames = fluent.ArgumentTypes.Select((t, i) => $"arg{i}").ToList();
+                var parametersTypes = fluent.Parameters.Select(p => p.Type.Name).ToList();
+                var parametersNames = fluent.Parameters.Select(p => p.Name).ToList();
 
                 fluentAnimation.MetaData = new FluentAnimation.FluentMetadata()
                 {
