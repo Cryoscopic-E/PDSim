@@ -15,27 +15,27 @@ namespace PDSim.Helpers
 
         [Header("Settings")]
         [Tooltip("World-space cell size.")]
-        [SerializeField, FormerlySerializedAs("gridSize")]
+        [SerializeField]
         private float GridSize = 1f;
 
         [Header("Axes")]
         [Tooltip("Axes to snap. Uncheck Y to leave height free.")]
-        [SerializeField, FormerlySerializedAs("snapX")]
+        [SerializeField]
         private bool SnapX = true;
 
-        [SerializeField, FormerlySerializedAs("snapY")]
+        [SerializeField]
         private bool SnapY = false;
 
-        [SerializeField, FormerlySerializedAs("snapZ")]
+        [SerializeField]
         private bool SnapZ = true;
 
         [Header("Execution")]
         [Tooltip("Snap immediately when the scene starts.")]
-        [SerializeField, FormerlySerializedAs("snapOnAwake")]
+        [SerializeField]
         private bool SnapOnAwake = true;
 
         [Tooltip("Re-snap every frame (useful during NavMesh arrival).")]
-        [SerializeField, FormerlySerializedAs("snapContinuously")]
+        [SerializeField]
         private bool SnapContinuously = false;
 
         #endregion

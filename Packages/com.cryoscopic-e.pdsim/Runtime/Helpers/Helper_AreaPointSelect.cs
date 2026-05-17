@@ -13,20 +13,16 @@ namespace PDSim.Helpers
 
         [Header("Settings")]
         [Tooltip("The size of the bounding volume.")]
-        [FormerlySerializedAs("size")]
         public Vector3 Size = Vector3.one;
 
         [Tooltip("The offset from the transform position.")]
-        [FormerlySerializedAs("offset")]
         public Vector3 Offset;
 
         [Header("Gizmo")]
         [Tooltip("The color of the gizmo in the Scene view.")]
-        [FormerlySerializedAs("gizmoColor")]
         public Color GizmoColor = new Color(0f, 1f, 0.8f, 1f);
 
         [Tooltip("Whether to show the dimension label in the Scene view.")]
-        [FormerlySerializedAs("showLabel")]
         public bool ShowLabel = true;
 
         #endregion

@@ -13,7 +13,6 @@ namespace PDSim.Helpers
 
         [Header("Settings")]
         [Tooltip("The canvas to associate with the main camera.")]
-        [SerializeField, FormerlySerializedAs("canvas")]
         private Canvas Canvas;
 
         #endregion

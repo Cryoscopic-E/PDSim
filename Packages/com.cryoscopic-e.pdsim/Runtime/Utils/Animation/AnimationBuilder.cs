@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using PDSim.Components;
 
@@ -583,14 +584,18 @@ namespace PDSim.Utils.Animation
                 yield break;
             }
 
-            var tmp = display.GetComponent("TMPro.TMP_Text");
+            var tmp = display.GetComponent("TMPro.TMP_Text"); //default supported
             if (tmp != null)
             {
                 tmp.GetType().GetProperty("text")?.SetValue(tmp, _text);
             }
-            else if (display is UnityEngine.UIElements.UIDocument uiDoc)
+            else if (display is Text textUI) //legacy for quick prototype
             {
-                var element = uiDoc.rootVisualElement.Q<UnityEngine.UIElements.TextElement>(_tag);
+                textUI.text = _text;
+            }
+            else if (display is UIDocument uiDoc)
+            {
+                var element = uiDoc.rootVisualElement.Q<TextElement>(_tag);
                 if (element != null) element.text = _text;
             }
 

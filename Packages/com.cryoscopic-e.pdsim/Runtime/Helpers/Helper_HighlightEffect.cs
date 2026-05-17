@@ -19,15 +19,15 @@ namespace PDSim.Helpers
 
         [Header("Settings")]
         [Tooltip("Color to flash to.")]
-        [SerializeField, FormerlySerializedAs("highlightColor")]
+        [SerializeField]
         private Color HighlightColor = new Color(1f, 0.9f, 0f, 1f); // yellow
 
         [Tooltip("Total duration of one flash cycle (seconds).")]
-        [SerializeField, FormerlySerializedAs("flashDuration")]
+        [SerializeField]
         private float FlashDuration = 0.35f;
 
         [Tooltip("Number of full flash cycles for a single Flash() call.")]
-        [SerializeField, FormerlySerializedAs("pulseCount")]
+        [SerializeField]
         [Min(1)]
         private int PulseCount = 2;
 

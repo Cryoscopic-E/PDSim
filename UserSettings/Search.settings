@@ -12,6 +12,10 @@ scopes = {
 	"last_search.2138236A" = ""
 	"OpenInspectorPreview.2138236A" = "0"
 	"currentGroup.2138236A" = "settings"
+	"picker_window_position_offset.00000000" = "208;345;320;550"
+	"picker_visibility_flags.00000000" = "0"
+	"picker_item_size.00000000" = "1"
+	"picker_inspector.00000000" = "0"
 }
 providers = {
 	adb = {
@@ -79,9 +83,10 @@ logIndexingPerformanceReport = false
 expandedQueries = [
 ]
 queryBuilder = false
-ignoredProperties = "id;name;classname;imagecontentshash"
+ignoredProperties = "addedobjectfileids;classname;correspondingsourceobject;editorclassidentifier;editorhideflags;fileid;gameobject;id;imagecontentshash;isprefabvariant;name;objecthideflags;pathid;prefabasset;prefabinstance;script"
 helperWidgetCurrentArea = "all"
 disabledIndexers = ""
 minIndexVariations = 2
 findProviderIndexHelper = true
 itemIconSize = 32
+version = 1

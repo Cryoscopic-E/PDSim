@@ -21,25 +21,18 @@ namespace PDSim.Helpers.Cameras
 
         [Header("Look")]
         [Tooltip("Mouse sensitivity in degrees per pixel.")]
-        [FormerlySerializedAs("lookSensitivity")]
         [SerializeField] private float LookSensitivity = 0.15f;
 
         [Tooltip("Vertical look clamp (degrees).")]
-        [FormerlySerializedAs("pitchMin")]
         [SerializeField] private float PitchMin = -89f;
 
-        [FormerlySerializedAs("pitchMax")]
         [SerializeField] private float PitchMax = 89f;
 
         [Header("Movement")]
-        [FormerlySerializedAs("moveSpeed")]
         [SerializeField] private float MoveSpeed = 8f;
 
-        [FormerlySerializedAs("sprintMultiplier")]
         [SerializeField] private float SprintMultiplier = 2.5f;
 
-        [FormerlySerializedAs("verticalSpeed")]
-        [SerializeField] private float VerticalSpeed = 6f;
 
         [Header("Feel")]
         [Tooltip("Smoothing applied to movement (0 = instant, 1 = never moves).")]

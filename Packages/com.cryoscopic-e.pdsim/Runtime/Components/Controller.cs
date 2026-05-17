@@ -206,9 +206,6 @@ namespace PDSim.Components
         {
             AutoAdvance = false;    // always start in manual mode
 
-            _problemObjects = ProblemObjects.Instance;
-            _initBlock = InitBlock.Instance;
-            _typeHierarchy = TypeHierarchy.Instance;
             _animationsController = GetComponent<AnimationsController>();
         }
 
@@ -291,10 +288,6 @@ namespace PDSim.Components
 
         private bool _pendingAdvance = false;
         private bool _awaitingAdvance = false;
-
-        private ProblemObjects _problemObjects;
-        private InitBlock _initBlock;
-        private TypeHierarchy _typeHierarchy;
         private AnimationsController _animationsController;
 
         private void QueueInitFluent(int index)

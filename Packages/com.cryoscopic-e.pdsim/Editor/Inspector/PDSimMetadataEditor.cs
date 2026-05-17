@@ -78,8 +78,7 @@ namespace PDSim.Editor.Inspector
         /// <param name="menuCommand">The menu command context.</param>
         [MenuItem("CONTEXT/TextMeshPro/PDSim Tag: Register as UI")]
         [MenuItem("CONTEXT/TextMeshProUGUI/PDSim Tag: Register as UI")]
-        [MenuItem("CONTEXT/UnityEngine.UIElements.UIDocument/PDSim Tag: Register as UI")]
-        [MenuItem("CONTEXT/UnityEngine.UI.Text/PDSim Tag: Register as UI")]
+        [MenuItem("CONTEXT/Text/PDSim Tag: Register as UI")]
         public static void RegisterAsUICtx(MenuCommand menuCommand)
         {
             RegisterAsUI((menuCommand.context as Component).gameObject);
@@ -101,7 +100,7 @@ namespace PDSim.Editor.Inspector
         [MenuItem("CONTEXT/TextMeshPro/PDSim Tag: Register as UI", true)]
         [MenuItem("CONTEXT/TextMeshProUGUI/PDSim Tag: Register as UI", true)]
         [MenuItem("CONTEXT/UnityEngine.UIElements.UIDocument/PDSim Tag: Register as UI", true)]
-        [MenuItem("CONTEXT/UnityEngine.UI.Text/PDSim Tag: Register as UI", true)]
+        [MenuItem("CONTEXT/Text/PDSim Tag: Register as UI", true)]
         public static bool PDSimMenuValidation(MenuCommand menuCommand)
         {
             GameObject go = null;

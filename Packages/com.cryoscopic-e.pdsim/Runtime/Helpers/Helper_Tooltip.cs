@@ -14,19 +14,19 @@ namespace PDSim.Helpers
 
         [Header("References")]
         [Tooltip("The canvas transform containing the tooltip UI.")]
-        [SerializeField, FormerlySerializedAs("canvas")]
+        [SerializeField]
         private Transform Canvas;
 
         [Tooltip("The target point the line should connect to.")]
-        [SerializeField, FormerlySerializedAs("point")]
+        [SerializeField]
         private Transform Point;
 
         [Tooltip("The LineRenderer to draw the connection.")]
-        [SerializeField, FormerlySerializedAs("line")]
+        [SerializeField]
         private LineRenderer Line;
 
         [Tooltip("The TextMeshPro component for the tooltip text.")]
-        [SerializeField, FormerlySerializedAs("tmpText")]
+        [SerializeField]
         private TMP_Text TmpText;
 
         #endregion

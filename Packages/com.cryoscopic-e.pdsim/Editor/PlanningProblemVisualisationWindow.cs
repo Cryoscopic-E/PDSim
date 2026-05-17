@@ -157,7 +157,7 @@ namespace PDSim.Editor
 
         private void TryAutoPopulate()
         {
-            var controller = FindFirstObjectByType<Controller>();
+            var controller = FindAnyObjectByType<Controller>();
             if (controller == null)
             {
                 EditorUtility.DisplayDialog("Auto-populate", "No Controller found in the active scene.", "OK");

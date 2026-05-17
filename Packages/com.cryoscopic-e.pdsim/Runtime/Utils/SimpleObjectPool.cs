@@ -27,7 +27,7 @@ namespace PDSim.Utils
             }
         }
 
-        private readonly Dictionary<string, Queue<GameObject>> _pools = new Dictionary<string, Queue<GameObject>>();
+        private readonly Dictionary<GameObject, Queue<GameObject>> _pools = new Dictionary<GameObject, Queue<GameObject>>();
 
         #region Public API
 
@@ -38,16 +38,14 @@ namespace PDSim.Utils
         /// <returns>A pooled or new instance of the prefab.</returns>
         public GameObject Get(GameObject prefab)
         {
-            string key = prefab.GetInstanceID().ToString();
-
-            if (!_pools.ContainsKey(key))
+            if (!_pools.ContainsKey(prefab))
             {
-                _pools[key] = new Queue<GameObject>();
+                _pools[prefab] = new Queue<GameObject>();
             }
 
-            if (_pools[key].Count > 0)
+            if (_pools[prefab].Count > 0)
             {
-                var obj = _pools[key].Dequeue();
+                var obj = _pools[prefab].Dequeue();
                 if (obj != null)
                 {
                     obj.SetActive(true);
@@ -57,7 +55,7 @@ namespace PDSim.Utils
 
             var newObj = Instantiate(prefab);
             var tracker = newObj.AddComponent<PoolTracker>();
-            tracker.PoolKey = key;
+            tracker.PoolKey = prefab;
             return newObj;
         }
 
@@ -72,7 +70,7 @@ namespace PDSim.Utils
             {
                 obj.SetActive(false);
                 obj.transform.SetParent(transform);
-                
+
                 if (!_pools.ContainsKey(tracker.PoolKey))
                 {
                     _pools[tracker.PoolKey] = new Queue<GameObject>();
@@ -97,6 +95,6 @@ namespace PDSim.Utils
         /// <summary>
         /// The unique key for the pool this object belongs to.
         /// </summary>
-        public string PoolKey;
+        public GameObject PoolKey;
     }
 }
