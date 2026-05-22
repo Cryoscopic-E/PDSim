@@ -10,19 +10,19 @@ namespace PDSim.Components
     /// Manages the mapping between fluent effects and their corresponding animations.
     /// Provides functionality to check and retrieve animation data for grounded fluents.
     /// </summary>
-    public class Animations : MonoBehaviour
+    public class PredicateAnimations : MonoBehaviour
     {
         #region Public API
 
         /// <summary>
-        /// Singleton instance of the Animations manager.
+        /// Singleton instance of the PredicateAnimations manager.
         /// </summary>
-        public static Animations Instance
+        public static PredicateAnimations Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = FindAnyObjectByType<Animations>();
+                    _instance = FindAnyObjectByType<PredicateAnimations>();
                 return _instance;
             }
         }
@@ -152,7 +152,7 @@ namespace PDSim.Components
 
         #region Private Internals
 
-        private static Animations _instance;
+        private static PredicateAnimations _instance;
 
         // Cache for AnimationCheck
         private Dictionary<string, List<FluentAnimation.AnimationData>> _cache;

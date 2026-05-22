@@ -43,6 +43,21 @@ namespace PDSim.Editor
                 }
             }
 
+            // Iterate through all action animations and attempt to bind their visualizer scripts.
+            var actionAnimations = Object.FindObjectsByType<ActionAnimation>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var aa in actionAnimations)
+            {
+                if (aa.AnimationDataList == null) continue;
+
+                foreach (var data in aa.AnimationDataList)
+                {
+                    if (data.SceneObjectReference != null && data.Visualizer == null && !string.IsNullOrEmpty(data.ScriptClassName))
+                    {
+                        if (TryAttachAction(aa, data)) madeChanges = true;
+                    }
+                }
+            }
+
             // Identify and attach custom behavior scripts to simulation objects based on their object type.
             var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
@@ -68,6 +83,29 @@ namespace PDSim.Editor
         #endregion
 
         #region Private Methods
+        private static bool TryAttachAction(ActionAnimation context, ActionAnimation.AnimationData data)
+        {
+            var type = ResolveType(data.ScriptClassName)
+                ?? ResolveType("GeneratedVisualizers." + data.ScriptClassName);
+            if (type != null)
+            {
+                var component = data.SceneObjectReference.GetComponent(type) as MonoBehaviour;
+                if (component == null)
+                {
+                    component = data.SceneObjectReference.AddComponent(type) as MonoBehaviour;
+                }
+
+                if (component != null)
+                {
+                    data.Visualizer = component;
+                    EditorUtility.SetDirty(context);
+                    Debug.Log($"[PDSim] Auto-attached action visualizer '{data.ScriptClassName}' to '{data.SceneObjectReference.name}'.");
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private static bool TryAttachFluent(FluentAnimation context, FluentAnimation.AnimationData data)
         {
             // scriptClassName is now stored as the fully-qualified type name for new animations.

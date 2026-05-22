@@ -64,50 +64,39 @@ namespace PDSim.Components
 
         /// <summary>
         /// Updates the animation queue with new state variables resulting from an action.
+        /// If the action has a matching action animation, that runs instead of predicate animations.
+        /// During init phase (action == null) predicate animations always run.
         /// </summary>
-        /// <param name="action">The grounded action that caused the state change.</param>
+        /// <param name="action">The grounded action that caused the state change, or null during init.</param>
         /// <param name="newStateVar">The new fluent state variable and its value.</param>
         public void UpdateQueue(GroundedAction action, (FluentExpression Fluent, object Value) newStateVar)
         {
-            var match = _animations.AnimationCheck(newStateVar);
-
-            if (match == null || match.Count == 0)
+            // Init phase: always use predicate animations
+            if (action == null)
             {
+                EnqueueFluentAnimation(null, newStateVar);
                 return;
             }
 
-            string context = action != null ? action.Id : "init";
-
-            foreach (var animationData in match)
+            // Plan phase: check whether this action has a dedicated animation
+            if (_actionAnimations != null)
             {
-                if (!_animationsActive.ContainsKey(context))
+                var actionMatch = _actionAnimations.AnimationCheck(action);
+                if (actionMatch != null && actionMatch.Count > 0)
                 {
-                    _animationsActive.Add(context, new AnimationRoutine());
+                    // Queue the action animation once — deduplicate across multiple effect callbacks
+                    if (!_queuedActionIds.Contains(action.Id))
+                    {
+                        _queuedActionIds.Add(action.Id);
+                        EnqueueActionAnimation(action, actionMatch);
+                    }
+                    // Suppress predicate animations for every effect of this action
+                    return;
                 }
-
-                float duration = 0f;
-                if (action != null && action.StartTime.HasValue && action.EndTime.HasValue)
-                {
-                    duration = (float)(action.EndTime.Value - action.StartTime.Value);
-                }
-
-                var parameters = newStateVar.Fluent.Arguments
-                    .Select(a => a is ConstantExpression c ? c.Value.ToString() : a.ToString())
-                    .Select(p => _objects.GetObjectInScene(p)?.gameObject)
-                    .Where(g => g != null)
-                    .ToArray();
-
-                _animationsActive[context].Queue.Enqueue(new AnimationQueueElement()
-                {
-                    AnimationName = animationData.Name,
-                    FluentString = newStateVar.Fluent.ToString(),
-                    Value = newStateVar.Value,
-                    ParametersObjects = parameters,
-                    GraphToClone = animationData.SceneObjectReference,
-                    ScriptClassName = animationData.ScriptClassName,
-                    Duration = duration
-                });
             }
+
+            // Fallthrough: no action animation defined — use predicate animations
+            EnqueueFluentAnimation(action, newStateVar);
         }
 
         #endregion
@@ -116,7 +105,8 @@ namespace PDSim.Components
 
         private void Awake()
         {
-            _animations = Animations.Instance;
+            _animations = PredicateAnimations.Instance;
+            _actionAnimations = ActionAnimations.Instance;
             _objects = ProblemObjects.Instance;
             _animationsActive = new Dictionary<string, AnimationRoutine>();
         }
@@ -125,6 +115,7 @@ namespace PDSim.Components
         {
             Controller.Instance.OnVisualiseInitBlock += () =>
             {
+                _queuedActionIds.Clear();
                 _stop = false;
                 RestartLoop();
             };
@@ -149,9 +140,11 @@ namespace PDSim.Components
         private static AnimationsController _instance;
 
         private ProblemObjects _objects;
-        private Animations _animations;
+        private PredicateAnimations _animations;
+        private ActionAnimations _actionAnimations;
         private Dictionary<string, AnimationRoutine> _animationsActive;
         private Dictionary<string, GameObject> _activeGraphs = new Dictionary<string, GameObject>();
+        private readonly HashSet<string> _queuedActionIds = new HashSet<string>();
         private bool _stop = false;
         private Coroutine _loopCoroutine;
 
@@ -246,41 +239,131 @@ namespace PDSim.Components
             }
         }
 
+        private void EnqueueFluentAnimation(GroundedAction action, (FluentExpression Fluent, object Value) newStateVar)
+        {
+            var match = _animations.AnimationCheck(newStateVar);
+            if (match == null || match.Count == 0)
+                return;
+
+            string context = action != null ? action.Id : "init";
+
+            foreach (var animationData in match)
+            {
+                if (!_animationsActive.ContainsKey(context))
+                    _animationsActive.Add(context, new AnimationRoutine());
+
+                float duration = 0f;
+                if (action != null && action.StartTime.HasValue && action.EndTime.HasValue)
+                    duration = (float)(action.EndTime.Value - action.StartTime.Value);
+
+                var parameters = newStateVar.Fluent.Arguments
+                    .Select(a => a is ConstantExpression c ? c.Value.ToString() : a.ToString())
+                    .Select(p => _objects.GetObjectInScene(p)?.gameObject)
+                    .Where(g => g != null)
+                    .ToArray();
+
+                _animationsActive[context].Queue.Enqueue(new AnimationQueueElement()
+                {
+                    AnimationName = animationData.Name,
+                    FluentString = newStateVar.Fluent.ToString(),
+                    Value = newStateVar.Value,
+                    ParametersObjects = parameters,
+                    GraphToClone = animationData.SceneObjectReference,
+                    ScriptClassName = animationData.ScriptClassName,
+                    Duration = duration,
+                    IsActionAnimation = false
+                });
+            }
+        }
+
+        private void EnqueueActionAnimation(GroundedAction action, List<ActionAnimation.AnimationData> match)
+        {
+            string context = action.Id;
+            if (!_animationsActive.ContainsKey(context))
+                _animationsActive.Add(context, new AnimationRoutine());
+
+            float duration = 0f;
+            if (action.StartTime.HasValue && action.EndTime.HasValue)
+                duration = (float)(action.EndTime.Value - action.StartTime.Value);
+
+            var parameters = action.Objects
+                .Select(o => _objects.GetObjectInScene(o.Name)?.gameObject)
+                .Where(g => g != null)
+                .ToArray();
+
+            foreach (var animData in match)
+            {
+                _animationsActive[context].Queue.Enqueue(new AnimationQueueElement()
+                {
+                    AnimationName = animData.Name,
+                    FluentString = action.ToString(),
+                    Value = null,
+                    ParametersObjects = parameters,
+                    GraphToClone = animData.SceneObjectReference,
+                    ScriptClassName = animData.ScriptClassName,
+                    Duration = duration,
+                    IsActionAnimation = true
+                });
+            }
+        }
+
+        private T TryLoadComponent<T>(GameObject target, string scriptClassName) where T : class
+        {
+            System.Type type = null;
+            foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = assembly.GetType(scriptClassName)
+                    ?? assembly.GetType("GeneratedVisualizers." + scriptClassName);
+                if (type != null) break;
+            }
+            if (type != null)
+                return target.AddComponent(type) as T;
+            return null;
+        }
+
         private void TriggerAnimation(AnimationQueueElement animationElement, string context, GameObject[] objects)
         {
             var animationInstance = SimpleObjectPool.Instance.Get(animationElement.GraphToClone);
-
             animationInstance.name = $"{context} === {animationElement.AnimationName}";
             _activeGraphs.Add(context, animationInstance);
 
-            var scriptVisualizer = animationInstance.GetComponent<IFluentVisualizer>();
-
-            if (scriptVisualizer == null && !string.IsNullOrEmpty(animationElement.ScriptClassName))
+            if (animationElement.IsActionAnimation)
             {
-                System.Type type = null;
-                foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+                var actionVisualizer = animationInstance.GetComponent<IActionVisualizer>();
+                if (actionVisualizer == null && !string.IsNullOrEmpty(animationElement.ScriptClassName))
+                    actionVisualizer = TryLoadComponent<IActionVisualizer>(animationInstance, animationElement.ScriptClassName);
+
+                if (actionVisualizer != null)
                 {
-                    type = assembly.GetType(animationElement.ScriptClassName)
-                        ?? assembly.GetType("GeneratedVisualizers." + animationElement.ScriptClassName);
-                    if (type != null) break;
-                }
-                if (type != null)
-                {
-                    scriptVisualizer = animationInstance.AddComponent(type) as IFluentVisualizer;
+                    actionVisualizer.Animate(
+                        new List<string>(animationElement.ParametersObjects
+                            .Select(o => o != null ? o.name : string.Empty)),
+                        objects,
+                        animationElement.Duration,
+                        () => AnimationEndHandler(context)
+                    );
+                    _animationsActive[context].State = AnimationState.Running;
+                    return;
                 }
             }
-
-            if (scriptVisualizer != null)
+            else
             {
-                scriptVisualizer.Animate(
-                    new List<string>(),
-                    animationElement.Value,
-                    objects,
-                    animationElement.Duration,
-                    () => AnimationEndHandler(context)
-                );
-                _animationsActive[context].State = AnimationState.Running;
-                return;
+                var fluentVisualizer = animationInstance.GetComponent<IFluentVisualizer>();
+                if (fluentVisualizer == null && !string.IsNullOrEmpty(animationElement.ScriptClassName))
+                    fluentVisualizer = TryLoadComponent<IFluentVisualizer>(animationInstance, animationElement.ScriptClassName);
+
+                if (fluentVisualizer != null)
+                {
+                    fluentVisualizer.Animate(
+                        new List<string>(),
+                        animationElement.Value,
+                        objects,
+                        animationElement.Duration,
+                        () => AnimationEndHandler(context)
+                    );
+                    _animationsActive[context].State = AnimationState.Running;
+                    return;
+                }
             }
 
             AnimationEndHandler(context);
@@ -308,6 +391,7 @@ namespace PDSim.Components
             public GameObject GraphToClone { get; set; }
             public string ScriptClassName { get; set; }
             public float Duration { get; set; }
+            public bool IsActionAnimation { get; set; }
         }
 
         #endregion

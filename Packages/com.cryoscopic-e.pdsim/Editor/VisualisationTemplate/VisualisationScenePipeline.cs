@@ -54,8 +54,17 @@ namespace PDSim.SceneTemplates
 
             // Fluents
             var fluents = ProtobufReader.ReadFluents(problemParser);
-            
-            Animations.Instance.InitialiseComponent(fluents);
+            PredicateAnimations.Instance.InitialiseComponent(fluents);
+
+            // Actions — create a dedicated holder if not already in the scene template
+            var actions = ProtobufReader.ReadActions(problemParser);
+            var actionAnimations = ActionAnimations.Instance;
+            if (actionAnimations == null)
+            {
+                var actionAnimationsGo = new UnityEngine.GameObject("Action Animations");
+                actionAnimations = actionAnimationsGo.AddComponent<ActionAnimations>();
+            }
+            actionAnimations.InitialiseComponent(actions);
 
             // Objects
             var problemObjects = ProtobufReader.ReadObjects(problemParser);

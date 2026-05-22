@@ -8,49 +8,42 @@ using System.Linq;
 namespace PDSim.Editor.Inspector
 {
     /// <summary>
-    /// Custom inspector for the FluentAnimation component.
+    /// Custom inspector for the ActionAnimation component.
     /// </summary>
-    [CustomEditor(typeof(FluentAnimation))]
-    public class FluentAnimationEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ActionAnimation))]
+    public class ActionAnimationEditor : UnityEditor.Editor
     {
         #region Fields
-        private FluentAnimation _fluentAnimation;
+        private ActionAnimation _actionAnimation;
         private ReorderableList _list;
         #endregion
 
         #region Unity Lifecycle
         private void OnEnable()
         {
-            _fluentAnimation = (FluentAnimation)target;
+            _actionAnimation = (ActionAnimation)target;
 
             _list = new ReorderableList(serializedObject, serializedObject.FindProperty("AnimationDataList"), true, false, true, true);
 
-
             _list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
             {
-                // Get the element and its data we want to draw from the list.
                 var element = _list.serializedProperty.GetArrayElementAtIndex(index);
                 var nameProperty = element.FindPropertyRelative("Name");
                 var visualizerProperty = element.FindPropertyRelative("Visualizer");
                 var sceneObjectProperty = element.FindPropertyRelative("SceneObjectReference");
-                var classNameProperty = element.FindPropertyRelative("ScriptClassName");
 
                 float lineHeight = EditorGUIUtility.singleLineHeight;
                 float spacing = 2;
 
-                // Name (First Line)
                 var nameRect = new Rect(rect.x, rect.y + spacing, rect.width, lineHeight);
                 EditorGUI.LabelField(nameRect, nameProperty.stringValue, EditorStyles.boldLabel);
 
-                // Scene Object (Second Line)
                 var sceneObjRect = new Rect(rect.x, rect.y + lineHeight + spacing * 2, rect.width * 0.5f - 5, lineHeight);
                 EditorGUI.PropertyField(sceneObjRect, sceneObjectProperty, GUIContent.none);
 
-                // Script/Visualizer (Second Line, Right)
                 var scriptRect = new Rect(rect.x + rect.width * 0.5f + 5, rect.y + lineHeight + spacing * 2, rect.width * 0.35f - 10, lineHeight);
                 var regenRect = new Rect(rect.x + rect.width * 0.85f, rect.y + lineHeight + spacing * 2, rect.width * 0.15f, lineHeight);
-                
-                // Read-only property field for visualizer script (auto-attached)
+
                 EditorGUI.PropertyField(scriptRect, visualizerProperty, GUIContent.none);
 
                 if (GUI.Button(regenRect, "Regen"))
@@ -64,26 +57,21 @@ namespace PDSim.Editor.Inspector
                 return EditorGUIUtility.singleLineHeight * 2 + 10;
             };
 
-            // When user clicks on add button, open the CreateAnimationWindow.
             _list.onAddCallback = (ReorderableList List) =>
             {
                 EditorApplication.delayCall += CreateAnimation;
             };
 
-            // When user clicks on remove button, remove the animation from the list.
             _list.onRemoveCallback = (ReorderableList List) =>
             {
                 if (EditorUtility.DisplayDialog("Warning!", "Are you sure you want to delete the animation?", "Yes", "No"))
                 {
-                    // Destroy the animation object.
-                    var data = _fluentAnimation.AnimationDataList[List.index];
+                    var data = _actionAnimation.AnimationDataList[List.index];
                     if (data.SceneObjectReference != null)
                     {
                         DestroyImmediate(data.SceneObjectReference);
                     }
-                    // Remove the animation from the list.
                     ReorderableList.defaultBehaviours.DoRemoveButton(List);
-                    // Apply the changes to the serialized object.
                     serializedObject.ApplyModifiedProperties();
                 }
             };
@@ -97,11 +85,11 @@ namespace PDSim.Editor.Inspector
 
         #region Public Methods
         /// <summary>
-        /// Opens the CreateAnimationWindow to add a new animation.
+        /// Opens the CreateActionAnimationWindow to add a new animation.
         /// </summary>
         public void CreateAnimation()
         {
-            CreateAnimationWindow.ShowAsModal(_fluentAnimation.MetaData, _fluentAnimation);
+            CreateActionAnimationWindow.ShowAsModal(_actionAnimation.MetaData, _actionAnimation);
         }
 
         /// <summary>
@@ -109,14 +97,14 @@ namespace PDSim.Editor.Inspector
         /// </summary>
         public override void OnInspectorGUI()
         {
-            if (_fluentAnimation.MetaData == null)
+            if (_actionAnimation.MetaData == null)
             {
                 EditorGUILayout.HelpBox("Missing MetaData", MessageType.Error);
                 return;
             }
 
-            EditorGUILayout.LabelField(_fluentAnimation.MetaData.ToString(), EditorStyles.whiteLargeLabel, GUILayout.Height(20));
-            
+            EditorGUILayout.LabelField(_actionAnimation.MetaData.ToString(), EditorStyles.whiteLargeLabel, GUILayout.Height(20));
+
             EditorGUILayout.Space();
             serializedObject.Update();
             _list.DoLayoutList();
@@ -127,11 +115,10 @@ namespace PDSim.Editor.Inspector
         #region Private Methods
         private void RegenerateScript(int index)
         {
-            var data = _fluentAnimation.AnimationDataList[index];
-            var predicateName = _fluentAnimation.MetaData.Name;
+            var data = _actionAnimation.AnimationDataList[index];
+            var actionName = _actionAnimation.MetaData.Name;
             var attributeTypes = data.Parameters;
 
-            // scriptClassName may be fully-qualified (new) or a bare class name (legacy).
             var fullTypeName = data.ScriptClassName;
             var className = fullTypeName.Contains(".")
                 ? fullTypeName.Substring(fullTypeName.LastIndexOf('.') + 1)
@@ -141,19 +128,18 @@ namespace PDSim.Editor.Inspector
             var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
             var namespaceName = $"PDSim.Generated.Animations.{sanitizedSceneName}";
 
-            string folderPath = PDSim.Utils.AssetUtils.GetSimulationAnimationsPath(sceneName) + "/Predicates";
-            if (!System.IO.Directory.Exists(folderPath))
-                System.IO.Directory.CreateDirectory(folderPath);
+            string folderPath = PDSim.Utils.AssetUtils.GetSimulationAnimationsPath(sceneName) + "/Actions";
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
 
-            // Convert Metadata to PredicateDefinition for generator
-            var argTypes = attributeTypes.Select(t => new PlanType(t)).ToArray();
-            var predicate = new PredicateDefinition(predicateName, argTypes);
+            var paramDefs = _actionAnimation.MetaData.ParametersNames
+                .Zip(_actionAnimation.MetaData.ParametersTypes, (name, type) => (name, type))
+                .ToList();
 
-            string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(predicate, className, namespaceName);
+            string code = PDSimAPI.Generators.ActionScriptGenerator.GenerateActionAnimationUnityScript(
+                actionName, paramDefs, attributeTypes, className, namespaceName);
             System.IO.File.WriteAllText(filePath, code);
             AssetDatabase.Refresh();
-            Debug.Log($"[PDSim] Regenerated C# Script: {filePath}");
+            Debug.Log($"[PDSim] Regenerated action animation script: {filePath}");
         }
         #endregion
     }

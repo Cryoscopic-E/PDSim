@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using PDSim.Components;
-using GeTPlan.Core.Models;
 using PDSim.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -10,31 +9,31 @@ using UnityEngine.UIElements;
 namespace PDSim.Editor
 {
     /// <summary>
-    /// Custom editor window for creating new animations.
+    /// Custom editor window for creating new action animations.
     /// </summary>
-    public class CreateAnimationWindow : EditorWindow
+    public class CreateActionAnimationWindow : EditorWindow
     {
         #region Fields
         /// <summary>
-        /// Template for the predicate animation attribute UI.
+        /// Template for the predicate animation attribute UI (reused for action parameters).
         /// </summary>
         public VisualTreeAsset PredicateAnimationAttributeTemplate;
 
-        private FluentAnimation.FluentMetadata _metadata;
+        private ActionAnimation.ActionMetadata _metadata;
         private ScrollView _predicateAnimationAttributeList;
-        private FluentAnimation _context;
+        private ActionAnimation _context;
         #endregion
 
         #region Public Methods
         /// <summary>
-        /// Shows the CreateAnimationWindow as a modal window.
+        /// Shows the CreateActionAnimationWindow as a modal window.
         /// </summary>
-        /// <param name="metadata">The fluent metadata.</param>
-        /// <param name="context">The fluent animation context.</param>
-        public static void ShowAsModal(FluentAnimation.FluentMetadata metadata, FluentAnimation context)
+        /// <param name="metadata">The action metadata.</param>
+        /// <param name="context">The action animation context.</param>
+        public static void ShowAsModal(ActionAnimation.ActionMetadata metadata, ActionAnimation context)
         {
-            var wnd = GetWindow<CreateAnimationWindow>();
-            wnd.titleContent = new GUIContent("Create New Animation");
+            var wnd = GetWindow<CreateActionAnimationWindow>();
+            wnd.titleContent = new GUIContent("Create New Action Animation");
             wnd._metadata = metadata;
             wnd._context = context;
             wnd.UpdateContent();
@@ -46,19 +45,16 @@ namespace PDSim.Editor
         /// </summary>
         public void CreateGUI()
         {
-            // Set Window not resizable
             this.minSize = new Vector2(365, 325);
             this.maxSize = this.minSize;
 
-            // Each editor window contains a root VisualElement object
             var root = rootVisualElement;
 
-            // Import UXML
+            // Reuse the same UXML as the fluent animation window — same structure
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.AnimationDialogUI);
             var fromUxml = visualTree.Instantiate();
             root.Add(fromUxml);
 
-            // Load the attribute template
             PredicateAnimationAttributeTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommonPaths.PredicateAnimationAttributeUI);
         }
 
@@ -77,13 +73,9 @@ namespace PDSim.Editor
             var animationName = root.Q<Label>("Predicate");
             animationName.text = _metadata.ToString();
 
-            // Types list
-
             _predicateAnimationAttributeList = root.Q<ScrollView>("TypesList");
 
-
             var items = _metadata.ParametersTypes;
-
             for (var i = 0; i < items.Count; i++)
             {
                 var item = items[i];
@@ -95,7 +87,6 @@ namespace PDSim.Editor
                 _predicateAnimationAttributeList.Add(fromUxml);
             }
 
-            // Buttons
             var createButton = root.Q<Button>("CreateButton");
             var cancelButton = root.Q<Button>("CancelButton");
 
@@ -109,78 +100,67 @@ namespace PDSim.Editor
             {
                 Close();
             };
-
         }
         #endregion
 
         #region Private Methods
         /// <summary>
-        /// Creates a new animation object and sets its components.
+        /// Creates a new action animation variant scene object and generates the visualizer script.
         /// </summary>
         private void CreateAnimation()
         {
-            var predicateName = _metadata.Name;
+            var actionName = _metadata.Name;
             var attributeTypes = new List<string>();
-            var attributes = new List<string>();
 
             foreach (var item in _predicateAnimationAttributeList.Children())
             {
                 var controller = item.Q<DropdownField>("Attribute");
                 attributeTypes.Add(controller.value);
-                attributes.Add(controller.label + " " + controller.value);
             }
 
-            var animationName = AnimationNames.UniqueAnimationName(predicateName, attributeTypes);
+            var animationName = AnimationNames.UniqueAnimationName(actionName, attributeTypes);
 
-            // Create a new scene GameObject to represent this animation variant.
             var instance = new GameObject(animationName);
-            Undo.RegisterCreatedObjectUndo(instance, "Create Animation Variant");
-
-            // Set the position of the instance
+            Undo.RegisterCreatedObjectUndo(instance, "Create Action Animation Variant");
             instance.transform.position = Vector3.zero;
-            instance.transform.parent = PredicateAnimations.Instance.transform;
+            instance.transform.parent = ActionAnimations.Instance.transform;
 
-            // Generate the C# visualizer script if it doesn't already exist.
-            // Everything should be handled in the DLL library
             var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             var sanitizedSceneName = System.Text.RegularExpressions.Regex.Replace(sceneName, @"[^a-zA-Z0-9_]", "");
             var namespaceName = $"PDSim.Generated.Animations.{sanitizedSceneName}";
 
-            string folderPath = AssetUtils.GetSimulationAnimationsPath(sceneName) + "/Predicates";
+            string folderPath = AssetUtils.GetSimulationAnimationsPath(sceneName) + "/Actions";
             if (!System.IO.Directory.Exists(folderPath))
             {
                 System.IO.Directory.CreateDirectory(folderPath);
             }
 
-            // Build PredicateDefinition with real parameter names from metadata
-            var parameters = attributeTypes.Zip(_metadata.ParametersNames,
-                (type, name) => new PredicateParameter(name, new PlanType(type)));
-            var predicate = new PredicateDefinition(predicateName, _metadata.FluentValueType ?? "bool", parameters);
+            // Build parameter definitions from metadata
+            var paramDefs = _metadata.ParametersNames
+                .Zip(attributeTypes, (name, type) => (name, type))
+                .ToList();
 
-            string className = PDSimAPI.Generators.FluentScriptGenerator.GetVisualizerClassName(predicate);
+            string className = PDSimAPI.Generators.ActionScriptGenerator.GetActionAnimationVisualizerClassName(actionName, attributeTypes);
             string fullTypeName = $"{namespaceName}.{className}";
             string filePath = System.IO.Path.Combine(folderPath, className + ".cs");
 
-            // Only generate if it doesn't exist yet
             if (!System.IO.File.Exists(filePath))
             {
-                string code = PDSimAPI.Generators.FluentScriptGenerator.GenerateUnityScript(predicate, className, namespaceName);
+                string code = PDSimAPI.Generators.ActionScriptGenerator.GenerateActionAnimationUnityScript(
+                    actionName, paramDefs, attributeTypes, className, namespaceName);
                 System.IO.File.WriteAllText(filePath, code);
                 AssetDatabase.Refresh();
-                Debug.Log($"[PDSim] Generated C# Script: {filePath}");
+                Debug.Log($"[PDSim] Generated action animation script: {filePath}");
             }
 
-            // Add the animation to the context (FluentAnimation component)
-            // scriptClassName stores the fully-qualified type name for direct assembly lookup.
             if (!_context.AddAnimationData(animationName, attributeTypes, instance, fullTypeName))
             {
-                EditorUtility.DisplayDialog("Error", $"Animation '{animationName}' already exists for fluent '{predicateName}'.", "Ok");
+                EditorUtility.DisplayDialog("Error", $"Animation '{animationName}' already exists for action '{actionName}'.", "Ok");
                 DestroyImmediate(instance);
                 return;
             }
 
-            // Note: IFluentVisualizer won't be found until Unity finishes compiling the new script.
-            Debug.Log($"[PDSim] Created animation variant '{animationName}' for fluent '{predicateName}'.");
+            Debug.Log($"[PDSim] Created action animation variant '{animationName}' for action '{actionName}'.");
             Debug.LogWarning($"[PDSim] Please attach the script '{className}' to the GameObject '{animationName}' in the scene once compilation finishes.");
 
             EditorUtility.SetDirty(_context);

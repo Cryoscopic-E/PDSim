@@ -1,4 +1,5 @@
 ﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="PDSimRuntime.csproj" />
   <Project Path="PDSimEditor.csproj" />
 </Solution>

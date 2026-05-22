@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6fbdb05616768448dd58b9e987c557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabs: []
+  Prefabs: []
 --- !u!1 &958859640
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,13 +647,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfadb5835ac9b1d459005bbe0384b1e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookSensitivity: 0.15
-  pitchMin: -89
-  pitchMax: 89
-  moveSpeed: 3.5
-  sprintMultiplier: 2.5
-  verticalSpeed: 6
-  movementSmoothing: 0.1
+  LookSensitivity: 0.15
+  PitchMin: -89
+  PitchMax: 89
+  MoveSpeed: 8
+  SprintMultiplier: 2.5
+  MovementSmoothing: 0.1
 --- !u!1 &1160234425
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +767,50 @@ Transform:
   - {fileID: 439415611}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1754401336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1754401338}
+  - component: {fileID: 1754401337}
+  m_Layer: 0
+  m_Name: Action Animations
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1754401337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754401336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c8e68c64790fb333b1ba42a44430ceb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PDSimRuntime::PDSim.Components.ActionAnimations
+--- !u!4 &1754401338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754401336}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1802710177
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,9 +854,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1851035209}
-  - component: {fileID: 1851035210}
+  - component: {fileID: 1851035211}
   m_Layer: 0
-  m_Name: Animations Definitions
+  m_Name: Predicates Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -834,7 +877,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1851035210
+--- !u!114 &1851035211
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -843,9 +886,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1851035208}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c7b96de5f4123149b632bc1684adad3, type: 3}
+  m_Script: {fileID: 11500000, guid: db1040ff31772e34889bde9a81d988cd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: PDSimRuntime::PDSim.Components.PredicateAnimations
 --- !u!1 &2017000297
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,9 +936,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50da83f2eb464e25834412907a54a127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  problem: {fileID: 0}
-  planGeneration: {fileID: 0}
-  animationSpeed: 1
+  Problem: {fileID: 0}
+  PlanGeneration: {fileID: 0}
+  AnimationSpeed: 1
 --- !u!114 &2017000300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -908,8 +951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce054c3e932829a48b3a641b1ef754c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelTypes:
-    serializableTypeNodes:
+  ModelTypes:
+    _serializableTypeNodes:
     - name: object
       childrenCount: 0
       indexFirstChild: 1
@@ -947,4 +990,5 @@ SceneRoots:
   - {fileID: 1211119948}
   - {fileID: 2017000298}
   - {fileID: 1851035209}
+  - {fileID: 1754401338}
   - {fileID: 519354776}
