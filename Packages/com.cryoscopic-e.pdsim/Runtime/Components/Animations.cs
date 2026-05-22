@@ -138,7 +138,7 @@ namespace PDSim.Components
             _cache = new Dictionary<string, List<FluentAnimation.AnimationData>>();
 
             // Find all FluentAnimation components in the scene
-            var fluentAnimations = FindObjectsByType<FluentAnimation>(FindObjectsInactive.Exclude);
+            var fluentAnimations = FindObjectsByType<FluentAnimation>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             foreach (var fluentAnimation in fluentAnimations)
             {
                 if (fluentAnimation.MetaData != null)

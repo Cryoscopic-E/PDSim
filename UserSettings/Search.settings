@@ -89,4 +89,3 @@ disabledIndexers = ""
 minIndexVariations = 2
 findProviderIndexHelper = true
 itemIconSize = 32
-version = 1

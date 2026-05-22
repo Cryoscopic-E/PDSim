@@ -25,8 +25,8 @@ namespace PDSim.Editor
         /// </summary>
         public static void ScanAndAttach()
         {
-            var fluentAnimations = Object.FindObjectsByType<FluentAnimation>(FindObjectsInactive.Exclude);
-            var simObjects = Object.FindObjectsByType<VisualisationObject>(FindObjectsInactive.Exclude);
+            var fluentAnimations = Object.FindObjectsByType<FluentAnimation>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var simObjects = Object.FindObjectsByType<VisualisationObject>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             bool madeChanges = false;
 
             // Iterate through all identified fluent animations and attempt to bind their visualizer scripts.
