@@ -101,9 +101,10 @@ namespace PDSim.SceneUI
                 _speedBar.style.display = _speedBar.style.display == DisplayStyle.None
                     ? DisplayStyle.Flex : DisplayStyle.None;
 
-            _simulationSpeedSlider.SetValueWithoutNotify(1f);
+            _simulationSpeedSlider.SetValueWithoutNotify(_controller.AnimationSpeed);
             _simulationSpeedSlider.RegisterValueChangedCallback(evt =>
                 _controller.AnimationSpeed = evt.newValue);
+            _controller.OnAnimationSpeedChanged += OnAnimationSpeedChanged;
 
             // Listen for simulation and animation lifecycle events from the controllers.
             _controller.OnVisualisationReady += VisualisationReady;
@@ -142,6 +143,7 @@ namespace PDSim.SceneUI
             _controller.OnStepAnimationsComplete -= StepAnimationsComplete;
             _controller.OnVisualisationFinished -= VisualisationFinished;
             _controller.OnTimeLineAdvanced -= TimelineAdvance;
+            _controller.OnAnimationSpeedChanged -= OnAnimationSpeedChanged;
 
             _animationsController.OnVisualisationStep -= VisualisationStep;
 
@@ -196,7 +198,7 @@ namespace PDSim.SceneUI
             _speedBar.style.display = DisplayStyle.Flex;
             header.Add(_speedBar);
 
-            _simulationSpeedSlider = new Slider(0, 2) { name = "SpeedSlider", value = 1, focusable = false, showInputField = false };
+            _simulationSpeedSlider = new Slider(0.1f, 5f) { name = "SpeedSlider", value = 1, focusable = false, showInputField = false };
             _simulationSpeedSlider.AddToClassList("speed-slider");
             _speedBar.Add(_simulationSpeedSlider);
 
@@ -204,9 +206,9 @@ namespace PDSim.SceneUI
             speedLabelsRow.AddToClassList("speed-labels-row");
             _speedBar.Add(speedLabelsRow);
 
-            speedLabelsRow.Add(new Label("0x") { name = "0x" }.WithClass("speed-label"));
-            speedLabelsRow.Add(new Label("1x") { name = "1x" }.WithClass("speed-label"));
-            speedLabelsRow.Add(new Label("2x") { name = "2x" }.WithClass("speed-label"));
+            speedLabelsRow.Add(new Label("0.1x") { name = "0.1x" }.WithClass("speed-label"));
+            speedLabelsRow.Add(new Label("2.5x") { name = "2.5x" }.WithClass("speed-label"));
+            speedLabelsRow.Add(new Label("5x") { name = "5x" }.WithClass("speed-label"));
 
             // Build the main playback control toolbar.
             var controls = new VisualElement { name = "Controls" };
@@ -412,6 +414,11 @@ namespace PDSim.SceneUI
             SetFinishedState();
             _actionStatus.text = "Simulation Finished";
             _predicateAnimated.text = "";
+        }
+
+        private void OnAnimationSpeedChanged(float speed)
+        {
+            _simulationSpeedSlider.SetValueWithoutNotify(speed);
         }
 
         private void TimelineAdvance(double time, double progress)

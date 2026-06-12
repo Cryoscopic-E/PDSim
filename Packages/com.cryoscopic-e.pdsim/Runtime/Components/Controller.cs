@@ -49,12 +49,29 @@ namespace PDSim.Components
         public Visualisation Visualisation;
 
         /// <summary>
+        /// Fired whenever AnimationSpeed changes, with the new value.
+        /// </summary>
+        public event System.Action<float> OnAnimationSpeedChanged;
+
+        /// <summary>
         /// The speed multiplier for animations.
         /// </summary>
         [Header("Settings")]
         [Range(0.1f, 5f)]
         [Tooltip("Multiplier for the animation speed.")]
-        public float AnimationSpeed = 1.0f;
+        [SerializeField]
+        private float _animationSpeed = 1.0f;
+
+        public float AnimationSpeed
+        {
+            get => _animationSpeed;
+            set
+            {
+                if (Mathf.Approximately(_animationSpeed, value)) return;
+                _animationSpeed = value;
+                OnAnimationSpeedChanged?.Invoke(_animationSpeed);
+            }
+        }
 
         /// <summary>
         /// Whether the visualization should automatically advance to the next step.
