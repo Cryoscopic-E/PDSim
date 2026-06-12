@@ -340,7 +340,7 @@ namespace PDSim.SceneUI
         private void PlayButtonClicked()
         {
             _controller.StartVisualisation();
-            SetAnimatingState();
+            SetWaitingStepState();
         }
 
         private void PauseButtonClicked()

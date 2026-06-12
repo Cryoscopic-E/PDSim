@@ -150,11 +150,8 @@ namespace PDSim.Components
             OnVisualisationReady?.Invoke(actions);
             OnVisualiseInitBlock?.Invoke();  // starts AnimationsLoop in AnimationsController
 
-            // Queue the first init fluent so the loop has something to process.
-            if (_initPhase)
-                QueueInitFluent(0);
-            // If there are no init fluents the loop will fire OnTimePointAnimationEnd
-            // naturally and transition straight to the plan.
+            // The AnimationsLoop will find an empty queue and fire OnTimePointAnimationEnd,
+            // transitioning to the waiting state. The user then steps forward manually.
         }
 
         /// <summary>
