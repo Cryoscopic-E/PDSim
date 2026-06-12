@@ -75,15 +75,30 @@ namespace PDSim.Editor.Inspector
             {
                 if (EditorUtility.DisplayDialog("Warning!", "Are you sure you want to delete the animation?", "Yes", "No"))
                 {
-                    // Destroy the animation object.
                     var data = _fluentAnimation.AnimationDataList[List.index];
-                    if (data.SceneObjectReference != null)
+
+                    // Delete the generated script file.
+                    if (!string.IsNullOrEmpty(data.ScriptClassName))
                     {
-                        DestroyImmediate(data.SceneObjectReference);
+                        var fullTypeName = data.ScriptClassName;
+                        var className = fullTypeName.Contains(".")
+                            ? fullTypeName.Substring(fullTypeName.LastIndexOf('.') + 1)
+                            : fullTypeName;
+                        var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                        string filePath = PDSim.Utils.AssetUtils.GetSimulationAnimationsPath(sceneName) + "/Predicates/" + className + ".cs";
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            AssetDatabase.DeleteAsset(filePath);
+                            Debug.Log($"[PDSim] Deleted script: {filePath}");
+                        }
                     }
+
+                    // Destroy the animation scene object.
+                    if (data.SceneObjectReference != null)
+                        DestroyImmediate(data.SceneObjectReference);
+
                     // Remove the animation from the list.
                     ReorderableList.defaultBehaviours.DoRemoveButton(List);
-                    // Apply the changes to the serialized object.
                     serializedObject.ApplyModifiedProperties();
                 }
             };
