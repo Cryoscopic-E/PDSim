@@ -315,6 +315,8 @@ namespace PDSim.Utils.Animation
         private Vector3 _end;
         private GameObject _endTarget;
         private string _endTargetTag;
+        // Offset added to every resolved end position when moving the root to place an anchor.
+        private Vector3 _anchorToRootOffset = Vector3.zero;
 
         public MoveAction(GameObject target, string tag = null) : base(target, tag) { }
 
@@ -326,20 +328,32 @@ namespace PDSim.Utils.Animation
             _endTargetTag = anchorTag;
         }
 
-        // Resolves the world-space destination, including optional anchor tag on the destination.
+        // Resolves the world-space destination and applies the anchor-to-root offset so that
+        // the root object is positioned such that the anchor reaches the requested point.
         private Vector3 ResolveEndPosition()
         {
-            if (_endTarget == null) return _end;
-
-            if (!string.IsNullOrEmpty(_endTargetTag))
+            Vector3 basePos;
+            if (_endTarget == null)
+            {
+                basePos = _end;
+            }
+            else if (!string.IsNullOrEmpty(_endTargetTag))
             {
                 var meta   = _endTarget.GetComponent<ProblemObjectMetaData>();
                 var anchor = meta?.GetAnchor(_endTargetTag);
-                if (anchor != null) return anchor.position;
-                Debug.LogWarning($"[PDSim] Destination tag '{_endTargetTag}' not found on '{_endTarget.name}'. Using root.");
+                if (anchor != null)
+                    basePos = anchor.localPosition;
+                else
+                {
+                    Debug.LogWarning($"[PDSim] Destination tag '{_endTargetTag}' not found on '{_endTarget.name}'. Using root.");
+                    basePos = _endTarget.transform.localPosition;
+                }
             }
-
-            return _endTarget.transform.position;
+            else
+            {
+                basePos = _endTarget.transform.position;
+            }
+            return basePos + _anchorToRootOffset;
         }
 
         /// <inheritdoc/>
@@ -347,6 +361,15 @@ namespace PDSim.Utils.Animation
         {
             var resolvedSource = ResolveTarget();
             if (resolvedSource == null) yield break;
+
+            // When an anchor tag is specified, Move(obj, "Anchor").To(dest) should move the
+            // root object so that the anchor ends up at dest — not move the anchor child itself.
+            // Compute the offset from anchor to root once, then redirect movement to the root.
+            if (!string.IsNullOrEmpty(Tag) && resolvedSource != Target.transform)
+            {
+                _anchorToRootOffset = Target.transform.position - resolvedSource.position;
+                resolvedSource = Target.transform;
+            }
 
             // If the moving object is marked for NavMesh movement, use the agent.
             var visObj = Target.GetComponent<VisualisationObject>();
@@ -364,8 +387,6 @@ namespace PDSim.Utils.Animation
             yield return DoTween(t =>
             {
                 if (resolvedSource == null) return;
-                // Re-resolve every tick so the destination can move dynamically.
-                _end = ResolveEndPosition();
                 var val = Vector3.Lerp(_start, _end, t);
                 if (IsLocal) resolvedSource.localPosition = val;
                 else         resolvedSource.position      = val;

@@ -84,10 +84,12 @@ namespace PDSim.Components
                 var actionMatch = _actionAnimations.AnimationCheck(action);
                 if (actionMatch != null && actionMatch.Count > 0)
                 {
-                    // Queue the action animation once — deduplicate across multiple effect callbacks
-                    if (!_queuedActionIds.Contains(action.Id))
+                    // Queue the action animation once — deduplicate across multiple effect callbacks.
+                    // Use Id when available; fall back to ToString() since planners often leave Id empty.
+                    var actionKey = !string.IsNullOrEmpty(action.Id) ? action.Id : action.ToString();
+                    if (!_queuedActionIds.Contains(actionKey))
                     {
-                        _queuedActionIds.Add(action.Id);
+                        _queuedActionIds.Add(actionKey);
                         EnqueueActionAnimation(action, actionMatch);
                     }
                     // Suppress predicate animations for every effect of this action
@@ -193,7 +195,7 @@ namespace PDSim.Components
             if (!_animationsActive.ContainsKey(context))
                 yield break;
             _animationsActive[context].State = AnimationState.None;
-            while (_animationsActive[context].State != AnimationState.Finished)
+            while (_animationsActive.ContainsKey(context) && _animationsActive[context].State != AnimationState.Finished)
             {
                 switch (_animationsActive[context].State)
                 {
@@ -222,7 +224,7 @@ namespace PDSim.Components
                         yield return null;
                         break;
                 }
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
         }
 
@@ -335,6 +337,7 @@ namespace PDSim.Components
 
                 if (actionVisualizer != null)
                 {
+                    _animationsActive[context].State = AnimationState.Running;
                     actionVisualizer.Animate(
                         new List<string>(animationElement.ParametersObjects
                             .Select(o => o != null ? o.name : string.Empty)),
@@ -342,7 +345,6 @@ namespace PDSim.Components
                         animationElement.Duration,
                         () => AnimationEndHandler(context)
                     );
-                    _animationsActive[context].State = AnimationState.Running;
                     return;
                 }
             }
@@ -354,6 +356,7 @@ namespace PDSim.Components
 
                 if (fluentVisualizer != null)
                 {
+                    _animationsActive[context].State = AnimationState.Running;
                     fluentVisualizer.Animate(
                         new List<string>(),
                         animationElement.Value,
@@ -361,13 +364,11 @@ namespace PDSim.Components
                         animationElement.Duration,
                         () => AnimationEndHandler(context)
                     );
-                    _animationsActive[context].State = AnimationState.Running;
                     return;
                 }
             }
 
             AnimationEndHandler(context);
-            _animationsActive[context].State = AnimationState.Running;
         }
 
         private class AnimationRoutine
