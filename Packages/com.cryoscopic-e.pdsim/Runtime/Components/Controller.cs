@@ -9,7 +9,7 @@ using UnityEngine;
 namespace PDSim.Components
 {
     /// <summary>
-    /// Core singleton controller for PDSim. Manages the visualization lifecycle, 
+    /// Core singleton controller for PDSim. Manages the visualization lifecycle,
     /// problem and plan data, and coordinates between various components.
     /// </summary>
     public class Controller : MonoBehaviour
@@ -165,10 +165,12 @@ namespace PDSim.Components
 
             var actions = Visualisation.PlanResult.Plan?.Actions ?? new List<GroundedAction>();
             OnVisualisationReady?.Invoke(actions);
-            OnVisualiseInitBlock?.Invoke();  // starts AnimationsLoop in AnimationsController
+            OnVisualiseInitBlock?.Invoke();
 
-            // The AnimationsLoop will find an empty queue and fire OnTimePointAnimationEnd,
-            // transitioning to the waiting state. The user then steps forward manually.
+            // Signal the "initial empty" state so the UI and auto-advance logic know
+            // they can request the first step.  BeginStep() with no active routines
+            // schedules a one-frame completion via SignalStepComplete.
+            _animationsController.BeginStep();
         }
 
         /// <summary>
@@ -180,7 +182,7 @@ namespace PDSim.Components
             if (_initPhase)
             {
                 // Don't defer init steps — handle immediately so _animationsActive
-                // is populated before the AnimationsLoop's next iteration.
+                // is populated before BeginStep fires the machine loops.
                 _awaitingAdvance = false;
                 StepInitPhase();
             }
@@ -238,16 +240,23 @@ namespace PDSim.Components
             Visualisation.WorldStateChanged += (_, args) =>
                 _animationsController.UpdateQueue(args.AppliedAction, args.NewStateVar);
 
+            // Build action → index map once for O(1) lookup per ActionStarted event (A7).
+            var planActions = Visualisation.PlanResult.Plan?.Actions ?? new List<GroundedAction>();
+            _actionIndexMap = new Dictionary<GroundedAction, int>(planActions.Count);
+            for (int i = 0; i < planActions.Count; i++)
+                _actionIndexMap[planActions[i]] = i;
+
             Visualisation.ActionStarted += (_, action) =>
             {
-                var actions = Visualisation.PlanResult.Plan?.Actions ?? new List<GroundedAction>();
-                int index = actions.IndexOf(action);
+                _actionIndexMap.TryGetValue(action, out int index);
                 OnVisualisationActionBlock?.Invoke(action.ToString(), index);
             };
 
             Visualisation.VisualisationEnd += (_, __) =>
                 OnVisualisationFinished?.Invoke();
 
+            // OnTimePointAnimationEnd fires exactly once per step (event-driven model).
+            // _awaitingAdvance debounces any edge-case re-fires.
             AnimationsController.Instance.OnTimePointAnimationEnd += () =>
             {
                 if (_awaitingAdvance) return;
@@ -268,9 +277,17 @@ namespace PDSim.Components
             _awaitingAdvance = false;
 
             if (_initPhase)
+            {
                 StepInitPhase();
+            }
             else
+            {
+                // Advance the plan timeline (fires WorldStateChanged synchronously for
+                // each effect, populating _animationsActive via UpdateQueue).
+                // Then start the machine loops for this step.
                 Visualisation.Advance();
+                _animationsController.BeginStep();
+            }
         }
 
         #endregion
@@ -292,17 +309,20 @@ namespace PDSim.Components
 
         // Logic for scheduling and debouncing simulation step advancements.
         //
-        // OnTimePointAnimationEnd fires every frame while _animationsActive is
-        // empty.  We never call visualisation.Advance() directly from inside an
-        // event/coroutine callback because StartCoroutine runs synchronously to
-        // its first yield, creating a same-frame chain that drains the whole plan.
+        // OnTimePointAnimationEnd fires exactly once per step (event-driven model).
+        // We never call Visualisation.Advance() directly from inside an event/coroutine
+        // callback because StartCoroutine runs synchronously to its first yield, creating
+        // a same-frame chain that drains the whole plan.
         //
         // Instead: set _pendingAdvance = true → Update() processes it next frame.
-        // _awaitingAdvance debounces the repeated OnTimePointAnimationEnd fires.
+        // _awaitingAdvance debounces any edge-case re-fires of OnTimePointAnimationEnd.
 
         private bool _pendingAdvance = false;
         private bool _awaitingAdvance = false;
         private AnimationsController _animationsController;
+
+        // O(1) action index lookup — built once from the plan list in Start().
+        private Dictionary<GroundedAction, int> _actionIndexMap;
 
         private void QueueInitFluent(int index)
         {
@@ -310,6 +330,8 @@ namespace PDSim.Components
             var fluent = _initFluents[index];
             _animationsController.UpdateQueue(null, fluent);
             OnInitFluentStarted?.Invoke(fluent.ToString(), index, _initFluents.Count);
+            // Immediately start machine loops for the queued fluent animation.
+            _animationsController.BeginStep();
         }
 
         private void StepInitPhase()
@@ -318,18 +340,17 @@ namespace PDSim.Components
 
             if (next < _initFluents.Count)
             {
-                // More init fluents — queue the next one.
-                // The AnimationsLoop is still running and will pick it up.
+                // More init fluents — queue and start the next one.
                 QueueInitFluent(next);
             }
             else
             {
                 // All init fluents have been stepped through.
                 _initPhase = false;
-                // _awaitingAdvance is already false (reset by caller).
-                // The AnimationsLoop's next OnTimePointAnimationEnd fire will
-                // transition to plan mode naturally: if autoAdvance → _pendingAdvance
-                // → visualisation.Advance(); otherwise → OnStepAnimationsComplete.
+                // Signal completion for the "end of init" transition so the plan phase
+                // can begin: in auto mode this triggers Visualisation.Advance(); in manual
+                // mode it fires OnStepAnimationsComplete.
+                _animationsController.BeginStep();
             }
         }
 

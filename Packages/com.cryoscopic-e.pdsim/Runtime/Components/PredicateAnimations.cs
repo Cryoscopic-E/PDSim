@@ -36,11 +36,11 @@ namespace PDSim.Components
         /// Checks for available animations that match a given grounded fluent and its value.
         /// </summary>
         /// <param name="fluent">The grounded fluent and its current value.</param>
-        /// <returns>A list of matching animation data.</returns>
+        /// <returns>A list of matching animation data (shared empty list on no match — do not mutate).</returns>
         public List<FluentAnimation.AnimationData> AnimationCheck((FluentExpression Fluent, object Value) fluent)
         {
-            if (!EffectToAnimations.ContainsKey(fluent.Fluent.Name))
-                return new List<FluentAnimation.AnimationData>();
+            if (!EffectToAnimations.TryGetValue(fluent.Fluent.Name, out var fluentAnimation))
+                return _emptyResult;
 
             // Construct cache key
             // Grounded fluents have ConstantExpression arguments.
@@ -58,14 +58,13 @@ namespace PDSim.Components
 
             string cacheKey = fluent.Fluent.Name + ":" + string.Join(",", fluentParametersAsTypes);
 
-            if (_cache.ContainsKey(cacheKey))
+            if (_cache.TryGetValue(cacheKey, out var cached))
             {
-                return _cache[cacheKey];
+                return cached;
             }
 
             var returnList = new List<FluentAnimation.AnimationData>();
 
-            var fluentAnimation = EffectToAnimations[fluent.Fluent.Name];
             var animationData = fluentAnimation.AnimationDataList;
 
             var typeHierarchy = TypeHierarchy.Instance;
@@ -153,6 +152,10 @@ namespace PDSim.Components
         #region Private Internals
 
         private static PredicateAnimations _instance;
+
+        // Shared empty result returned when no animation matches — callers must not mutate it.
+        private static readonly List<FluentAnimation.AnimationData> _emptyResult
+            = new List<FluentAnimation.AnimationData>();
 
         // Cache for AnimationCheck
         private Dictionary<string, List<FluentAnimation.AnimationData>> _cache;

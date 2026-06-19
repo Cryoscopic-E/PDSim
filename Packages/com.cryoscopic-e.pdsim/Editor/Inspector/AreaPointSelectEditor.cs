@@ -5,12 +5,14 @@ using PDSim.Helpers;
 namespace PDSim.Editor.Inspector
 {
     /// <summary>
-    /// Custom editor for Helper_AreaPointSelect, providing scene handles for resizing the area.
+    /// Custom editor for Helper_AreaPointSelect, providing scene handles for resizing the area
+    /// and inspector buttons to preview both random and collision-free sample points.
     /// </summary>
     [CustomEditor(typeof(Helper_AreaPointSelect))]
     public class Helper_AreaPointSelectEditor : UnityEditor.Editor
     {
         #region Fields
+
         // Each axis has two face handles (+X/-X, +Y/-Y, +Z/-Z)
         private static readonly Vector3[] _faceDirections =
         {
@@ -25,9 +27,12 @@ namespace PDSim.Editor.Inspector
 
         private Vector3? _previewPoint;
         private float _previewTimer;
+        private bool _lastPreviewWasNonColliding;
+
         #endregion
 
         #region Unity Lifecycle
+
         /// <summary>
         /// Draws the custom inspector GUI for AreaPointSelect.
         /// </summary>
@@ -39,14 +44,16 @@ namespace PDSim.Editor.Inspector
 
             var area = (Helper_AreaPointSelect)target;
 
+            // Row 1: random preview + reset
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Preview Random Point", GUILayout.Height(24)))
             {
                 Vector3 pt = area.GetRandomPoint();
                 Debug.Log($"[AreaPointSelect] '{area.name}' random point: {pt}");
-                SceneView.lastActiveSceneView?.Repaint();
                 _previewPoint = pt;
                 _previewTimer = (float)EditorApplication.timeSinceStartup + 2f;
+                _lastPreviewWasNonColliding = false;
+                SceneView.lastActiveSceneView?.Repaint();
             }
             if (GUILayout.Button("Reset Offset", GUILayout.Height(24)))
             {
@@ -56,11 +63,33 @@ namespace PDSim.Editor.Inspector
             }
             EditorGUILayout.EndHorizontal();
 
+            // Row 2: collision-aware preview
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Preview Non-Colliding Point", GUILayout.Height(24)))
+            {
+                if (area.TryGetNonCollidingPoint(out Vector3 pt))
+                {
+                    Debug.Log($"[AreaPointSelect] '{area.name}' non-colliding point: {pt}");
+                    _previewPoint = pt;
+                    _previewTimer = (float)EditorApplication.timeSinceStartup + 2f;
+                    _lastPreviewWasNonColliding = true;
+                    SceneView.lastActiveSceneView?.Repaint();
+                }
+                else
+                {
+                    Debug.LogWarning(
+                        $"[AreaPointSelect] '{area.name}': no collision-free point found after " +
+                        $"{area.MaxAttempts} attempts. Check ClearanceRadius and ObstacleMask.");
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
             if (_previewPoint.HasValue)
             {
-                EditorGUILayout.HelpBox(
-                    $"Last preview: {_previewPoint.Value:F2}  (visible for 2 s in Scene view)",
-                    MessageType.None);
+                string label = _lastPreviewWasNonColliding
+                    ? $"Last preview (non-colliding): {_previewPoint.Value:F2}  |  clearance r={area.ClearanceRadius:F2}"
+                    : $"Last preview (random): {_previewPoint.Value:F2}";
+                EditorGUILayout.HelpBox(label + "  (visible for 2 s in Scene view)", MessageType.None);
             }
         }
 
@@ -68,7 +97,7 @@ namespace PDSim.Editor.Inspector
         {
             var area = (Helper_AreaPointSelect)target;
 
-            // Expire preview point
+            // Expire preview point after 2 s
             if (_previewPoint.HasValue && EditorApplication.timeSinceStartup > _previewTimer)
             {
                 _previewPoint = null;
@@ -101,7 +130,7 @@ namespace PDSim.Editor.Inspector
                     labelStyle);
             }
 
-            // Rendering the offset position handle for the area.
+            // Offset position handle
             EditorGUI.BeginChangeCheck();
             Vector3 newCenter = Handles.PositionHandle(center, Quaternion.identity);
             if (EditorGUI.EndChangeCheck())
@@ -111,7 +140,7 @@ namespace PDSim.Editor.Inspector
                 EditorUtility.SetDirty(area);
             }
 
-            // Rendering handles to resize the area's faces.
+            // Face resize handles
             Handles.color = solid;
             float capSize = HandleUtility.GetHandleSize(center) * 0.08f;
 
@@ -133,15 +162,11 @@ namespace PDSim.Editor.Inspector
                 {
                     Undo.RecordObject(area, "Resize AreaPointSelect");
 
-                    // delta > 0 means the face moved outward (_faceDirections already
-                    // encodes the sign, so no extra sign flip needed).
                     float delta = Vector3.Dot(newPos - handlePos, _faceDirections[i]);
                     Vector3 dir = _faceDirections[i];
                     Vector3 newSize   = area.Size;
                     Vector3 newOffset = area.Offset;
 
-                    // Grow the size by delta, shift the offset by delta/2 so the
-                    // opposite face stays fixed.
                     if (i < 2)
                     {
                         newSize.x    = Mathf.Max(0.01f, newSize.x + delta);
@@ -164,7 +189,7 @@ namespace PDSim.Editor.Inspector
                 }
             }
 
-            // Rendering the preview point if one is currently active.
+            // Preview point: magenta dot + clearance sphere (when non-colliding mode)
             if (_previewPoint.HasValue)
             {
                 Handles.color = Color.magenta;
@@ -177,12 +202,25 @@ namespace PDSim.Editor.Inspector
                     normal = { textColor = Color.magenta },
                     fontStyle = FontStyle.Bold
                 });
+
+                // Draw the clearance sphere as three orthogonal wire discs
+                if (_lastPreviewWasNonColliding && area.ClearanceRadius > 0f)
+                {
+                    Color ringColor = new Color(1f, 0.4f, 1f, 0.7f);
+                    Handles.color = ringColor;
+                    Handles.DrawWireDisc(_previewPoint.Value, Vector3.up,      area.ClearanceRadius);
+                    Handles.DrawWireDisc(_previewPoint.Value, Vector3.right,   area.ClearanceRadius);
+                    Handles.DrawWireDisc(_previewPoint.Value, Vector3.forward, area.ClearanceRadius);
+                }
+
                 HandleUtility.Repaint();
             }
         }
+
         #endregion
 
         #region Private Methods
+
         private static void DrawShadedBox(Vector3 center, Vector3 size, Color baseColor)
         {
             Vector3 h = size * 0.5f;
@@ -213,6 +251,7 @@ namespace PDSim.Editor.Inspector
                 Handles.DrawSolidRectangleWithOutline(verts, faceColor, Color.clear);
             }
         }
+
         #endregion
     }
 }

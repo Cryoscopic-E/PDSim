@@ -60,8 +60,8 @@ namespace PDSim.Components
         /// <returns>A list of object names.</returns>
         public List<string> GetObjectsOfType(string type)
         {
-            if (_typeToObjects != null && _typeToObjects.ContainsKey(type))
-                return _typeToObjects[type];
+            if (_typeToObjects != null && _typeToObjects.TryGetValue(type, out var list))
+                return list;
             return new List<string>();
         }
 
@@ -72,8 +72,8 @@ namespace PDSim.Components
         /// <returns>The type name, or null if not found.</returns>
         public string GetTypeOfObject(string objectName)
         {
-            if (_objectToTypes != null && _objectToTypes.ContainsKey(objectName))
-                return _objectToTypes[objectName];
+            if (_objectToTypes != null && _objectToTypes.TryGetValue(objectName, out var type))
+                return type;
             return null;
         }
 
@@ -84,8 +84,8 @@ namespace PDSim.Components
         /// <returns>The VisualisationObject component, or null if not found.</returns>
         public VisualisationObject GetObjectInScene(string objectName)
         {
-            if (_objectDictionary != null && _objectDictionary.ContainsKey(objectName))
-                return _objectDictionary[objectName];
+            if (_objectDictionary != null && _objectDictionary.TryGetValue(objectName, out var obj))
+                return obj;
             return null;
         }
 

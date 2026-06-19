@@ -533,7 +533,17 @@ namespace PDSim.Utils.Animation
 
             _propBlock = new MaterialPropertyBlock();
             _renderer.GetPropertyBlock(_propBlock);
-            _start = _renderer.material.color;
+
+            // Read the start color from the property block or the shared material — never
+            // from .material, which instantiates a per-renderer clone and leaks materials.
+            if (_propBlock.HasColor("_BaseColor"))
+                _start = _propBlock.GetColor("_BaseColor");
+            else if (_propBlock.HasColor("_Color"))
+                _start = _propBlock.GetColor("_Color");
+            else
+                _start = _renderer.sharedMaterial != null
+                    ? _renderer.sharedMaterial.color
+                    : Color.white;
 
             yield return DoTween(t => {
                 if (_renderer == null) return;
@@ -585,6 +595,11 @@ namespace PDSim.Utils.Animation
         private readonly string _tag;
         private readonly string _text;
 
+        // Cached PropertyInfo for TMPro.TMP_Text.text — resolved once on first use to
+        // avoid per-execution reflection overhead (we can't hard-reference TMPro to keep
+        // the optional assembly dependency).
+        private static System.Reflection.PropertyInfo _tmpTextProperty;
+
         public TextAction(GameObject target, string tag, string text)
         {
             _target = target;
@@ -608,7 +623,10 @@ namespace PDSim.Utils.Animation
             var tmp = display.GetComponent("TMPro.TMP_Text"); //default supported
             if (tmp != null)
             {
-                tmp.GetType().GetProperty("text")?.SetValue(tmp, _text);
+                // Resolve and cache the PropertyInfo once; reuse on subsequent calls.
+                if (_tmpTextProperty == null)
+                    _tmpTextProperty = tmp.GetType().GetProperty("text");
+                _tmpTextProperty?.SetValue(tmp, _text);
             }
             else if (display is Text textUI) //legacy for quick prototype
             {

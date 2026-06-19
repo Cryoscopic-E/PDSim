@@ -35,11 +35,11 @@ namespace PDSim.Components
         /// Checks for available animations that match a given grounded action.
         /// </summary>
         /// <param name="action">The grounded action to check.</param>
-        /// <returns>A list of matching animation data, or empty list if none found.</returns>
+        /// <returns>A list of matching animation data (shared empty list on no match — do not mutate).</returns>
         public List<ActionAnimation.AnimationData> AnimationCheck(GroundedAction action)
         {
-            if (!ActionToAnimation.ContainsKey(action.ActionName))
-                return new List<ActionAnimation.AnimationData>();
+            if (!ActionToAnimation.TryGetValue(action.ActionName, out var actionAnimation))
+                return _emptyResult;
 
             var paramTypes = action.Objects
                 .Select(o => ProblemObjects.Instance.GetTypeOfObject(o.Name))
@@ -48,11 +48,10 @@ namespace PDSim.Components
 
             string cacheKey = action.ActionName + ":" + string.Join(",", paramTypes);
 
-            if (_cache.ContainsKey(cacheKey))
-                return _cache[cacheKey];
+            if (_cache.TryGetValue(cacheKey, out var cached))
+                return cached;
 
             var returnList = new List<ActionAnimation.AnimationData>();
-            var actionAnimation = ActionToAnimation[action.ActionName];
             var typeHierarchy = TypeHierarchy.Instance;
 
             foreach (var animData in actionAnimation.AnimationDataList)
@@ -132,6 +131,11 @@ namespace PDSim.Components
         #region Private Internals
 
         private static ActionAnimations _instance;
+
+        // Shared empty result returned when no animation matches — callers must not mutate it.
+        private static readonly List<ActionAnimation.AnimationData> _emptyResult
+            = new List<ActionAnimation.AnimationData>();
+
         private Dictionary<string, List<ActionAnimation.AnimationData>> _cache;
 
         #endregion
