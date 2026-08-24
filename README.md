@@ -43,7 +43,7 @@ Additional resources:
 
 - https://itch.io/game-assets
 - https://polyhaven.com/models
-- https://www.blenderkit.com/
+- https://www.blendkit.com/
 
 
 # Project
