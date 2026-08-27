@@ -85,6 +85,17 @@ namespace PDSim.Components
         /// <param name="newStateVar">The new fluent state variable and its value.</param>
         public void UpdateQueue(GroundedAction action, (FluentExpression Fluent, object Value) newStateVar)
         {
+            // Record the assignment on every scene object the fluent references,
+            // regardless of whether an animation matches — the object state panel
+            // (StateListUI) reads this via VisualisationObject.GetObjectState().
+            foreach (var arg in newStateVar.Fluent.Arguments)
+            {
+                var argName = arg is ConstantExpression constant ? constant.Value.ToString() : arg.ToString();
+                var sceneObject = _objects != null ? _objects.GetObjectInScene(argName) : null;
+                if (sceneObject != null)
+                    sceneObject.AddFluentAssignment(newStateVar);
+            }
+
             // Init phase: always use predicate animations
             if (action == null)
             {
@@ -124,6 +135,12 @@ namespace PDSim.Components
         /// </summary>
         public void BeginStep()
         {
+            // Dedup only needs to span the UpdateQueue calls of a single step
+            // (WorldStateChanged fires once per effect of the same action).
+            // Reset here so the same grounded action recurring later in the plan
+            // queues its animation again.
+            _queuedActionIds.Clear();
+
             if (_animationsActive.Count == 0)
             {
                 // Nothing to animate — signal completion on the next frame.

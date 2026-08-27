@@ -25,6 +25,10 @@ namespace PDSim.SceneUI
             var docRoot = uiDocument.rootVisualElement;
             docRoot.styleSheets.Add(Resources.Load<StyleSheet>("SceneUI/SceneUSS"));
 
+            // The document root spans the whole screen — it must not swallow
+            // scene picking done by the ObjectPicker.
+            docRoot.pickingMode = PickingMode.Ignore;
+
             // Root panel
             _root = new VisualElement { name = "Root" };
             _root.AddToClassList("panel");

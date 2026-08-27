@@ -2,6 +2,7 @@ using GeTPlan.Core.Models;
 using PDSim.Components;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
@@ -46,6 +47,7 @@ namespace PDSim.SceneUI
         private VisualElement _actionInfo;
         private VisualElement _speedBar;
         private VisualElement _cameraHints;
+        private Label _hoverTooltip;
 
         // Internal state and references to simulation controllers.
 
@@ -119,6 +121,8 @@ namespace PDSim.SceneUI
 
             _problemObjects.OnVisualisationObjectHovered += VisualisationObjectHovered;
             _problemObjects.OnVisualisationObjectUnhovered += VisualisationObjectUnhovered;
+            _problemObjects.OnVisualisationObjectSelected += VisualisationObjectSelected;
+            _problemObjects.OnVisualisationObjectDeselected += VisualisationObjectDeselected;
 
             SetIdleState();
         }
@@ -149,19 +153,25 @@ namespace PDSim.SceneUI
 
             _problemObjects.OnVisualisationObjectHovered -= VisualisationObjectHovered;
             _problemObjects.OnVisualisationObjectUnhovered -= VisualisationObjectUnhovered;
+            _problemObjects.OnVisualisationObjectSelected -= VisualisationObjectSelected;
+            _problemObjects.OnVisualisationObjectDeselected -= VisualisationObjectDeselected;
         }
         #endregion
 
         #region UI Building
         private void BuildUI(VisualElement root)
         {
+            // Full-screen layout containers must not block scene picking done by
+            // the ObjectPicker — only the actual HUD chrome should be pickable.
+            root.pickingMode = PickingMode.Ignore;
+
             // Create the main container that holds all UI elements.
-            var rootContainer = new VisualElement { name = "Root" };
+            var rootContainer = new VisualElement { name = "Root", pickingMode = PickingMode.Ignore };
             rootContainer.AddToClassList("root-container");
             root.Add(rootContainer);
 
             // Build the header section including the top bar and branding.
-            var header = new VisualElement { name = "Header" };
+            var header = new VisualElement { name = "Header", pickingMode = PickingMode.Ignore };
             header.AddToClassList("header");
             rootContainer.Add(header);
 
@@ -222,7 +232,7 @@ namespace PDSim.SceneUI
             _nextStepButton = AddIconButton(controls, "SkipButton", "icon--skip");
 
             // Build the footer section containing the toolbox and timeline.
-            var footer = new VisualElement { name = "Footer" };
+            var footer = new VisualElement { name = "Footer", pickingMode = PickingMode.Ignore };
             footer.AddToClassList("footer");
             rootContainer.Add(footer);
 
@@ -262,14 +272,23 @@ namespace PDSim.SceneUI
             footer.Add(_timelineBar);
 
             // Build the overlay that provides camera navigation hints.
-            _cameraHints = new VisualElement { name = "CameraHints" };
+            _cameraHints = new VisualElement { name = "CameraHints", pickingMode = PickingMode.Ignore };
             _cameraHints.AddToClassList("camera-hints");
             _cameraHints.style.display = DisplayStyle.None;
             rootContainer.Add(_cameraHints);
 
-            var cameraHintsLabel = new Label("Press C to Control the Camera\n\nUse W,A,S,D to Move\nUse the Mouse to Rotate");
+            var cameraHintsLabel = new Label("Press C to Control the Camera\n\nUse W,A,S,D to Move\nUse the Mouse to Rotate")
+            {
+                pickingMode = PickingMode.Ignore
+            };
             cameraHintsLabel.AddToClassList("camera-hints__text");
             _cameraHints.Add(cameraHintsLabel);
+
+            // Build the hover tooltip shown next to the cursor over scene objects.
+            _hoverTooltip = new Label { name = "HoverTooltip", pickingMode = PickingMode.Ignore };
+            _hoverTooltip.AddToClassList("hover-tooltip");
+            _hoverTooltip.style.display = DisplayStyle.None;
+            root.Add(_hoverTooltip);
         }
 
         private Button AddIconButton(VisualElement parent, string name, string iconClass)
@@ -429,12 +448,35 @@ namespace PDSim.SceneUI
 
         private void VisualisationObjectHovered(VisualisationObject simObject)
         {
-            StateListUI.InitializeList(simObject);
+            _hoverTooltip.text = $"{simObject.name} : {simObject.ObjectType}\nClick to inspect state";
+
+            var mouse = Mouse.current;
+            if (mouse != null && _hoverTooltip.panel != null)
+            {
+                var screenPos = mouse.position.ReadValue();
+                // UI Toolkit panels use a top-left origin, screen space is bottom-left.
+                var panelPos = RuntimePanelUtils.ScreenToPanel(
+                    _hoverTooltip.panel, new Vector2(screenPos.x, Screen.height - screenPos.y));
+                _hoverTooltip.style.left = panelPos.x + 14;
+                _hoverTooltip.style.top = panelPos.y + 12;
+            }
+
+            _hoverTooltip.style.display = DisplayStyle.Flex;
         }
 
         private void VisualisationObjectUnhovered()
         {
-            StateListUI.Clear();
+            _hoverTooltip.style.display = DisplayStyle.None;
+        }
+
+        private void VisualisationObjectSelected(VisualisationObject simObject)
+        {
+            StateListUI.ShowFor(simObject);
+        }
+
+        private void VisualisationObjectDeselected()
+        {
+            StateListUI.Hide();
         }
         #endregion
 

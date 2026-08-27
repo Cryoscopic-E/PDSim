@@ -29,7 +29,7 @@ namespace PDSim.SceneUI
         /// <param name="data">A tuple containing the fluent expression and its current value.</param>
         public void SetData((FluentExpression Fluent, object Value) data)
         {
-            _label.text = data.ToString();
+            _label.text = $"{data.Fluent} = {data.Value}";
         }
         #endregion
     }

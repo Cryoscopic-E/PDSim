@@ -5,7 +5,9 @@ using UnityEngine.UIElements;
 namespace PDSim.SceneUI
 {
     /// <summary>
-    /// Manages the State List UI panel, showing fluents and values for a selected object.
+    /// Manages the State List UI panel, showing fluents and values for the selected object.
+    /// The panel is pinned open when an object is selected (clicked) and refreshes live
+    /// while the pinned object's state changes during plan replay.
     /// </summary>
     public class StateListUI : MonoBehaviour
     {
@@ -15,6 +17,7 @@ namespace PDSim.SceneUI
         private StateListController _stateListController;
         private VisualElement _root;
         private bool _visible;
+        private VisualisationObject _pinnedObject;
         #endregion
 
         #region Unity Lifecycle
@@ -23,6 +26,10 @@ namespace PDSim.SceneUI
             var uiDocument = GetComponent<UIDocument>();
             var docRoot = uiDocument.rootVisualElement;
             docRoot.styleSheets.Add(Resources.Load<StyleSheet>("SceneUI/SceneUSS"));
+
+            // The document root spans the whole screen — it must not swallow
+            // scene picking done by the ObjectPicker.
+            docRoot.pickingMode = PickingMode.Ignore;
 
             // Root panel: responsive positioning via USS (bottom-right anchor)
             _root = new VisualElement { name = "Root" };
@@ -34,6 +41,7 @@ namespace PDSim.SceneUI
             // Object name label
             _objectName = new Label { name = "ObjectName" };
             _objectName.AddToClassList("panel-title");
+            _objectName.text = EmptyTitle;
             _root.Add(_objectName);
 
             // List container
@@ -55,38 +63,72 @@ namespace PDSim.SceneUI
             listContainer.Add(_stateList);
 
             _stateListController = new StateListController();
+            _stateListController.InitializeStateList(_root);
+        }
+
+        private void OnDisable()
+        {
+            Unpin();
         }
         #endregion
 
         #region Public Methods
         /// <summary>
-        /// Initializes the state list for a specific simulation object.
+        /// Pins the panel to a simulation object: shows its state and keeps it
+        /// updated until another object is selected or the selection is cleared.
         /// </summary>
         /// <param name="simObject">The simulation object whose state to display.</param>
-        /// <returns>The initialized StateListController.</returns>
-        public StateListController InitializeList(VisualisationObject simObject)
+        public void ShowFor(VisualisationObject simObject)
         {
-            _objectName.text = simObject.name;
-            _stateListController.InitializeStateList(_root);
+            Unpin();
+            _pinnedObject = simObject;
+            _pinnedObject.OnStateChanged += RefreshState;
+
+            _objectName.text = $"{simObject.name} ({simObject.ObjectType})";
             _stateListController.SetState(simObject.GetObjectState());
-            return _stateListController;
+            SetVisible(true);
         }
 
         /// <summary>
-        /// Clears the state list display.
+        /// Unpins the current object, clears the list, and hides the panel.
         /// </summary>
-        public void Clear()
+        public void Hide()
         {
-            _objectName.text = "";
+            Unpin();
+            _objectName.text = EmptyTitle;
             _stateListController.ClearList();
+            SetVisible(false);
         }
 
         /// <summary>
-        /// Toggles the visibility of the State List panel.
+        /// Toggles the visibility of the State List panel (manual override button).
         /// </summary>
         public void ToggleVisibility()
         {
-            _visible = !_visible;
+            SetVisible(!_visible);
+        }
+        #endregion
+
+        #region Private Methods
+        private const string EmptyTitle = "No object selected";
+
+        private void RefreshState()
+        {
+            if (_pinnedObject != null)
+                _stateListController.SetState(_pinnedObject.GetObjectState());
+        }
+
+        private void Unpin()
+        {
+            if (_pinnedObject == null) return;
+            _pinnedObject.OnStateChanged -= RefreshState;
+            _pinnedObject = null;
+        }
+
+        private void SetVisible(bool value)
+        {
+            if (_visible == value) return;
+            _visible = value;
             if (_visible)
             {
                 _root.style.display = DisplayStyle.Flex;

@@ -47,6 +47,24 @@ namespace PDSim.Components
         public event VisualisationObjectUnhovered OnVisualisationObjectUnhovered;
 
         /// <summary>
+        /// Delegate for object selection events.
+        /// </summary>
+        public delegate void VisualisationObjectSelected(VisualisationObject @object);
+        /// <summary>
+        /// Event fired when a visualization object is selected (clicked).
+        /// </summary>
+        public event VisualisationObjectSelected OnVisualisationObjectSelected;
+
+        /// <summary>
+        /// Delegate for object deselection events.
+        /// </summary>
+        public delegate void VisualisationObjectDeselected();
+        /// <summary>
+        /// Event fired when the current selection is cleared (click on empty space or Escape).
+        /// </summary>
+        public event VisualisationObjectDeselected OnVisualisationObjectDeselected;
+
+        /// <summary>
         /// The list of visualization object prefabs available for instantiation.
         /// </summary>
         [SerializeField]
@@ -106,6 +124,23 @@ namespace PDSim.Components
             OnVisualisationObjectUnhovered?.Invoke();
         }
 
+        /// <summary>
+        /// Triggers the selection event for an object.
+        /// </summary>
+        /// <param name="object">The object being selected.</param>
+        public void SelectObject(VisualisationObject @object)
+        {
+            OnVisualisationObjectSelected?.Invoke(@object);
+        }
+
+        /// <summary>
+        /// Triggers the deselection event.
+        /// </summary>
+        public void ClearSelection()
+        {
+            OnVisualisationObjectDeselected?.Invoke();
+        }
+
         #endregion
 
         #region Unity Lifecycle
@@ -115,6 +150,11 @@ namespace PDSim.Components
             _objectDictionary = new Dictionary<string, VisualisationObject>();
             _typeToObjects = new Dictionary<string, List<string>>();
             _objectToTypes = new Dictionary<string, string>();
+
+            // Legacy OnMouseEnter/OnMouseExit callbacks don't fire with the Input System
+            // package, so an ObjectPicker must exist in the scene to drive hover/selection.
+            if (FindAnyObjectByType<ObjectPicker>() == null)
+                gameObject.AddComponent<ObjectPicker>();
         }
 
         private void Start()
