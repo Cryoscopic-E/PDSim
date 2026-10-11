@@ -1,5 +1,6 @@
 using GeTPlan.Core.Models;
 using PDSim.Components;
+using PDSim.Components.Animations;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -51,16 +52,16 @@ namespace PDSim.SceneUI
 
         // Internal state and references to simulation controllers.
 
-        private Controller _controller;
+        private VisualisationController _controller;
         private AnimationsController _animationsController;
-        private ProblemObjects _problemObjects;
+        private VisualisationObjects _problemObjects;
         #endregion
 
         #region Unity Lifecycle
         private void Awake()
         {
-            _controller = Controller.Instance;
-            _problemObjects = ProblemObjects.Instance;
+            _controller = VisualisationController.Instance;
+            _problemObjects = VisualisationObjects.Instance;
             _animationsController = AnimationsController.Instance;
 
             if (_controller == null) Debug.LogError("[PDSim] Controller.Instance is null!");

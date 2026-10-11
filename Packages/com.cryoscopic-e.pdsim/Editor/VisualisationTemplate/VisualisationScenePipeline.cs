@@ -1,5 +1,7 @@
 using PDSim.Components;
-using PDSim.Helpers;
+using PDSim.Components.Animations.Actions;
+using PDSim.Components.Animations.Fluents;
+using PDSim.Components.Model;
 using PDSim.ScriptableObjects;
 using PDSim.Utils;
 using Proto;
@@ -36,7 +38,7 @@ namespace PDSim.SceneTemplates
         public override void AfterTemplateInstantiation(SceneTemplateAsset sceneTemplateAsset, Scene scene, bool isAdditive, string sceneName)
         {
             // Connect data assets to simulation manager
-            var simulationManager = Controller.Instance;
+            var simulationManager = VisualisationController.Instance;
             var simulationDataRoot = AssetUtils.GetSimulationDataPath(scene.name);
             simulationManager.Problem = AssetUtils.GetAsset<ParsedProblem>(simulationDataRoot + "/Problem.asset");
             simulationManager.PlanGeneration = AssetUtils.GetAsset<PlanGeneration>(simulationDataRoot + "/Plan.asset");
@@ -54,7 +56,7 @@ namespace PDSim.SceneTemplates
 
             // Fluents
             var fluents = ProtobufReader.ReadFluents(problemParser);
-            PredicateAnimations.Instance.InitialiseComponent(fluents);
+            FluentAnimations.Instance.InitialiseComponent(fluents);
 
             // Actions — create a dedicated holder if not already in the scene template
             var actions = ProtobufReader.ReadActions(problemParser);
@@ -69,7 +71,7 @@ namespace PDSim.SceneTemplates
             // Objects
             var problemObjects = ProtobufReader.ReadObjects(problemParser);
 
-            ProblemObjects.Instance.InitialiseComponent(problemObjects, TypeHierarchy.Instance.GetLeafNodes());
+            VisualisationObjects.Instance.InitialiseComponent(problemObjects, TypeHierarchy.Instance.GetLeafNodes());
 
             // Initial State
             var initialState = ProtobufReader.ReadInit(problemParser);

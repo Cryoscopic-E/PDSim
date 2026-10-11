@@ -44,7 +44,7 @@ namespace PDSim.Components.Interactive
         /// <summary>
         /// Registers a problem object metadata component.
         /// </summary>
-        public void RegisterObject(ProblemObjectMetaData obj)
+        public void RegisterObject(VisualisationObjectMetaData obj)
         {
             if (!_objects.Contains(obj)) _objects.Add(obj);
         }
@@ -52,7 +52,7 @@ namespace PDSim.Components.Interactive
         /// <summary>
         /// Unregisters a problem object metadata component.
         /// </summary>
-        public void UnregisterObject(ProblemObjectMetaData obj) => _objects.Remove(obj);
+        public void UnregisterObject(VisualisationObjectMetaData obj) => _objects.Remove(obj);
 
         /// <summary>
         /// Registers a semantic sensor.
@@ -189,7 +189,7 @@ namespace PDSim.Components.Interactive
         private static PDSimWorldObserver _instance;
 
         private WorldState _liveState = new WorldState(new Dictionary<FluentExpression, object>());
-        private readonly List<ProblemObjectMetaData> _objects = new List<ProblemObjectMetaData>();
+        private readonly List<VisualisationObjectMetaData> _objects = new List<VisualisationObjectMetaData>();
         private readonly List<SemanticSensor> _sensors = new List<SemanticSensor>();
         private readonly List<LogicalAction> _actions = new List<LogicalAction>();
 

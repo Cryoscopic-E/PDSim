@@ -1,4 +1,5 @@
 using GeTPlan.Core.Models;
+using PDSim.SceneUI.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,7 +14,7 @@ namespace PDSim.SceneUI
         #region Private Fields
         private ListView _planList;
         private PlanActionsListController _actionListController;
-        private MovablePanel _movablePanel;
+        private MovablePanelUI _movablePanel;
         private VisualElement _root;
         private bool _visible;
         #endregion
@@ -59,7 +60,7 @@ namespace PDSim.SceneUI
             _planList.AddToClassList("panel-listview");
             listContainer.Add(_planList);
 
-            _movablePanel = new MovablePanel(_root);
+            _movablePanel = new MovablePanelUI(_root);
         }
         #endregion
 

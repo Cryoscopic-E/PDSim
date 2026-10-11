@@ -154,7 +154,7 @@ namespace PDSim.Components.Interactive
 
         private bool IsValidTarget(GameObject go)
         {
-            return go.GetComponent<ProblemObjectMetaData>() != null || go.GetComponent<VisualisationObject>() != null;
+            return go.GetComponent<VisualisationObjectMetaData>() != null || go.GetComponent<VisualisationObject>() != null;
         }
 
         private void NotifyStateChange(GameObject target, object value)

@@ -119,12 +119,12 @@ namespace PDSim.Helpers
             while (elapsed < duration)
             {
                 // Pause-aware: respect Controller animation speed
-                if (Controller.Instance != null && Controller.Instance.IsPaused)
+                if (VisualisationController.Instance != null && VisualisationController.Instance.IsPaused)
                 {
                     yield return null;
                     continue;
                 }
-                float speed = Controller.Instance != null ? Controller.Instance.AnimationSpeed : 1f;
+                float speed = VisualisationController.Instance != null ? VisualisationController.Instance.AnimationSpeed : 1f;
                 elapsed += Time.deltaTime * speed;
                 SetColor(Color.Lerp(from, to, Mathf.Clamp01(elapsed / duration)));
                 yield return null;
